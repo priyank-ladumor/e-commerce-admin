@@ -54,7 +54,10 @@
 
 @media screen and (max-width: 1024px) {
     .style_modal {
-        /* width: 1000px; */
         width: 80%;
     }
+}
+
+#standard-error-helper-text:focus{
+    box-shadow: none;
 }
