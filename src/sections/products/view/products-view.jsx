@@ -1,3 +1,5 @@
+/* eslint-disable perfectionist/sort-imports */
+/* eslint-disable import/no-unresolved */
 import { useState } from 'react';
 
 import Stack from '@mui/material/Stack';
@@ -7,10 +9,12 @@ import Typography from '@mui/material/Typography';
 
 import { products } from 'src/_mock/products';
 
+import Iconify from 'src/components/iconify';
+import Button from '@mui/material/Button';
 import ProductCard from '../product-card';
 import ProductSort from '../product-sort';
 import ProductFilters from '../product-filters';
-import ProductCartWidget from '../product-cart-widget';
+import ProductModal from './create-Product-model';
 
 // ----------------------------------------------------------------------
 
@@ -27,9 +31,13 @@ export default function ProductsView() {
 
   return (
     <Container>
-      <Typography variant="h4" sx={{ mb: 5 }}>
-        Products
-      </Typography>
+      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+        <Typography variant="h4">Products</Typography>
+
+        <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
+          <ProductModal />
+        </Button>
+      </Stack>
 
       <Stack
         direction="row"
@@ -56,8 +64,6 @@ export default function ProductsView() {
           </Grid>
         ))}
       </Grid>
-
-      {/* <ProductCartWidget /> */}
     </Container>
   );
 }

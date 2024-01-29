@@ -1,19 +1,28 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import path from 'path';
 import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react-swc';
+import tailwindcss from 'tailwindcss';
 import checker from 'vite-plugin-checker';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import react from '@vitejs/plugin-react-swc';
 
 // ----------------------------------------------------------------------
 
 export default defineConfig({
   plugins: [
     react(),
+    tailwindcss(),
     checker({
       eslint: {
         lintCommand: 'eslint "./src/**/*.{js,jsx,ts,tsx}"',
       },
     }),
   ],
+  css: {
+    postcss: {
+      plugins: [tailwindcss()],
+    },
+  },
   resolve: {
     alias: [
       {

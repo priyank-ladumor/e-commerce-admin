@@ -1,2 +1,60 @@
 /* scrollbar */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 @import 'simplebar-react/dist/simplebar.min.css';
+
+.captcha {
+    margin: 0 auto;
+    width: 65%;
+    margin-bottom: 1rem;
+}
+
+@media screen and (max-width: 480px) {
+    .captcha {
+        width: 70%;
+    }
+}
+
+@media screen and (max-width: 425px) {
+    .captcha {
+        width: 80%;
+    }
+}
+
+@media screen and (max-width: 375px) {
+    .captcha {
+        width: 93%;
+    }
+}
+
+@media screen and (max-width: 375px) {
+    .captcha {
+        width: 100%;
+        float: left;
+    }
+}
+
+/*  model responsive  */
+
+@media screen and (max-width: 2400px) {
+    .style_modal {
+        /* width: 1000px; */
+        width: 70%;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .style_modal {
+        /* width: 1000px; */
+        width: 90%;
+    }
+}
+
+
+@media screen and (max-width: 1024px) {
+    .style_modal {
+        /* width: 1000px; */
+        width: 80%;
+    }
+}

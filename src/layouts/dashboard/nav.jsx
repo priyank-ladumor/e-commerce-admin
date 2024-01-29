@@ -1,5 +1,10 @@
-import { useEffect } from 'react';
+/* eslint-disable import/no-extraneous-dependencies */
+// eslint-disable-next-line perfectionist/sort-imports
 import PropTypes from 'prop-types';
+import { NavLink } from 'react-router-dom';
+/* eslint-disable import/no-unresolved */
+import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -14,19 +19,45 @@ import { RouterLink } from 'src/routes/components';
 
 import { useResponsive } from 'src/hooks/use-responsive';
 
-import { account } from 'src/_mock/account';
-
 import Logo from 'src/components/logo';
 import Scrollbar from 'src/components/scrollbar';
 
 import { NAV } from './config-layout';
 import navConfig from './config-navigation';
-
+// eslint-disable-next-line perfectionist/sort-imports, import/extensions
+import { adminLoginData } from "../../store/action/authAction.js"
 // ----------------------------------------------------------------------
+
+
+// sidemenu 
+// sidemenu 
+// sidemenu 
+// sidemenu 
+// sidemenu 
+// sidemenu 
 
 export default function Nav({ openNav, onCloseNav }) {
   const pathname = usePathname();
   const upLg = useResponsive('up', 'lg');
+
+  const dispatch = useDispatch()
+  const { adminLoginDatas } = useSelector((state) => state.auth)
+  const auth = localStorage.getItem("token")
+
+  const [adminData, setAdminData] = useState()
+
+  useEffect(() => {
+    if (auth?.length > 0) {
+      dispatch(adminLoginData())
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [auth])
+
+  useEffect(() => {
+    if (adminLoginDatas) {
+      setAdminData(adminLoginDatas)
+    }
+  }, [adminLoginDatas])
 
   useEffect(() => {
     if (openNav) {
@@ -49,13 +80,31 @@ export default function Nav({ openNav, onCloseNav }) {
       }}
     >
       {/* admin pic and name for sidebar */}
-      <Avatar src="https://i.imgur.com/d7MoWpc.png" alt="photoURL" />
+      {adminData &&
+        <Avatar
+          src={adminData?.photoURL}
+          alt={adminData.firstName}
+          sx={{
+            width: 36,
+            height: 36,
+            border: (theme) => `solid 2px ${theme.palette.background.default}`,
+          }}
+        >
+          {adminData.firstName.charAt(0).toUpperCase()}
+          {adminData.lastName.charAt(0).toUpperCase()}
+        </Avatar>}
       <Box sx={{ ml: 2 }}>
-        <Typography variant="subtitle2">{account.displayName}</Typography>
-
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          {account.role}
-        </Typography>
+        {adminData &&
+          <>
+            <Typography variant="subtitle2">
+              {adminData.firstName.charAt(0).toUpperCase() + adminData.firstName.slice(1)}
+              {" "}
+              {adminData.lastName.charAt(0).toUpperCase() + adminData.lastName.slice(1)}
+            </Typography>
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              {adminData.role}
+            </Typography>
+          </>}
       </Box>
       {/* admin pic and name  */}
 
@@ -81,8 +130,13 @@ export default function Nav({ openNav, onCloseNav }) {
         },
       }}
     >
-      {/* logo for admin panel */}
-      <Logo sx={{ mt: 3, ml: 4}} />
+      {/* logo for admin panel and company name */}
+      <NavLink to="/">
+        <div className='flex items-center'>
+          <Logo sx={{ mt: 3, ml: 4 }} />
+          <p className='text-3xl font-semibold ms-3 -mb-4'>Shoppy.io</p>
+        </div>
+      </NavLink>
       {/* logo for admin panel */}
 
       {renderAccount}

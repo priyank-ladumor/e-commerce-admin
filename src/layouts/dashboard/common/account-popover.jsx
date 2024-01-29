@@ -1,4 +1,8 @@
-import { useState } from 'react';
+/* eslint-disable no-shadow */
+/* eslint-disable import/no-unresolved */
+import { useState, useEffect } from 'react';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { useDispatch, useSelector } from 'react-redux';
 
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
@@ -9,7 +13,12 @@ import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
-import { account } from 'src/_mock/account';
+// eslint-disable-next-line perfectionist/sort-imports
+import { Logout } from 'src/store/slice/authSlice';
+// eslint-disable-next-line perfectionist/sort-imports
+import { useNavigate } from 'react-router-dom';
+// eslint-disable-next-line perfectionist/sort-imports
+import { adminLoginData } from 'src/store/action/authAction';
 
 // ----------------------------------------------------------------------
 
@@ -31,8 +40,20 @@ const MENU_OPTIONS = [
 // ----------------------------------------------------------------------
 
 export default function AccountPopover() {
-  const [open, setOpen] = useState(null);
+  const { adminLogout, adminLoginDatas } = useSelector((state) => state.auth)
 
+  const [open, setOpen] = useState(null);
+  const navigate = useNavigate()
+  const auth = localStorage.getItem("token")
+
+  useEffect(() => {
+    if (!auth && adminLogout === true) {
+      navigate("/login")
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [adminLogout, auth])
+
+  const dispatch = useDispatch()
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
   };
@@ -40,6 +61,24 @@ export default function AccountPopover() {
   const handleClose = () => {
     setOpen(null);
   };
+  const handleLogOut = () => {
+    dispatch(Logout())
+  }
+
+  const [adminData, setAdminData] = useState()
+
+  useEffect(() => {
+    if (auth?.length > 0) {
+      dispatch(adminLoginData())
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [auth])
+
+  useEffect(() => {
+    if (adminLoginDatas) {
+      setAdminData(adminLoginDatas)
+    }
+  }, [adminLoginDatas])
 
   return (
     <>
@@ -56,16 +95,14 @@ export default function AccountPopover() {
         }}
       >
         <Avatar
-          src={account.photoURL}
-          alt={account.displayName}
+          src="https://res.cloudinary.com/dstojqsjz/image/upload/v1706514670/kdjq59glyogb1ped5d43.png"
+          alt="admin url"
           sx={{
             width: 36,
             height: 36,
             border: (theme) => `solid 2px ${theme.palette.background.default}`,
           }}
-        >
-          {account.displayName.charAt(0).toUpperCase()}
-        </Avatar>
+        />
       </IconButton>
 
       <Popover
@@ -83,14 +120,18 @@ export default function AccountPopover() {
           },
         }}
       >
-        <Box sx={{ my: 1.5, px: 2 }}>
-          <Typography variant="subtitle2" noWrap>
-            {account.displayName}
-          </Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {account.email}
-          </Typography>
-        </Box>
+        {adminData
+          &&
+          <Box sx={{ my: 1.5, px: 2 }}>
+            <Typography variant="subtitle2" noWrap>
+              {adminData.firstName.charAt(0).toUpperCase() + adminData.firstName.slice(1)}
+              {" "}
+              {adminData.lastName.charAt(0).toUpperCase() + adminData.lastName.slice(1)}
+            </Typography>
+            <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
+              {adminData.email}
+            </Typography>
+          </Box>}
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
@@ -105,8 +146,8 @@ export default function AccountPopover() {
         <MenuItem
           disableRipple
           disableTouchRipple
-          onClick={handleClose}
-          sx={{ typography: 'body2', color: 'error.main', py: 1.5 , px: 9}}
+          onClick={handleLogOut}
+          sx={{ typography: 'body2', color: 'error.main', py: 1.5, px: 9 }}
         >
           Logout
         </MenuItem>

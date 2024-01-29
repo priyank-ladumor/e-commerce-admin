@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import PropTypes from 'prop-types';
 
 import Box from '@mui/material/Box';
@@ -19,6 +20,12 @@ import AccountPopover from './common/account-popover';
 // import NotificationsPopover from './common/notifications-popover';
 
 // ----------------------------------------------------------------------
+
+// nav bar 
+// nav bar 
+// nav bar 
+// nav bar 
+// nav bar 
 
 export default function Header({ onOpenNav }) {
   const theme = useTheme();
