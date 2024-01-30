@@ -1,3 +1,15 @@
+/* eslint-disable import/no-unresolved */
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable prefer-const */
+/* eslint-disable object-shorthand */
+/* eslint-disable no-unreachable-loop */
+/* eslint-disable react/no-unstable-nested-components */
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+/* eslint-disable react/button-has-type */
+/* eslint-disable no-unused-expressions */
+/* eslint-disable react/void-dom-elements-no-children */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable perfectionist/sort-named-imports */
 /* eslint-disable no-shadow */
 /* eslint-disable prefer-destructuring */
 /* eslint-disable perfectionist/sort-imports */
@@ -18,9 +30,25 @@ import Typography from '@mui/material/Typography';
 import FormControl from '@mui/material/FormControl';
 // import { useNavigate } from 'react-router-dom';
 // eslint-disable-next-line perfectionist/sort-imports
-// import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { FaTrash } from "react-icons/fa"
+import ListSubheader from '@mui/material/ListSubheader';
 
+import { useTheme } from '@mui/material/styles';
+import ListItemText from '@mui/material/ListItemText';
+import Checkbox from '@mui/material/Checkbox';
+// import { SketchPicker } from 'react-color'
+// import { IoIosColorPalette } from "react-icons/io";
+
+
+import {
+    OutlinedInput,
+    InputLabel,
+    MenuItem,
+    Select,
+} from "@mui/material";
+import { getColorAction } from 'src/store/action/colorAction';
+// import { ChildProductModal } from './child-create-product-modal';
 
 const style = {
     position: 'absolute',
@@ -32,8 +60,45 @@ const style = {
     boxShadow: 24,
     p: 3,
 };
+const sizes = [
+    {
+        label: 'sizes',
+        options: [
+            'XS',
+            'S',
+            'M',
+            'L',
+            'XL',
+            'XLL',
+            'XXS'
+        ],
+    },
+];
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+    PaperProps: {
+        style: {
+            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+            width: 250,
+        },
+    },
+};
+function getStyles(name, personName, theme) {
+    return {
+        fontWeight:
+            personName.indexOf(name) === -1
+                ? theme.typography.fontWeightRegular
+                : theme.typography.fontWeightMedium,
+    };
+}
+
 
 export default function ProductModal() {
+
+    const { colorData } = useSelector((state) => state.color)
+
     const [open, setOpen] = React.useState(false);
     const [images, setimages] = useState([]);
     const [imgerr, setimgerr] = useState();
@@ -42,9 +107,38 @@ export default function ProductModal() {
     const [thumbnailerr, setthumbnailerr] = useState();
     const [thumbnaillenerr, setthumbnaillenerr] = useState();
 
-    // const navigate = useNavigate();
-    // const dispatch = useDispatch();
+    const [selectedNames, setSelectedNames] = useState([]);
+    // const [clropen, setclropen] = useState(false)
 
+    // const [addOtherColor, setAddOtherColor] = useState(0)
+    // console.log(addOtherColor);
+
+    // const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const [color, setColor] = useState()
+    // let colorPicker = []
+
+    // const handleColor = () => {
+    //     colorPicker.push(color)
+    //     console.log(colorPicker);
+    // }
+    // console.log(colorPicker, "colorPicker");
+
+    // const showColorPicker = () => {
+    //     colorPicker.push(...colorPicker)
+    //     setclropen(!clropen)
+    // }
+    console.log(color, "color");
+
+    const theme = useTheme();
+    const handleChange = (event) => {
+        const {
+            target: { value },
+        } = event;
+        setSelectedNames(
+            typeof value === 'string' ? value.split(',') : value
+        );
+    };
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
@@ -74,6 +168,15 @@ export default function ProductModal() {
         }
     }, [thumbnail]);
 
+    useEffect(() => {
+        dispatch(getColorAction())
+    }, [])
+
+    useEffect(() => {
+        if (colorData) {
+            setColor(colorData.colors)
+        }
+    }, [colorData])
 
     const uploadimages = (e) => {
         const files = e.target.files;
@@ -106,11 +209,7 @@ export default function ProductModal() {
     const uploadthumbnail = (e) => {
         const files = e.target.files;
         const imagePromises = [];
-
-        if (files.length > 5) {
-            setthumbnailerr('Maximum images allowed is five')
-            setthumbnaillenerr("")
-        } else {
+        if (files.length > 0) {
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
                 if (file) {
@@ -151,8 +250,6 @@ export default function ProductModal() {
         const handleDelete2 = thumbnail.filter((item, id) => item !== delitem);
         setthumbnail(handleDelete2);
     };
-
-
     return (
         <div>
             <Button onClick={handleOpen} style={{ color: "white" }}>New Product</Button>
@@ -171,7 +268,7 @@ export default function ProductModal() {
                     <Typography id="modal-modal-description" sx={{ mt: 6, maxHeight: "80vh", overflowY: "auto" }}>
                         <form>
                             <div className="border-b border-gray-900/10 pb-12">
-                                <h2 className="text-2xl font-semibold leading-7 text-gray-900">Add New Product</h2>
+                                <h2 className="text-3xl font-semibold leading-7 text-gray-900">Add New Product</h2>
                                 <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-12">
                                     <div className="sm:col-span-6">
                                         <FormControl fullWidth sx={{ m: 0 }} size="large" >
@@ -182,7 +279,7 @@ export default function ProductModal() {
                                                 type='text'
                                                 // {...register("email")}
                                                 // helperText={errors && errors.email?.message}
-                                                variant="filled"
+                                                variant="outlined"
                                             />
                                         </FormControl>
                                     </div>
@@ -195,7 +292,7 @@ export default function ProductModal() {
                                                 type='text'
                                                 // {...register("email")}
                                                 // helperText={errors && errors.email?.message}
-                                                variant="filled" />
+                                                variant="outlined" />
                                         </FormControl>
                                     </div>
 
@@ -208,7 +305,7 @@ export default function ProductModal() {
                                                 type='text'
                                                 // {...register("email")}
                                                 // helperText={errors && errors.email?.message}
-                                                variant="filled"
+                                                variant="outlined"
                                             />
                                         </FormControl>
                                     </div>
@@ -221,11 +318,11 @@ export default function ProductModal() {
                                                 type='text'
                                                 // {...register("email")}
                                                 // helperText={errors && errors.email?.message}
-                                                variant="filled" />
+                                                variant="outlined" />
                                         </FormControl>
                                     </div>
 
-                                    <div className="sm:col-span-6">
+                                    <div className="sm:col-span-12">
                                         <FormControl fullWidth sx={{ m: 0 }} size="large" >
                                             <TextField
                                                 // error={errors && errors.email?.message}
@@ -234,22 +331,112 @@ export default function ProductModal() {
                                                 type='text'
                                                 // {...register("email")}
                                                 // helperText={errors && errors.email?.message}
-                                                variant="filled"
+                                                variant="outlined"
                                             />
                                         </FormControl>
                                     </div>
-                                    <div className="sm:col-span-6">
-                                        <FormControl fullWidth sx={{ m: 0 }} size="large" >
-                                            <label htmlFor="favcolor">Select your favorite color:</label>
-                                            <input type="color" id="favcolor" name="favcolor" />
+                                    <div className=" sm:col-span-4">
+                                        {/* <FormControl fullWidth sx={{ m: 0 }} size="large" className='text-lg text-700 mt-3' >
+                                            {!clropen ?
+                                                <div className='flex float-start'>
+                                                    <label htmlFor="favcolor " onClick={showColorPicker} className='mb-3 font-semibold cursor-pointer text-lg text-700 flex justify-center items-center float-start' >Select Color
+                                                        <IoIosColorPalette className='text-[28px] font-bold mr-1' type='button' />:
+                                                    </label>
+                                                    <p className=' text-black-700 p-3 h-10 ml-1 -mt-1 rounded-full' style={{ color: color, background: color }} >{". "}</p>
+                                                </div>
+                                                :
+                                                <div className='flex float-start'>
+                                                    <label htmlFor="favcolor " onClick={showColorPicker} className='mb-3 font-semibold cursor-pointer text-lg text-700 flex justify-center items-center float-start' >Close
+                                                        <IoIosColorPalette className='text-[28px] font-bold mr-1' type='button' />:
+                                                    </label>
+                                                    <p className=' text-black-700 p-3 h-10 ml-1 -mt-1 rounded-full' style={{ color: color, background: color }} >{". "}</p>
+                                                </div>
+                                            }
+                                            <button type='button' onClick={handleColor}>add</button>
+
+                                            {clropen && <SketchPicker className='mt-3' onChange={(color) => setColor(color.hex)} />}
+                                        </FormControl> */}
+
+                                        <FormControl sx={{ m: 0, width: "100%" }}>
+                                            <InputLabel id="demo-multiple-name-label">Colors</InputLabel>
+                                            <Select
+                                                labelId="demo-multiple-name-label"
+                                                multiple
+                                                id="demo-multiple-name"
+                                                value={selectedNames}
+                                                // onChange={handleChange}
+                                                input={<OutlinedInput label="Colors" />}
+                                                renderValue={(selected) => selected.join(', ')}
+                                                MenuProps={MenuProps}
+                                            >
+                                                {color?.length > 0 && color.map((clr) => (
+                                                    <MenuItem
+                                                        key={clr.name}
+                                                        value={clr.name}
+                                                        // style={getStyles(clr, selectedNames, theme)}
+                                                    >
+                                                        <Checkbox checked={selectedNames.indexOf(clr.name) > -1} />
+                                                        <ListItemText primary={clr.name} />
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
                                         </FormControl>
+                                    </div>
+                                    {color?.length > 0 &&
+                                        <div className="sm:col-span-4">
+                                            <FormControl sx={{ m: 0, width: "100%" }}>
+                                                <InputLabel id="demo-multiple-name-label">Sizes</InputLabel>
+                                                <Select
+                                                    labelId="demo-multiple-name-label"
+                                                    multiple
+                                                    id="demo-multiple-name"
+                                                    value={selectedNames}
+                                                    onChange={handleChange}
+                                                    input={<OutlinedInput label="Sizes" />}
+                                                    renderValue={(selected) => selected.join(', ')}
+                                                    MenuProps={MenuProps}
+                                                >
+                                                    {sizes.map((name) => (
+                                                        <ListSubheader ><div className='text-lg text-700'>{name.label}:</div></ListSubheader>
+                                                    ))}
+                                                    {sizes.map((name) => (
+                                                        name.options.map((opt) => (
+                                                            <MenuItem
+                                                                key={opt}
+                                                                value={opt}
+                                                                style={getStyles(name, selectedNames, theme)}
+                                                            >
+                                                                <Checkbox checked={selectedNames.indexOf(opt) > -1} />
+                                                                <ListItemText primary={opt} />
+                                                            </MenuItem>
+                                                        ))
+                                                    ))}
+                                                </Select>
+                                            </FormControl>
+                                        </div>}
+
+                                    {selectedNames?.length > 0 &&
+                                        <div className=" sm:col-span-4">
+                                            <FormControl fullWidth sx={{ m: 0 }} size="large" >
+                                                <TextField
+                                                    // error={errors && errors.email?.message}
+                                                    id="standard-error-helper-text"
+                                                    label="Quantity"
+                                                    type='number'
+                                                    // {...register("email")}
+                                                    // helperText={errors && errors.email?.message}
+                                                    variant="outlined"
+                                                />
+                                            </FormControl>
+                                        </div>}
+                                    <div className=" sm:col-span-12">
+                                        <p>add another color and size</p>
                                     </div>
 
                                     <div className="sm:col-span-12">
                                         <label htmlFor="uploadimg" className="d-flex-align-items-center justify-content-center btn btn-outline-secondary col-12">Upload Product Thumbnail</label>
                                         <FormControl fullWidth sx={{ m: 0 }} size="large" >
-                                            <TextField
-                                                // error={errors && errors.email?.message}
+                                            <input
                                                 id="uploadimg"
                                                 accept="image/png, image/gif, image/jpeg"
                                                 type="file"
@@ -257,9 +444,6 @@ export default function ProductModal() {
                                                 name="photoo"
                                                 onChange={(e) => [uploadthumbnail(e)]}
                                                 style={{ display: "none" }}
-                                                // {...register("email")}
-                                                // helperText={errors && errors.email?.message}
-                                                variant="filled"
                                             />
                                         </FormControl>
                                         {(thumbnaillenerr || thumbnailerr) && (
@@ -269,19 +453,35 @@ export default function ProductModal() {
                                         )}
                                     </div>
                                     {thumbnail?.length > 0 &&
-                                        <div className="sm:col-span-12 -mt-8 mb-4 flex justify-center items-center bg-[#f0f0f0] p-8" >
-                                            <div style={{ position: "relative" }}>
-                                                <img
-                                                    src={thumbnail[0]}
-                                                    alt="img-preview"
-                                                    className="rounded-xl "
-                                                    style={{ width: "250px", height: "220px" }}
-                                                />
-                                                <FaTrash
-                                                    className="text-danger btn-trash trash"
-                                                    style={{ cursor: "pointer", position: "absolute", top: 10, right: 10 }}
-                                                    onClick={() => deletethumbnail(thumbnail[0])}
-                                                />
+                                        <div className="sm:col-span-12 -mt-8  sm:grid-cols-1 gap-4 bg-[#f0f0f0] p-8 mb-3" >
+                                            <div className="flex justify-center items-center" >
+                                                {thumbnail.map((img) => {
+                                                    return (
+                                                        <div style={{ position: "relative" }} className='m-2 ' >
+                                                            <div className="flex justify-center items-center" >
+                                                                <img
+                                                                    src={img}
+                                                                    alt="img-preview"
+                                                                    className="rounded-xl "
+                                                                    style={{ width: "250px", height: "220px" }}
+                                                                    onMouseEnter={(e) => {
+                                                                        e.target.style.border = '1px solid red';
+                                                                        e.target.style.opacity = 0.5;
+                                                                    }}
+                                                                    onMouseLeave={(e) => {
+                                                                        e.target.style.border = "none";
+                                                                        e.target.style.opacity = 1;
+                                                                    }}
+                                                                />
+                                                                <FaTrash
+                                                                    className="text-danger btn-trash trash"
+                                                                    style={{ cursor: "pointer", position: "absolute" }}
+                                                                    onClick={() => deletethumbnail(img)}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    )
+                                                })}
                                             </div>
                                         </div>
                                     }
@@ -290,7 +490,6 @@ export default function ProductModal() {
                                         <label htmlFor="uploadimg2" className="d-flex-align-items-center justify-content-center btn btn-outline-secondary col-12">Upload Product Images</label>
                                         <FormControl fullWidth sx={{ m: 0 }} size="large" >
                                             <input
-                                                // error={errors && errors.email?.message}
                                                 id="uploadimg2"
                                                 multiple
                                                 accept="image/png, image/gif, image/jpeg"
@@ -299,9 +498,6 @@ export default function ProductModal() {
                                                 name="photoo"
                                                 onChange={(e) => [uploadimages(e)]}
                                                 style={{ display: "none" }}
-                                            // {...register("email")}
-                                            // helperText={errors && errors.email?.message}
-                                            // variant="filled"
                                             />
                                         </FormControl>
                                         {(imglenerr || imgerr) && (
@@ -311,7 +507,7 @@ export default function ProductModal() {
                                         )}
                                     </div>
                                     {images?.length > 0 &&
-                                        <div className="sm:col-span-12 -mt-8 grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-4" >
+                                        <div className="sm:col-span-12 -mt-8 grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-4 bg-[#f0f0f0] p-8" >
                                             {images.map((img) => {
                                                 return (
                                                     <div style={{ position: "relative" }} className='m-2' >
@@ -333,7 +529,7 @@ export default function ProductModal() {
                                                             <FaTrash
                                                                 className="text-danger btn-trash trash"
                                                                 style={{ cursor: "pointer", position: "absolute" }}
-                                                                onClick={() => deleteimgs(images[0])}
+                                                                onClick={() => deleteimgs(img)}
                                                             />
                                                         </div>
                                                     </div>
@@ -347,7 +543,7 @@ export default function ProductModal() {
                     </Typography>
                 </Box>
             </Modal>
-        </div>
+        </div >
     );
 }
 
