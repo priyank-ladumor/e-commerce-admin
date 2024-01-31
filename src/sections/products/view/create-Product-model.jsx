@@ -1,3 +1,4 @@
+/* eslint-disable no-lone-blocks */
 /* eslint-disable import/no-unresolved */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable prefer-const */
@@ -30,7 +31,7 @@ import Typography from '@mui/material/Typography';
 import FormControl from '@mui/material/FormControl';
 // import { useNavigate } from 'react-router-dom';
 // eslint-disable-next-line perfectionist/sort-imports
-import { useDispatch, useSelector } from 'react-redux';
+// import { useDispatch, useSelector } from 'react-redux';
 import { FaTrash } from "react-icons/fa"
 import ListSubheader from '@mui/material/ListSubheader';
 
@@ -47,7 +48,8 @@ import {
     MenuItem,
     Select,
 } from "@mui/material";
-import { getColorAction } from 'src/store/action/colorAction';
+import SizesTableModal from './child-create-product';
+// import { getColorAction } from 'src/store/action/colorAction';
 // import { ChildProductModal } from './child-create-product-modal';
 
 const style = {
@@ -97,7 +99,7 @@ function getStyles(name, personName, theme) {
 
 export default function ProductModal() {
 
-    const { colorData } = useSelector((state) => state.color)
+    // const { colorData } = useSelector((state) => state.color)
 
     const [open, setOpen] = React.useState(false);
     const [images, setimages] = useState([]);
@@ -114,7 +116,7 @@ export default function ProductModal() {
     // console.log(addOtherColor);
 
     // const navigate = useNavigate();
-    const dispatch = useDispatch();
+    // const dispatch = useDispatch();
     const [color, setColor] = useState()
     // let colorPicker = []
 
@@ -136,6 +138,9 @@ export default function ProductModal() {
             target: { value },
         } = event;
         setSelectedNames(
+            typeof value === 'string' ? value.split(',') : value
+        );
+        setColor(
             typeof value === 'string' ? value.split(',') : value
         );
     };
@@ -168,15 +173,15 @@ export default function ProductModal() {
         }
     }, [thumbnail]);
 
-    useEffect(() => {
-        dispatch(getColorAction())
-    }, [])
+    // useEffect(() => {
+    //     dispatch(getColorAction())
+    // }, [])
 
-    useEffect(() => {
-        if (colorData) {
-            setColor(colorData.colors)
-        }
-    }, [colorData])
+    // useEffect(() => {
+    //     if (colorData) {
+    //         setColor(colorData.colors)
+    //     }
+    // }, [colorData])
 
     const uploadimages = (e) => {
         const files = e.target.files;
@@ -335,104 +340,44 @@ export default function ProductModal() {
                                             />
                                         </FormControl>
                                     </div>
-                                    <div className=" sm:col-span-4">
-                                        {/* <FormControl fullWidth sx={{ m: 0 }} size="large" className='text-lg text-700 mt-3' >
-                                            {!clropen ?
-                                                <div className='flex float-start'>
-                                                    <label htmlFor="favcolor " onClick={showColorPicker} className='mb-3 font-semibold cursor-pointer text-lg text-700 flex justify-center items-center float-start' >Select Color
-                                                        <IoIosColorPalette className='text-[28px] font-bold mr-1' type='button' />:
-                                                    </label>
-                                                    <p className=' text-black-700 p-3 h-10 ml-1 -mt-1 rounded-full' style={{ color: color, background: color }} >{". "}</p>
-                                                </div>
-                                                :
-                                                <div className='flex float-start'>
-                                                    <label htmlFor="favcolor " onClick={showColorPicker} className='mb-3 font-semibold cursor-pointer text-lg text-700 flex justify-center items-center float-start' >Close
-                                                        <IoIosColorPalette className='text-[28px] font-bold mr-1' type='button' />:
-                                                    </label>
-                                                    <p className=' text-black-700 p-3 h-10 ml-1 -mt-1 rounded-full' style={{ color: color, background: color }} >{". "}</p>
-                                                </div>
-                                            }
-                                            <button type='button' onClick={handleColor}>add</button>
-
-                                            {clropen && <SketchPicker className='mt-3' onChange={(color) => setColor(color.hex)} />}
-                                        </FormControl> */}
-
+                                 
+                                    <div className="sm:col-span-6">
                                         <FormControl sx={{ m: 0, width: "100%" }}>
-                                            <InputLabel id="demo-multiple-name-label">Colors</InputLabel>
+                                            <InputLabel id="demo-multiple-name-label">Sizes</InputLabel>
                                             <Select
                                                 labelId="demo-multiple-name-label"
                                                 multiple
                                                 id="demo-multiple-name"
                                                 value={selectedNames}
-                                                // onChange={handleChange}
-                                                input={<OutlinedInput label="Colors" />}
+                                                onChange={handleChange}
+                                                input={<OutlinedInput label="Sizes" />}
                                                 renderValue={(selected) => selected.join(', ')}
                                                 MenuProps={MenuProps}
                                             >
-                                                {color?.length > 0 && color.map((clr) => (
-                                                    <MenuItem
-                                                        key={clr.name}
-                                                        value={clr.name}
-                                                        // style={getStyles(clr, selectedNames, theme)}
-                                                    >
-                                                        <Checkbox checked={selectedNames.indexOf(clr.name) > -1} />
-                                                        <ListItemText primary={clr.name} />
-                                                    </MenuItem>
+                                                {sizes.map((name) => (
+                                                    <ListSubheader ><div className='text-lg text-700'>{name.label}:</div></ListSubheader>
+                                                ))}
+                                                {sizes.map((name) => (
+                                                    name.options.map((opt) => (
+                                                        <MenuItem
+                                                            key={opt}
+                                                            value={opt}
+                                                            style={getStyles(name, selectedNames, theme)}
+                                                        >
+                                                            <Checkbox checked={selectedNames.indexOf(opt) > -1} />
+                                                            <ListItemText primary={opt} />
+                                                        </MenuItem>
+                                                    ))
                                                 ))}
                                             </Select>
                                         </FormControl>
                                     </div>
-                                    {color?.length > 0 &&
-                                        <div className="sm:col-span-4">
-                                            <FormControl sx={{ m: 0, width: "100%" }}>
-                                                <InputLabel id="demo-multiple-name-label">Sizes</InputLabel>
-                                                <Select
-                                                    labelId="demo-multiple-name-label"
-                                                    multiple
-                                                    id="demo-multiple-name"
-                                                    value={selectedNames}
-                                                    onChange={handleChange}
-                                                    input={<OutlinedInput label="Sizes" />}
-                                                    renderValue={(selected) => selected.join(', ')}
-                                                    MenuProps={MenuProps}
-                                                >
-                                                    {sizes.map((name) => (
-                                                        <ListSubheader ><div className='text-lg text-700'>{name.label}:</div></ListSubheader>
-                                                    ))}
-                                                    {sizes.map((name) => (
-                                                        name.options.map((opt) => (
-                                                            <MenuItem
-                                                                key={opt}
-                                                                value={opt}
-                                                                style={getStyles(name, selectedNames, theme)}
-                                                            >
-                                                                <Checkbox checked={selectedNames.indexOf(opt) > -1} />
-                                                                <ListItemText primary={opt} />
-                                                            </MenuItem>
-                                                        ))
-                                                    ))}
-                                                </Select>
-                                            </FormControl>
-                                        </div>}
 
                                     {selectedNames?.length > 0 &&
-                                        <div className=" sm:col-span-4">
-                                            <FormControl fullWidth sx={{ m: 0 }} size="large" >
-                                                <TextField
-                                                    // error={errors && errors.email?.message}
-                                                    id="standard-error-helper-text"
-                                                    label="Quantity"
-                                                    type='number'
-                                                    // {...register("email")}
-                                                    // helperText={errors && errors.email?.message}
-                                                    variant="outlined"
-                                                />
-                                            </FormControl>
-                                        </div>}
-                                    <div className=" sm:col-span-12">
-                                        <p>add another color and size</p>
-                                    </div>
-
+                                        <div className=" sm:col-span-6">
+                                            <SizesTableModal selectedNames={selectedNames} />
+                                        </div>
+                                    }
                                     <div className="sm:col-span-12">
                                         <label htmlFor="uploadimg" className="d-flex-align-items-center justify-content-center btn btn-outline-secondary col-12">Upload Product Thumbnail</label>
                                         <FormControl fullWidth sx={{ m: 0 }} size="large" >
@@ -543,9 +488,57 @@ export default function ProductModal() {
                     </Typography>
                 </Box>
             </Modal>
-        </div >
+        </div>
     );
 }
 
 
 
+{/* <FormControl fullWidth sx={{ m: 0 }} size="large" className='text-lg text-700 mt-3' >
+<div className=" sm:col-span-4">
+    {!clropen ?
+        <div className='flex float-start'>
+            <label htmlFor="favcolor " onClick={showColorPicker} className='mb-3 font-semibold cursor-pointer text-lg text-700 flex justify-center items-center float-start' >Select Color
+                <IoIosColorPalette className='text-[28px] font-bold mr-1' type='button' />:
+            </label>
+            <p className=' text-black-700 p-3 h-10 ml-1 -mt-1 rounded-full' style={{ color: color, background: color }} >{". "}</p>
+        </div>
+        :
+        <div className='flex float-start'>
+            <label htmlFor="favcolor " onClick={showColorPicker} className='mb-3 font-semibold cursor-pointer text-lg text-700 flex justify-center items-center float-start' >Close
+                <IoIosColorPalette className='text-[28px] font-bold mr-1' type='button' />:
+            </label>
+            <p className=' text-black-700 p-3 h-10 ml-1 -mt-1 rounded-full' style={{ color: color, background: color }} >{". "}</p>
+        </div>
+    }
+    <button type='button' onClick={handleColor}>add</button>
+
+    {clropen && <SketchPicker className='mt-3' onChange={(color) => setColor(color.hex)} />}
+</FormControl> */}
+
+{/*   <FormControl sx={{ m: 0, width: "100%" }}>
+    <InputLabel id="demo-multiple-name-label">Colors</InputLabel>
+    <Select
+        labelId="demo-multiple-name-label"
+        multiple
+        id="demo-multiple-name"
+        value={selectedNames}
+        // onChange={handleChange}
+        input={<OutlinedInput label="Colors" />}
+        renderValue={(selected) => selected.join(', ')}
+        MenuProps={MenuProps}
+    >
+        {color?.length > 0 && color.map((clr) => (
+            <MenuItem
+                key={clr.name}
+                value={clr.name}
+                // style={getStyles(clr, selectedNames, theme)}
+            >
+                <Checkbox checked={selectedNames.indexOf(clr.name) > -1} />
+                <ListItemText primary={clr.name} />
+            </MenuItem>
+        ))}
+    </Select>
+</FormControl>
+</div>
+*/}

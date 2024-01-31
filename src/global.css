@@ -53,6 +53,27 @@
 
 
 @media screen and (max-width: 1024px) {
+    .style_modal2 {
+        width: 70%;
+    }
+}
+
+@media screen and (max-width: 2400px) {
+    .style_modal2 {
+        /* width: 1000px; */
+        width: 60%;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .style_modal2 {
+        /* width: 1000px; */
+        width: 80%;
+    }
+}
+
+
+@media screen and (max-width: 1024px) {
     .style_modal {
         width: 80%;
     }
@@ -61,3 +82,22 @@
 #standard-error-helper-text:focus{
     box-shadow: none;
 }
+
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+    width: 200px;
+  }
+
+
+
+/* tr:nth-child(even) {
+    background-color: #D6EEEE;
+  } */
