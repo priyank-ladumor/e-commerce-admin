@@ -1,3 +1,6 @@
+/* eslint-disable import/no-duplicates */
+/* eslint-disable react/jsx-no-useless-fragment */
+/* eslint-disable no-lonely-if */
 /* eslint-disable spaced-comment */
 /* eslint-disable no-unneeded-ternary */
 /* eslint-disable react/jsx-no-bind */
@@ -44,6 +47,9 @@ import Checkbox from '@mui/material/Checkbox';
 // import { SketchPicker } from 'react-color'
 // import { IoIosColorPalette } from "react-icons/io";
 
+import { RiDeleteBin5Fill } from "react-icons/ri";
+import { MdEditSquare } from "react-icons/md";
+import { IoSave } from "react-icons/io5";
 
 import {
     OutlinedInput,
@@ -51,7 +57,7 @@ import {
     MenuItem,
     Select,
 } from "@mui/material";
-import SizesTableModal from './child-create-product';
+// import SizesTableModal from './child-create-product';
 // import { getColorAction } from 'src/store/action/colorAction';
 // import { ChildProductModal } from './child-create-product-modal';
 
@@ -105,14 +111,13 @@ export default function ProductModal() {
     // const { colorData } = useSelector((state) => state.color)
 
     //for geting child data i created state and function to passing child to parent
-    const [sizeColorQuantity, setsizeColorQuantity] = useState([]);
-    function setSize(table) {
-        setsizeColorQuantity(table)
-    }
-    
-    const getSizeFromTable = sizeColorQuantity.map((ele) => ele.size)
-    console.log(sizeColorQuantity, "sizeColorQuantity");
-    console.log(getSizeFromTable, "getSizeFromTable");
+    // const [sizeColorQuantity, setsizeColorQuantity] = useState([]);
+    // function setSize(table) {
+    //     setsizeColorQuantity(table)
+    // }
+
+    // const getSizeFromTable = TableAll.map((ele) => ele.size)
+    // console.log(sizeColorQuantity, "sizeColorQuantity");
 
     const [open, setOpen] = React.useState(false);
     const [images, setimages] = useState([]);
@@ -247,6 +252,114 @@ export default function ProductModal() {
         const handleDelete2 = thumbnail.filter((item, id) => item !== delitem);
         setthumbnail(handleDelete2);
     };
+
+    const table = []
+    const [color, setColor] = useState(0)
+    const [quantity, setQuantity] = React.useState(0);
+    const [otherSize, setotherSize] = React.useState([]);
+    const [TableAll, setTableAll] = useState([])
+    const [firstSize, setfirstSize] = useState()
+    const [editTableSize, setEditTableSize] = useState([])
+
+    const getSizeFromTable = TableAll.map((ele) => ele.size)
+
+    // for first save input and other disable sizes input array separates 
+    React.useEffect(() => {
+        if (selectedNames?.length > 0) {
+            setfirstSize(selectedNames[0])
+        }
+        if (firstSize) {
+            const copyWithoutFirstElement = selectedNames.slice(1);
+            setotherSize(copyWithoutFirstElement)
+            if (firstSize === otherSize[0]) {
+                const copyWithoutFirstElement = otherSize.slice(1);
+                setotherSize(copyWithoutFirstElement)
+            }
+        }
+    }, [selectedNames, firstSize])
+
+    const saveData = (sizes, clr, quant) => {
+
+        const id = Math.floor(Math.random() * 100)
+
+        //create single table input array
+        if (editTableSize && quant && quantity === 0) {
+            const filterTable = table.filter((tbl) => tbl.size === sizes)
+            if (table.length === 0) {
+                table.push({ "size": sizes, "quantity": quant, "color": color, "id": id })
+            } else {
+                if (filterTable.length === 0) {
+                    table.push({ "size": sizes, "quantity": quant, "color": color, "id": id })
+                }
+            }
+        } else if (editTableSize && clr && color === 0) {
+            const filterTable = table.filter((tbl) => tbl.size === sizes)
+            if (table.length === 0) {
+                table.push({ "size": sizes, "quantity": quantity, "color": clr, "id": id })
+            } else {
+                if (filterTable.length === 0) {
+                    table.push({ "size": sizes, "quantity": quantity, "color": clr, "id": id })
+                }
+            }
+        }
+        else {
+            const filterTable = table.filter((tbl) => tbl.size === sizes)
+            if (table.length === 0) {
+                table.push({ "size": sizes, "quantity": quantity, "color": color, "id": id })
+            } else {
+                if (filterTable.length === 0) {
+                    table.push({ "size": sizes, "quantity": quantity, "color": color, "id": id })
+                }
+            }
+        }
+
+        // create all table data input array
+        const filterTable2 = TableAll.filter((tbl) => tbl.size === sizes)
+        if (TableAll.length === 0) {
+            TableAll.push({ "size": sizes, "quantity": quantity, "color": color, "id": id })
+        } else {
+            if (filterTable2.length === 0) {
+                TableAll.push({ "size": sizes, "quantity": quantity, "color": color, "id": id })
+            }
+        }
+        if (TableAll.length === 0) {
+            setTableAll(table)
+        }
+        //after save first input default quantity set 0
+
+
+        //for removing the already filled size input
+        for (let i = 0; i < selectedNames.length; i++) {
+            if (selectedNames[i] === sizes) {
+                selectedNames.splice(i, 1);
+            }
+        }
+        // for first save input and other disable sizes input array separates 
+        setfirstSize(selectedNames[0])
+
+        //edited data set empty array because after edited input we have to remove it showing 
+        setEditTableSize([])
+        console.log(TableAll, "TableAll");
+    }
+
+    const deleteSizes = (id, size) => {
+        const removedSizes = TableAll.filter((ele) => ele.id !== id);
+        setTableAll(removedSizes);
+    }
+
+    const editSizes = (tableEdit) => {
+        setEditTableSize([{
+            size: tableEdit.size,
+            color: tableEdit.color,
+            quantity: tableEdit.quantity,
+        }])
+        setQuantity(tableEdit.quantity)
+        setColor(tableEdit.color)
+
+        const removedSizes = TableAll.filter((ele) => ele.id !== tableEdit.id);
+        setTableAll(removedSizes);
+    }
+
     return (
         <div>
             <Button onClick={handleOpen} style={{ color: "white" }}>New Product</Button>
@@ -319,7 +432,7 @@ export default function ProductModal() {
                                         </FormControl>
                                     </div>
 
-                                    <div className="sm:col-span-12">
+                                    <div className="sm:col-span-6">
                                         <FormControl fullWidth sx={{ m: 0 }} size="large" >
                                             <TextField
                                                 // error={errors && errors.email?.message}
@@ -340,12 +453,13 @@ export default function ProductModal() {
                                                 labelId="demo-multiple-name-label"
                                                 multiple
                                                 id="demo-multiple-name"
-                                                value={getSizeFromTable.length > 0 ? getSizeFromTable : selectedNames}
+                                                // value={getSizeFromTable.length > 0 ? getSizeFromTable : selectedNames}
+                                                value={TableAll.length > 0 ? getSizeFromTable : selectedNames}
                                                 onChange={handleChange}
                                                 input={<OutlinedInput label="Sizes" />}
                                                 renderValue={(selected) => selected.join(', ')}
                                                 MenuProps={MenuProps}
-                                                disabled={getSizeFromTable.length > 0 }
+                                                disabled={getSizeFromTable.length > 0}
                                             >
                                                 {sizes.map((name) => (
                                                     <ListSubheader ><div className='text-lg text-700'>{name.label}:</div></ListSubheader>
@@ -357,7 +471,7 @@ export default function ProductModal() {
                                                             value={opt}
                                                             style={getStyles(name, selectedNames, theme)}
                                                         >
-                                                            <Checkbox checked={ selectedNames.indexOf(opt) > -1} />
+                                                            <Checkbox checked={selectedNames.indexOf(opt) > -1} />
                                                             <ListItemText primary={opt} />
                                                         </MenuItem>
                                                     ))
@@ -366,11 +480,101 @@ export default function ProductModal() {
                                         </FormControl>
                                     </div>
 
-                                    {(selectedNames?.length > 0 || getSizeFromTable.length > 0) &&
-                                        <div className=" sm:col-span-6">
-                                            <SizesTableModal selectedNames={selectedNames} setSize={setSize} sizeColorQuantity={sizeColorQuantity} />
+                                    {(selectedNames?.length > 0 || getSizeFromTable.length > 0 || editTableSize.length > 0) &&
+                                        <div className=" sm:col-span-12" style={{ width: "100%", overflowX: "auto" }}>
+                                            {/* <SizesTableModal selectedNames={selectedNames} setSize={setSize} sizeColorQuantity={sizeColorQuantity} /> */}
+                                            <table style={{ width: "50%" }}>
+                                                <thead>
+                                                    <tr>
+                                                        <th>Sizes</th>
+                                                        <th>Colors</th>
+                                                        <th>Quantity</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {editTableSize.length > 0 &&
+                                                        editTableSize.map((table) => {
+                                                            return (
+                                                                <>
+                                                                    <tr>
+                                                                        <td>{table.size}</td>
+                                                                        <td><input type='color' defaultValue={table.color} onChange={e => setColor(e.target.value)} /></td>
+                                                                        <td> <TextField style={{ width: "80px", display: "flex", justifyContent: "center" }} type='number' defaultValue={table.quantity} onChange={e => setQuantity(e.target.value)} id="standard-basic" label="" variant="standard" /></td>
+                                                                        <td>
+                                                                            <IoSave style={{ fontSize: "28px", color: "blue", cursor: "pointer" }} onClick={() => [saveData(table.size, table.color, table.quantity)]} >Save</IoSave>
+                                                                        </td>
+                                                                    </tr>
+                                                                </>
+                                                            )
+                                                        })
+                                                    }
+
+                                                    {TableAll.length > 0 &&
+                                                        TableAll.map((table) => {
+                                                            return (
+                                                                <>
+                                                                    <tr>
+                                                                        <td>
+                                                                            {table.size}
+                                                                        </td>
+                                                                        <td><spam className='p-2 px-3 rounded-full' style={{ background: table.color }}>{"  "}</spam></td>
+                                                                        <td>
+                                                                            {table.quantity}
+                                                                        </td>
+                                                                        <td className='flex justify-evenly' >
+                                                                            <MdEditSquare style={{ fontSize: "28px", color: "black", cursor: "pointer" }} onClick={() => [editSizes(table)]}>Edit</MdEditSquare>
+                                                                            <RiDeleteBin5Fill style={{ fontSize: "28px", color: "red", cursor: "pointer" }} onClick={() => deleteSizes(table.id, table.size)} >Delete</RiDeleteBin5Fill>
+                                                                        </td>
+                                                                    </tr>
+                                                                </>
+                                                            )
+                                                        })
+                                                    }
+                                                    {editTableSize.length === 0 && firstSize &&
+                                                        <tr>
+                                                            <td>{firstSize}</td>
+                                                            <td><input type='color' onChange={e => setColor(e.target.value)} /></td>
+                                                            <td> <TextField style={{ width: "80px", display: "flex", justifyContent: "center" }} type='number' defaultValue={table.quantity} onChange={e => setQuantity(e.target.value)} id="standard-basic" label="" variant="standard" /></td>
+                                                            <td>
+                                                                <IoSave style={{ fontSize: "28px", color: "blue", cursor: "pointer" }} onClick={() => saveData(firstSize)} >Save</IoSave>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                    {firstSize && editTableSize.length > 0 &&
+                                                        <tr>
+                                                            <td>{firstSize}</td>
+                                                            <td><input type='color' disabled onChange={e => setColor(e.target.value)} /></td>
+                                                            <td> <TextField style={{ width: "80px", display: "flex", justifyContent: "center" }} type='number' defaultValue={table.quantity} onChange={e => setQuantity(e.target.value)} id="standard-basic" label="" variant="standard" /></td>
+                                                            <td>
+                                                                <IoSave style={{ fontSize: "28px", color: "black", opacity: "0.5", cursor: "pointer" }} disabled color='success' >Save</IoSave>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                    {otherSize &&
+                                                        otherSize.map((sizes) => {
+                                                            return (
+                                                                <>
+                                                                    <tr>
+                                                                        <td>
+                                                                            {sizes}
+                                                                        </td>
+                                                                        <td><input type='color' disabled style={{ opacity: "0.5" }} /></td>
+                                                                        <td> <TextField style={{ width: "80px", display: "flex", justifyContent: "center", boxShadow: "none", textAlign: "center" }} disabled type='number' defaultValue={0} onChange={e => setQuantity(e.target.value)} className="standard-basic2" label="" variant="standard" /></td>
+                                                                        <td>
+                                                                            <IoSave style={{ fontSize: "28px", color: "black", opacity: "0.5" }} disabled >Save</IoSave>
+                                                                        </td>
+                                                                    </tr>
+                                                                </>
+                                                            )
+                                                        })
+                                                    }
+                                                </tbody>
+                                            </table>
+                                            <Button variant="contained" className='my-3' color='success' >Add New Row</Button>
                                         </div>
                                     }
+
                                     <div className="sm:col-span-12">
                                         <label htmlFor="uploadimg" className="d-flex-align-items-center justify-content-center btn btn-outline-secondary col-12">Upload Product Thumbnail</label>
                                         <FormControl fullWidth sx={{ m: 0 }} size="large" >
