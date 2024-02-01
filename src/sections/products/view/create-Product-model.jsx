@@ -1,3 +1,6 @@
+/* eslint-disable spaced-comment */
+/* eslint-disable no-unneeded-ternary */
+/* eslint-disable react/jsx-no-bind */
 /* eslint-disable no-lone-blocks */
 /* eslint-disable import/no-unresolved */
 /* eslint-disable react-hooks/exhaustive-deps */
@@ -101,6 +104,16 @@ export default function ProductModal() {
 
     // const { colorData } = useSelector((state) => state.color)
 
+    //for geting child data i created state and function to passing child to parent
+    const [sizeColorQuantity, setsizeColorQuantity] = useState([]);
+    function setSize(table) {
+        setsizeColorQuantity(table)
+    }
+    
+    const getSizeFromTable = sizeColorQuantity.map((ele) => ele.size)
+    console.log(sizeColorQuantity, "sizeColorQuantity");
+    console.log(getSizeFromTable, "getSizeFromTable");
+
     const [open, setOpen] = React.useState(false);
     const [images, setimages] = useState([]);
     const [imgerr, setimgerr] = useState();
@@ -110,27 +123,9 @@ export default function ProductModal() {
     const [thumbnaillenerr, setthumbnaillenerr] = useState();
 
     const [selectedNames, setSelectedNames] = useState([]);
-    // const [clropen, setclropen] = useState(false)
-
-    // const [addOtherColor, setAddOtherColor] = useState(0)
-    // console.log(addOtherColor);
 
     // const navigate = useNavigate();
     // const dispatch = useDispatch();
-    const [color, setColor] = useState()
-    // let colorPicker = []
-
-    // const handleColor = () => {
-    //     colorPicker.push(color)
-    //     console.log(colorPicker);
-    // }
-    // console.log(colorPicker, "colorPicker");
-
-    // const showColorPicker = () => {
-    //     colorPicker.push(...colorPicker)
-    //     setclropen(!clropen)
-    // }
-    console.log(color, "color");
 
     const theme = useTheme();
     const handleChange = (event) => {
@@ -138,9 +133,6 @@ export default function ProductModal() {
             target: { value },
         } = event;
         setSelectedNames(
-            typeof value === 'string' ? value.split(',') : value
-        );
-        setColor(
             typeof value === 'string' ? value.split(',') : value
         );
     };
@@ -340,7 +332,7 @@ export default function ProductModal() {
                                             />
                                         </FormControl>
                                     </div>
-                                 
+
                                     <div className="sm:col-span-6">
                                         <FormControl sx={{ m: 0, width: "100%" }}>
                                             <InputLabel id="demo-multiple-name-label">Sizes</InputLabel>
@@ -348,11 +340,12 @@ export default function ProductModal() {
                                                 labelId="demo-multiple-name-label"
                                                 multiple
                                                 id="demo-multiple-name"
-                                                value={selectedNames}
+                                                value={getSizeFromTable.length > 0 ? getSizeFromTable : selectedNames}
                                                 onChange={handleChange}
                                                 input={<OutlinedInput label="Sizes" />}
                                                 renderValue={(selected) => selected.join(', ')}
                                                 MenuProps={MenuProps}
+                                                disabled={getSizeFromTable.length > 0 }
                                             >
                                                 {sizes.map((name) => (
                                                     <ListSubheader ><div className='text-lg text-700'>{name.label}:</div></ListSubheader>
@@ -364,7 +357,7 @@ export default function ProductModal() {
                                                             value={opt}
                                                             style={getStyles(name, selectedNames, theme)}
                                                         >
-                                                            <Checkbox checked={selectedNames.indexOf(opt) > -1} />
+                                                            <Checkbox checked={ selectedNames.indexOf(opt) > -1} />
                                                             <ListItemText primary={opt} />
                                                         </MenuItem>
                                                     ))
@@ -373,9 +366,9 @@ export default function ProductModal() {
                                         </FormControl>
                                     </div>
 
-                                    {selectedNames?.length > 0 &&
+                                    {(selectedNames?.length > 0 || getSizeFromTable.length > 0) &&
                                         <div className=" sm:col-span-6">
-                                            <SizesTableModal selectedNames={selectedNames} />
+                                            <SizesTableModal selectedNames={selectedNames} setSize={setSize} sizeColorQuantity={sizeColorQuantity} />
                                         </div>
                                     }
                                     <div className="sm:col-span-12">

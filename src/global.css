@@ -1,8 +1,8 @@
 /* scrollbar */
+@import 'simplebar-react/dist/simplebar.min.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import 'simplebar-react/dist/simplebar.min.css';
 
 .captcha {
     margin: 0 auto;
@@ -93,7 +93,7 @@ table {
     border: 1px solid #dddddd;
     text-align: left;
     padding: 8px;
-    width: 200px;
+    width: 180px;
   }
 
 
