@@ -43,7 +43,9 @@ import FormControl from '@mui/material/FormControl';
 import { FaTrash } from "react-icons/fa"
 import ListSubheader from '@mui/material/ListSubheader';
 import Alert from '@mui/material/Alert';
-
+import { useForm } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { useTheme } from '@mui/material/styles';
 import ListItemText from '@mui/material/ListItemText';
 import Checkbox from '@mui/material/Checkbox';
@@ -53,6 +55,8 @@ import Checkbox from '@mui/material/Checkbox';
 import { RiDeleteBin5Fill } from "react-icons/ri";
 import { MdEditSquare } from "react-icons/md";
 import { IoSave } from "react-icons/io5";
+import { TextareaAutosize } from '@mui/base/TextareaAutosize';
+import FormHelperText from '@mui/material/FormHelperText';
 
 import {
     OutlinedInput,
@@ -74,6 +78,21 @@ const style = {
     boxShadow: 24,
     p: 3,
 };
+
+const schema = yup.object({
+    title: yup
+        .string()
+        .min(4, "title must be above 2 characters")
+        .max(25, "title must be with in 25 characters")
+        .required("please enter title"),
+    price: yup.number().min(50, "price must be above 50").typeError("please enter price").required(),
+    brand: yup.string().min(2).max(24).required("Please enter product brand"),
+    topLevelCategory: yup.string().min(2).max(24).required("Please enter product top level category"),
+    secondLevelCategory: yup.string().min(2).max(24).required("Please enter product second level category"),
+    thirdLevelCategory: yup.string().min(2).max(24).required("Please enter product third level category"),
+    description: yup.string().min(40).max(500).required("Please enter product description"),
+});
+
 const sizes = [
     {
         label: 'sizes',
@@ -113,7 +132,6 @@ export default function ProductModal() {
 
     // const { colorData } = useSelector((state) => state.color)
 
-    //for geting child data i created state and function to passing child to parent
     // const [sizeColorQuantity, setsizeColorQuantity] = useState([]);
     // function setSize(table) {
     //     setsizeColorQuantity(table)
@@ -121,13 +139,22 @@ export default function ProductModal() {
 
     // const getSizeFromTable = TableAll.map((ele) => ele.size)
 
+    const {
+        register,
+        handleSubmit,
+        clearErrors,
+        formState: { errors },
+        reset,
+    } = useForm({
+        resolver: yupResolver(schema),
+    });
+
     const [open, setOpen] = React.useState(false);
     const [images, setimages] = useState([]);
     const [imgerr, setimgerr] = useState();
     const [imglenerr, setimglenerr] = useState();
     const [thumbnail, setthumbnail] = useState([]);
     const [thumbnailerr, setthumbnailerr] = useState();
-    const [thumbnaillenerr, setthumbnaillenerr] = useState();
 
     const [selectedNames, setSelectedNames] = useState([]);
 
@@ -147,14 +174,7 @@ export default function ProductModal() {
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
-    // const onReset = () => {
-    //     setimages([]);
-    //     setimgerr("")
-    //     setimglenerr("")
-    //     setthumbnail([]);
-    //     setthumbnailerr("")
-    //     setthumbnaillenerr("")
-    // };
+
 
     useEffect(() => {
         if (images?.length > 0) {
@@ -168,19 +188,8 @@ export default function ProductModal() {
         if (thumbnail?.length > 0) {
             const rmv = "";
             setthumbnailerr(rmv);
-            setthumbnaillenerr(rmv);
         }
     }, [thumbnail]);
-
-    // useEffect(() => {
-    //     dispatch(getColorAction())
-    // }, [])
-
-    // useEffect(() => {
-    //     if (colorData) {
-    //         setColor(colorData.colors)
-    //     }
-    // }, [colorData])
 
     const uploadimages = (e) => {
         const files = e.target.files;
@@ -235,16 +244,6 @@ export default function ProductModal() {
         }
     }
 
-    // const validation = () => {
-    //     if (images?.length === 0) {
-    //         const err2 = "You need to provide an image";
-    //         setimgerr(err2);
-    //     }
-    //     if (thumbnail?.length === 0) {
-    //         const err2 = "You need to provide an image";
-    //         setthumbnailerr(err2);
-    //     }
-    // };
 
     const deleteimgs = (delitem) => {
         const handleDelete = images.filter((item, id) => item !== delitem);
@@ -384,7 +383,7 @@ export default function ProductModal() {
             TableAll.push({ "size": sizeselect, "quantity": quantity, "color": color, "id": id })
             seterror("")
         } else {
-            seterror("Please enter color and quantity");
+            seterror("Please enter color or quantity or size");
         }
         setColor("")
         setsizeselect("")
@@ -403,6 +402,61 @@ export default function ProductModal() {
     const handleChangeQuantity = (event) => {
         setQuantity(event.target.value)
     }
+
+    const onSubmit = (data) => {
+        const item = {
+            title: data.title,
+            brand: data.brand,
+            topLevelCategory: data.topLevelCategory,
+            secondLevelCategory: data.secondLevelCategory,
+            thirdLevelCategory: data.thirdLevelCategory,
+            price: data.price,
+            discountPercentage: data.discountPercentage,
+            description: data.description,
+            sizesAndColor: TableAll,
+            thumbnail: thumbnail,
+            images: images,
+        }
+        reset();
+        setimages("")
+        setthumbnail("")
+        setTableAll("")
+        console.log(item);
+    }
+
+    const [sizeValidation, setsizeValidation] = useState("")
+    const validation = () => {
+        if (images?.length === 0) {
+            const err2 = "You need to provide an image";
+            setimgerr(err2);
+        }
+        if (thumbnail?.length === 0) {
+            const err2 = "You need to provide an image";
+            setthumbnailerr(err2);
+        }
+        if (!getSizeFromTable[0]) {
+            setsizeValidation("Please select product sizes")
+        }
+    };
+
+    useEffect(() => {
+        if (getSizeFromTable[0]) {
+            setsizeValidation("")
+        }
+        // else{
+        //     setsizeValidation("Please select product sizes")
+        // }
+    }, [getSizeFromTable])
+
+    const onReset = () => {
+        setimages([]);
+        setimgerr("")
+        setimglenerr("")
+        setthumbnail([]);
+        setthumbnailerr("")
+        setsizeValidation("")
+    };
+
     return (
         <div>
             <Button onClick={handleOpen} style={{ color: "white" }}>New Product</Button>
@@ -419,19 +473,19 @@ export default function ProductModal() {
                         </div>
                     </Typography>
                     <Typography id="modal-modal-description" sx={{ mt: 6, maxHeight: "80vh", overflowY: "auto" }}>
-                        <form>
+                        <form className='-mt-4 p-4' onSubmit={handleSubmit(onSubmit)}>
                             <div className="border-b border-gray-900/10 pb-12">
                                 <h2 className="text-3xl font-semibold leading-7 text-gray-900">Add New Product</h2>
                                 <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-12">
                                     <div className="sm:col-span-6">
                                         <FormControl fullWidth sx={{ m: 0 }} size="large" >
                                             <TextField
-                                                // error={errors && errors.email?.message}
+                                                error={errors && errors.title?.message}
                                                 id="standard-error-helper-text"
                                                 label="Title"
                                                 type='text'
-                                                // {...register("email")}
-                                                // helperText={errors && errors.email?.message}
+                                                {...register("title")}
+                                                helperText={errors && errors.title?.message}
                                                 variant="outlined"
                                             />
                                         </FormControl>
@@ -439,12 +493,12 @@ export default function ProductModal() {
                                     <div className="sm:col-span-6">
                                         <FormControl fullWidth sx={{ m: 0 }} size="large" >
                                             <TextField
-                                                // error={errors && errors.email?.message}
+                                                error={errors && errors.brand?.message}
                                                 id="standard-error-helper-text"
                                                 label="Brand"
                                                 type='text'
-                                                // {...register("email")}
-                                                // helperText={errors && errors.email?.message}
+                                                {...register("brand")}
+                                                helperText={errors && errors.brand?.message}
                                                 variant="outlined" />
                                         </FormControl>
                                     </div>
@@ -452,12 +506,12 @@ export default function ProductModal() {
                                     <div className="sm:col-span-6">
                                         <FormControl fullWidth sx={{ m: 0 }} size="large" >
                                             <TextField
-                                                // error={errors && errors.email?.message}
+                                                error={errors && errors.topLevelCategory?.message}
                                                 id="standard-error-helper-text"
                                                 label="Top Level Category"
                                                 type='text'
-                                                // {...register("email")}
-                                                // helperText={errors && errors.email?.message}
+                                                {...register("topLevelCategory")}
+                                                helperText={errors && errors.topLevelCategory?.message}
                                                 variant="outlined"
                                             />
                                         </FormControl>
@@ -465,12 +519,12 @@ export default function ProductModal() {
                                     <div className="sm:col-span-6">
                                         <FormControl fullWidth sx={{ m: 0 }} size="large" >
                                             <TextField
-                                                // error={errors && errors.email?.message}
+                                                error={errors && errors.secondLevelCategory?.message}
                                                 id="standard-error-helper-text"
                                                 label="Second Level Category"
                                                 type='text'
-                                                // {...register("email")}
-                                                // helperText={errors && errors.email?.message}
+                                                {...register("secondLevelCategory")}
+                                                helperText={errors && errors.secondLevelCategory?.message}
                                                 variant="outlined" />
                                         </FormControl>
                                     </div>
@@ -478,12 +532,12 @@ export default function ProductModal() {
                                     <div className="sm:col-span-6">
                                         <FormControl fullWidth sx={{ m: 0 }} size="large" >
                                             <TextField
-                                                // error={errors && errors.email?.message}
+                                                error={errors && errors.thirdLevelCategory?.message}
                                                 id="standard-error-helper-text"
                                                 label="Third Level Category"
                                                 type='text'
-                                                // {...register("email")}
-                                                // helperText={errors && errors.email?.message}
+                                                {...register("thirdLevelCategory")}
+                                                helperText={errors && errors.thirdLevelCategory?.message}
                                                 variant="outlined"
                                             />
                                         </FormControl>
@@ -491,12 +545,13 @@ export default function ProductModal() {
 
                                     <div className="sm:col-span-6">
                                         <FormControl sx={{ m: 0, width: "100%" }}>
-                                            <InputLabel id="demo-multiple-name-label">Sizes</InputLabel>
+                                            <InputLabel id="demo-multiple-name-label" error={sizeValidation && errors.sizes?.message}>Sizes</InputLabel>
                                             <Select
+                                                error={sizeValidation && errors.sizes?.message}
                                                 labelId="demo-multiple-name-label"
                                                 multiple
                                                 id="demo-multiple-name"
-                                                // value={getSizeFromTable.length > 0 ? getSizeFromTable : selectedNames}
+                                                {...register("sizes")}
                                                 value={TableAll.length > 0 ? removeDuplicates(getSizeFromTable) : selectedNames}
                                                 onChange={handleChange}
                                                 input={<OutlinedInput label="Sizes" />}
@@ -520,12 +575,12 @@ export default function ProductModal() {
                                                     ))
                                                 ))}
                                             </Select>
+                                            {sizeValidation && <FormHelperText className='' style={{ color: "red", opacity: "0.8" }} >{sizeValidation}</FormHelperText>}
                                         </FormControl>
                                     </div>
 
                                     {(selectedNames?.length > 0 || getSizeFromTable.length > 0 || editTableSize.length > 0) &&
                                         <div className=" sm:col-span-12" style={{ width: "100%", overflowX: "auto" }}>
-                                            {/* <SizesTableModal selectedNames={selectedNames} setSize={setSize} sizeColorQuantity={sizeColorQuantity} /> */}
                                             {error && <Alert severity="error" className='flex justify-center' >{error}</Alert>}
                                             <table style={{ width: "50%" }}>
                                                 <thead>
@@ -544,7 +599,7 @@ export default function ProductModal() {
                                                                     <tr>
                                                                         <td>{table.size}</td>
                                                                         <td><input type='color' defaultValue={table.color} onChange={handleChangeColor} /></td>
-                                                                        <td> <TextField style={{ width: "60px", display: "flex", justifyContent: "center", textAlign: "center" }} type='number' defaultValue={table.quantity} onChange={handleChangeQuantity} id="standard-basic" label="" variant="standard" /></td>
+                                                                        <td> <TextField style={{ width: "60px", display: "flex", justifyContent: "center", textAlign: "center" }} inputProps={{ min: 0 }} type='number' defaultValue={table.quantity} onChange={handleChangeQuantity} id="standard-basic" label="" variant="standard" /></td>
                                                                         <td>
                                                                             <IoSave style={{ fontSize: "28px", color: "blue", cursor: "pointer" }} onClick={() => [saveData(table.size, table.color, table.quantity)]} >Save</IoSave>
                                                                         </td>
@@ -567,7 +622,7 @@ export default function ProductModal() {
                                                                             {table.quantity}
                                                                         </td>
                                                                         <td className='flex justify-evenly' >
-                                                                            <MdEditSquare style={{ fontSize: "28px", color: "black", cursor: "pointer" }} onClick={() => [editSizes(table)]}>Edit</MdEditSquare>
+                                                                            <MdEditSquare style={{ fontSize: "28px", color: "black", cursor: "pointer" }} onClick={() => [editSizes(table), setNewRow(false)]}>Edit</MdEditSquare>
                                                                             <RiDeleteBin5Fill style={{ fontSize: "28px", color: "red", cursor: "pointer" }} onClick={() => deleteSizes(table.id, table.size)} >Delete</RiDeleteBin5Fill>
                                                                         </td>
                                                                     </tr>
@@ -580,7 +635,7 @@ export default function ProductModal() {
                                                         <tr>
                                                             <td>{firstSize}</td>
                                                             <td><input type='color' value={color} onChange={handleChangeColor} /></td>
-                                                            <td> <TextField style={{ width: "60px", display: "flex", justifyContent: "center" }} type='number' value={quantity} onChange={handleChangeQuantity} id="standard-basic" label="" variant="standard" /></td>
+                                                            <td> <TextField style={{ width: "60px", display: "flex", justifyContent: "center" }} inputProps={{ min: 0 }} type='number' value={quantity} onChange={handleChangeQuantity} id="standard-basic" label="" variant="standard" /></td>
                                                             <td>
                                                                 <IoSave style={{ fontSize: "28px", color: "blue", cursor: "pointer" }} onClick={() => saveData(firstSize)} >Save</IoSave>
                                                             </td>
@@ -645,12 +700,12 @@ export default function ProductModal() {
                                                             </td>
                                                             <td>
                                                                 <FormControl variant="standard" sx={{ m: 0 }}>
-                                                                    <input type='color' value={color}  onChange={handleChangeColor} />
+                                                                    <input type='color' value={color} onChange={handleChangeColor} />
                                                                 </FormControl>
                                                             </td>
                                                             <td>
                                                                 <FormControl variant="standard" sx={{ m: 0 }}>
-                                                                    <TextField id="standard-basic" inputProps={{ 'aria-label': 'Without label' }} label=""  variant="standard" style={{ width: "60px", display: "flex", justifyContent: "center" }} type='number' value={quantity}  onChange={handleChangeQuantity} size='sm' />
+                                                                    <TextField id="standard-basic" inputProps={{ min: 0 }} variant="standard" style={{ width: "60px", display: "flex", justifyContent: "center" }} type='number' value={quantity} onChange={handleChangeQuantity} size='sm' />
                                                                 </FormControl>
                                                             </td>
                                                             <td className='flex justify-evenly' >
@@ -677,31 +732,92 @@ export default function ProductModal() {
                                             }
                                         </div>
                                     }
-                                    <div className="sm:col-span-12">
-                                        <label htmlFor="uploadimg" className="d-flex-align-items-center justify-content-center btn btn-outline-secondary col-12">Upload Product Thumbnail</label>
-                                        <FormControl fullWidth sx={{ m: 0 }} size="large" >
-                                            <input
-                                                id="uploadimg"
-                                                accept="image/png, image/gif, image/jpeg"
-                                                type="file"
-                                                className="form-control"
-                                                name="photoo"
-                                                onChange={(e) => [uploadthumbnail(e)]}
-                                                style={{ display: "none" }}
-                                            />
-                                        </FormControl>
-                                        {(thumbnaillenerr || thumbnailerr) && (
-                                            <p style={{ color: "red" }}>
-                                                {thumbnailerr || thumbnaillenerr}
-                                            </p>
-                                        )}
-                                    </div>
+                                    {thumbnail?.length === 0 &&
+                                        <div className="sm:col-span-6">
+                                            <label htmlFor="uploadimg" style={{ minHeight: "52px", display: "flex", alignItems: "center", borderColor: thumbnailerr && "red", color: thumbnailerr && "red", opacity: thumbnailerr && 0.8 }} className="d-flex-align-items-center justify-content-center btn btn-outline-secondary col-12">Upload Product Thumbnail</label>
+                                            <FormControl fullWidth sx={{ m: 0 }} size="large" >
+                                                <input
+                                                    id="uploadimg"
+                                                    accept="image/png, image/gif, image/jpeg"
+                                                    type="file"
+                                                    className="form-control"
+                                                    name="photoo"
+                                                    onChange={(e) => [uploadthumbnail(e)]}
+                                                    style={{ display: "none" }}
+                                                />
+                                            </FormControl>
+                                            {(thumbnailerr) && (
+                                                <p className='-mt-5' style={{ color: "red", opacity: "0.8", fontSize: "12px", marginLeft: "15px" }}>
+                                                    {thumbnailerr}
+                                                </p>
+                                            )}
+                                        </div>}
                                     {thumbnail?.length > 0 &&
-                                        <div className="sm:col-span-12 -mt-8  sm:grid-cols-1 gap-4 bg-[#f0f0f0] p-8 mb-3" >
-                                            <div className="flex justify-center items-center" >
-                                                {thumbnail.map((img) => {
+                                        <>
+                                            <p className=' sm:col-span-12 pt-3 flex justify-center text-2xl font-bold bg-[#f0f0f0]' >Thumbnail </p>
+                                            <div className="sm:col-span-12 -mt-8  sm:grid-cols-1 gap-4 bg-[#f0f0f0] p-8 mb-3" >
+                                                <div className="flex justify-center items-center" >
+                                                    {thumbnail.map((img) => {
+                                                        return (
+                                                            <div style={{ position: "relative" }} className='m-2 ' >
+                                                                <div className="flex justify-center items-center" >
+                                                                    <img
+                                                                        src={img}
+                                                                        alt="img-preview"
+                                                                        className="rounded-xl "
+                                                                        style={{ width: "250px", height: "220px" }}
+                                                                        onMouseEnter={(e) => {
+                                                                            e.target.style.border = '1px solid red';
+                                                                            e.target.style.opacity = 0.5;
+                                                                        }}
+                                                                        onMouseLeave={(e) => {
+                                                                            e.target.style.border = "none";
+                                                                            e.target.style.opacity = 1;
+                                                                        }}
+                                                                    />
+                                                                    <FaTrash
+                                                                        className="text-danger btn-trash trash"
+                                                                        style={{ cursor: "pointer", position: "absolute" }}
+                                                                        onClick={() => deletethumbnail(img)}
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        )
+                                                    })}
+                                                </div>
+                                            </div>
+                                        </>
+                                    }
+
+                                    {images?.length === 0 &&
+                                        <div className="sm:col-span-6">
+                                            <label htmlFor="uploadimg2" style={{ minHeight: "52px", display: "flex", alignItems: "center", borderColor: (imglenerr || imgerr) && "red", color: (imglenerr || imgerr) && "red", opacity: (imglenerr || imgerr) && 0.8 }} className="d-flex-align-items-center justify-content-center btn btn-outline-secondary col-12">Upload Product Images</label>
+                                            <FormControl fullWidth sx={{ m: 0 }} size="large" >
+                                                <input
+                                                    id="uploadimg2"
+                                                    multiple
+                                                    accept="image/png, image/gif, image/jpeg"
+                                                    type="file"
+                                                    className="form-control"
+                                                    name="photoo"
+                                                    onChange={(e) => [uploadimages(e)]}
+                                                    style={{ display: "none" }}
+
+                                                />
+                                            </FormControl>
+                                            {(imglenerr || imgerr) && (
+                                                <p className='-mt-5' style={{ color: "red", opacity: "0.8", fontSize: "12px", marginLeft: "15px" }}>
+                                                    {imgerr || imglenerr}
+                                                </p>
+                                            )}
+                                        </div>}
+                                    {images?.length > 0 &&
+                                        <>
+                                            <p className='-mt-4 sm:col-span-12 pt-3 flex justify-center text-2xl font-bold bg-[#f0f0f0]' >Product Images </p>
+                                            <div className="sm:col-span-12 -mt-8 grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-4 bg-[#f0f0f0] p-8" >
+                                                {images.map((img) => {
                                                     return (
-                                                        <div style={{ position: "relative" }} className='m-2 ' >
+                                                        <div style={{ position: "relative" }} className='m-2' >
                                                             <div className="flex justify-center items-center" >
                                                                 <img
                                                                     src={img}
@@ -720,68 +836,75 @@ export default function ProductModal() {
                                                                 <FaTrash
                                                                     className="text-danger btn-trash trash"
                                                                     style={{ cursor: "pointer", position: "absolute" }}
-                                                                    onClick={() => deletethumbnail(img)}
+                                                                    onClick={() => deleteimgs(img)}
                                                                 />
                                                             </div>
                                                         </div>
                                                     )
                                                 })}
                                             </div>
-                                        </div>
+                                        </>
                                     }
-
-                                    <div className="sm:col-span-12 -mt-6">
-                                        <label htmlFor="uploadimg2" className="d-flex-align-items-center justify-content-center btn btn-outline-secondary col-12">Upload Product Images</label>
+                                    <div className="sm:col-span-6">
                                         <FormControl fullWidth sx={{ m: 0 }} size="large" >
-                                            <input
-                                                id="uploadimg2"
-                                                multiple
-                                                accept="image/png, image/gif, image/jpeg"
-                                                type="file"
-                                                className="form-control"
-                                                name="photoo"
-                                                onChange={(e) => [uploadimages(e)]}
-                                                style={{ display: "none" }}
+                                            <TextField
+                                                error={errors && errors.price?.message}
+                                                id="standard-error-helper-text"
+                                                label="Price"
+                                                inputProps={{ min: 0 }}
+                                                type='number'
+                                                {...register("price")}
+                                                helperText={errors && errors.price?.message}
+                                                variant="outlined"
                                             />
                                         </FormControl>
-                                        {(imglenerr || imgerr) && (
-                                            <p style={{ color: "red" }}>
-                                                {imgerr || imglenerr}
-                                            </p>
-                                        )}
                                     </div>
-                                    {images?.length > 0 &&
-                                        <div className="sm:col-span-12 -mt-8 grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-4 bg-[#f0f0f0] p-8" >
-                                            {images.map((img) => {
-                                                return (
-                                                    <div style={{ position: "relative" }} className='m-2' >
-                                                        <div className="flex justify-center items-center" >
-                                                            <img
-                                                                src={img}
-                                                                alt="img-preview"
-                                                                className="rounded-xl "
-                                                                style={{ width: "250px", height: "220px" }}
-                                                                onMouseEnter={(e) => {
-                                                                    e.target.style.border = '1px solid red';
-                                                                    e.target.style.opacity = 0.5;
-                                                                }}
-                                                                onMouseLeave={(e) => {
-                                                                    e.target.style.border = "none";
-                                                                    e.target.style.opacity = 1;
-                                                                }}
-                                                            />
-                                                            <FaTrash
-                                                                className="text-danger btn-trash trash"
-                                                                style={{ cursor: "pointer", position: "absolute" }}
-                                                                onClick={() => deleteimgs(img)}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                )
-                                            })}
-                                        </div>
-                                    }
+                                    <div className="sm:col-span-6">
+                                        <FormControl fullWidth sx={{ m: 0 }} size="large" >
+                                            <TextField
+                                                error={errors && errors.discountPercentage?.message}
+                                                id="standard-error-helper-text"
+                                                label="Discount percentage"
+                                                type='number'
+                                                inputProps={{ min: 0, max: 90 }}
+                                                {...register("discountPercentage")}
+                                                helperText={errors && errors.discountPercentage?.message}
+                                                variant="outlined"
+                                            />
+                                        </FormControl>
+                                    </div>
+                                    <div className="sm:col-span-12">
+                                        <FormControl fullWidth sx={{ m: 0 }} size="large" >
+                                            <TextField
+                                                error={errors && errors.description?.message}
+                                                id="standard-error-helper-text"
+                                                label="Description"
+                                                placeholder='Description'
+                                                type='text'
+                                                InputProps={{
+                                                    inputComponent: TextareaAutosize,
+                                                    inputProps: {
+                                                        style: {
+                                                            resize: "auto",
+                                                            minHeight: "100px",
+
+                                                        }
+                                                    }
+                                                }}
+                                                {...register("description")}
+                                                helperText={errors && errors.description?.message}
+                                                variant="outlined"
+                                            />
+                                        </FormControl>
+                                    </div>
                                 </div>
+                            </div>
+                            <div className='flex justify-between'>
+                                <Button type='reset' color="error" onClick={() => [
+                                    clearErrors(),
+                                    onReset(),
+                                ]} variant="contained">Cancel</Button>
+                                <Button type='submit' onClick={validation} color="success" variant="contained">Add Product</Button>
                             </div>
                         </form>
                     </Typography>
@@ -791,53 +914,3 @@ export default function ProductModal() {
     );
 }
 
-
-
-{/* <FormControl fullWidth sx={{ m: 0 }} size="large" className='text-lg text-700 mt-3' >
-<div className=" sm:col-span-4">
-    {!clropen ?
-        <div className='flex float-start'>
-            <label htmlFor="favcolor " onClick={showColorPicker} className='mb-3 font-semibold cursor-pointer text-lg text-700 flex justify-center items-center float-start' >Select Color
-                <IoIosColorPalette className='text-[28px] font-bold mr-1' type='button' />:
-            </label>
-            <p className=' text-black-700 p-3 h-10 ml-1 -mt-1 rounded-full' style={{ color: color, background: color }} >{". "}</p>
-        </div>
-        :
-        <div className='flex float-start'>
-            <label htmlFor="favcolor " onClick={showColorPicker} className='mb-3 font-semibold cursor-pointer text-lg text-700 flex justify-center items-center float-start' >Close
-                <IoIosColorPalette className='text-[28px] font-bold mr-1' type='button' />:
-            </label>
-            <p className=' text-black-700 p-3 h-10 ml-1 -mt-1 rounded-full' style={{ color: color, background: color }} >{". "}</p>
-        </div>
-    }
-    <button type='button' onClick={handleColor}>add</button>
-
-    {clropen && <SketchPicker className='mt-3' onChange={(color) => setColor(color.hex)} />}
-</FormControl> */}
-
-{/*   <FormControl sx={{ m: 0, width: "100%" }}>
-    <InputLabel id="demo-multiple-name-label">Colors</InputLabel>
-    <Select
-        labelId="demo-multiple-name-label"
-        multiple
-        id="demo-multiple-name"
-        value={selectedNames}
-        // onChange={handleChange}
-        input={<OutlinedInput label="Colors" />}
-        renderValue={(selected) => selected.join(', ')}
-        MenuProps={MenuProps}
-    >
-        {color?.length > 0 && color.map((clr) => (
-            <MenuItem
-                key={clr.name}
-                value={clr.name}
-                // style={getStyles(clr, selectedNames, theme)}
-            >
-                <Checkbox checked={selectedNames.indexOf(clr.name) > -1} />
-                <ListItemText primary={clr.name} />
-            </MenuItem>
-        ))}
-    </Select>
-</FormControl>
-</div>
-*/}

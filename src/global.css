@@ -129,7 +129,7 @@ table {
     border: 1px solid #dddddd;
     text-align: left;
     padding: 8px;
-    width: 318px;
+    /* width: 280px; */
   } 
 
  @media screen and (min-width: 0px) {
@@ -172,7 +172,7 @@ table {
   }
   @media screen and (min-width: 1650px) {
     td, th {
-        width: 318px;
+        width: 306px;
     }
   }
 
