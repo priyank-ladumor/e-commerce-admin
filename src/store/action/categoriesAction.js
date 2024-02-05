@@ -11,7 +11,7 @@ export const getTopLvlCategoriesAction = createAsyncThunk(
     async (data, { rejectWithValue }) => {
         try {
             const result = await axios.get(
-                `${import.meta.env.VITE_APP_BASE_URL}/categories/toplevel`,
+                `${import.meta.env.VITE_APP_BASE_URL}/categories/toplevel?pageNumber=${1}&pageSize=${9}`,
                 // data,
                 {
                     headers: {
@@ -35,7 +35,7 @@ export const getSecondLvlCategoriesAction = createAsyncThunk(
     async (data, { rejectWithValue }) => {
         try {
             const result = await axios.get(
-                `${import.meta.env.VITE_APP_BASE_URL}/categories/secondlevel`,
+                `${import.meta.env.VITE_APP_BASE_URL}/categories/secondlevel?pageNumber=${1}&pageSize=${9}`,
                 // data,
                 {
                     headers: {
@@ -59,7 +59,7 @@ export const getThirdLvlCategoriesAction = createAsyncThunk(
     async (data, { rejectWithValue }) => {
         try {
             const result = await axios.get(
-                `${import.meta.env.VITE_APP_BASE_URL}/categories/thirdlevel`,
+                `${import.meta.env.VITE_APP_BASE_URL}/categories/thirdlevel?pageNumber=${1}&pageSize=${9}`,
                 // data,
                 {
                     headers: {

@@ -23,9 +23,10 @@ import Button from '@mui/material/Button';
 import Iconify from '../../components/iconify/iconify';
 import { IoClose } from "react-icons/io5";
 import { CTable } from '@coreui/react'
+import { CPagination } from '@coreui/react'
+import { CPaginationItem } from '@coreui/react'
 import { CTableBody } from '@coreui/react'
 import { CTableDataCell } from '@coreui/react'
-// import { CTableFoot } from '@coreui/react'
 import { CTableHead } from '@coreui/react'
 import { CTableHeaderCell } from '@coreui/react'
 import { CTableRow } from '@coreui/react'
@@ -50,12 +51,14 @@ export const Category = () => {
     const { getTopLvlCategoriesData, getSecondLvlCategoriesData, getThirdLvlCategoriesData } = useSelector(state => state.categories)
 
     const [open, setOpen] = React.useState(false);
-    const [openTop, setOpenTop] = React.useState(false);
+    const [openTop, setOpenTop] = React.useState(true);
     const [openSecond, setOpenSecond] = React.useState(false);
     const [openThird, setOpenThird] = React.useState(false);
     const [TopData, setTopData] = React.useState(false);
     const [SecondData, setSecondData] = React.useState(false);
     const [ThirdData, setThirdData] = React.useState(false);
+    // const [pageSize, setpageSize] = React.useState(false);
+    // const [pageNumber, setpageNumber] = React.useState(false);
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
@@ -79,6 +82,7 @@ export const Category = () => {
             setSecondData(getSecondLvlCategoriesData)
         }
     }, [getTopLvlCategoriesData, getThirdLvlCategoriesData, getSecondLvlCategoriesData])
+
 
     return (
         <Container>
@@ -117,7 +121,7 @@ export const Category = () => {
                     <CTableRow>
                         <CTableHeaderCell scope="row">1</CTableHeaderCell>
                         <CTableDataCell className='flex items-center'>
-                            <span className='text-blue-700 font-semibold cursor-pointer me-2' onClick={() => setOpenTop(!openTop)}> {openTop ? <FaGreaterThan style={{ transform: "rotate(90deg)" }} /> : <FaGreaterThan />} </span>
+                            <span className='text-blue-700 font-semibold cursor-pointer me-2' onClick={() => [setOpenTop(!openTop), setOpenSecond(false), setOpenThird(false)]}> {openTop ? <FaGreaterThan style={{ transform: "rotate(90deg)" }} /> : <FaGreaterThan />} </span>
                             Top Level Category
                         </CTableDataCell>
                         <CTableDataCell>
@@ -126,9 +130,9 @@ export const Category = () => {
                     </CTableRow>
                     {
                         openTop && TopData &&
-                        TopData.map((data) => {
+                        TopData.content.map((data) => {
                             return (
-                                <CTableRow>
+                                <CTableRow color="success">
                                     <CTableHeaderCell scope="row"></CTableHeaderCell>
                                     <CTableDataCell>
                                         {data.name}
@@ -141,10 +145,30 @@ export const Category = () => {
                             )
                         })
                     }
+                    {openTop && TopData &&
+                        <CTableRow color="primary">
+                            <CTableHeaderCell></CTableHeaderCell>
+                            <CTableHeaderCell>
+                                <div className='my-1'>
+                                    <CPagination aria-label="Page navigation example">
+                                        <CPaginationItem aria-label="Previous" disabled>
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </CPaginationItem>
+                                        <CPaginationItem active>1</CPaginationItem>
+                                        <CPaginationItem>2</CPaginationItem>
+                                        <CPaginationItem>3</CPaginationItem>
+                                        <CPaginationItem aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </CPaginationItem>
+                                    </CPagination>
+                                </div>
+                            </CTableHeaderCell>
+                            <CTableHeaderCell></CTableHeaderCell>
+                        </CTableRow>}
                     <CTableRow>
                         <CTableHeaderCell scope="row">2</CTableHeaderCell>
                         <CTableDataCell className='flex items-center'>
-                            <span className='text-blue-700 font-semibold cursor-pointer me-2' onClick={() => setOpenSecond(!openSecond)}>{openSecond ? <FaGreaterThan style={{ transform: "rotate(90deg)" }} /> : <FaGreaterThan />} </span>
+                            <span className='text-blue-700 font-semibold cursor-pointer me-2' onClick={() => [setOpenSecond(!openSecond), setOpenTop(false), setOpenThird(false)]}>{openSecond ? <FaGreaterThan style={{ transform: "rotate(90deg)" }} /> : <FaGreaterThan />} </span>
                             Second Level Category
                         </CTableDataCell>
                         <CTableDataCell className=''>
@@ -153,9 +177,9 @@ export const Category = () => {
                     </CTableRow>
                     {
                         openSecond && SecondData &&
-                        SecondData.map((data) => {
+                        SecondData.content.map((data) => {
                             return (
-                                <CTableRow>
+                                <CTableRow color="primary">
                                     <CTableHeaderCell scope="row"></CTableHeaderCell>
                                     <CTableDataCell>
                                         {data.name}
@@ -171,7 +195,7 @@ export const Category = () => {
                     <CTableRow>
                         <CTableHeaderCell scope="row">3</CTableHeaderCell>
                         <CTableDataCell className='flex items-center'>
-                            <span className='text-blue-700 font-semibold cursor-pointer me-2' onClick={() => setOpenThird(!openThird)}>{openThird ? <FaGreaterThan style={{ transform: "rotate(90deg)" }} /> : <FaGreaterThan />} </span>
+                            <span className='text-blue-700 font-semibold cursor-pointer me-2' onClick={() => [setOpenThird(!openThird), setOpenTop(false), setOpenSecond(false)]}>{openThird ? <FaGreaterThan style={{ transform: "rotate(90deg)" }} /> : <FaGreaterThan />} </span>
                             Third Level Category
                         </CTableDataCell>
                         <CTableDataCell className=''>
@@ -180,9 +204,9 @@ export const Category = () => {
                     </CTableRow>
                     {
                         openThird && ThirdData &&
-                        ThirdData.map((data) => {
+                        ThirdData.content.map((data) => {
                             return (
-                                <CTableRow>
+                                <CTableRow color="primary">
                                     <CTableHeaderCell scope="row"></CTableHeaderCell>
                                     <CTableDataCell>
                                         {data.name}
