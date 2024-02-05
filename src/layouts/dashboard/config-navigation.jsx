@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import SvgColor from 'src/components/svg-color';
 
 // ----------------------------------------------------------------------

@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-boolean-value */
 /* eslint-disable no-return-assign */
 /* eslint-disable no-undef */
 /* eslint-disable import/no-duplicates */
@@ -39,7 +40,8 @@ import Typography from '@mui/material/Typography';
 import FormControl from '@mui/material/FormControl';
 // import { useNavigate } from 'react-router-dom';
 // eslint-disable-next-line perfectionist/sort-imports
-// import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { FaTrash } from "react-icons/fa"
 import ListSubheader from '@mui/material/ListSubheader';
 import Alert from '@mui/material/Alert';
@@ -51,12 +53,14 @@ import ListItemText from '@mui/material/ListItemText';
 import Checkbox from '@mui/material/Checkbox';
 // import { SketchPicker } from 'react-color'
 // import { IoIosColorPalette } from "react-icons/io";
-
+import { ThreeDots } from 'react-loader-spinner'
 import { RiDeleteBin5Fill } from "react-icons/ri";
 import { MdEditSquare } from "react-icons/md";
 import { IoSave } from "react-icons/io5";
 import { TextareaAutosize } from '@mui/base/TextareaAutosize';
 import FormHelperText from '@mui/material/FormHelperText';
+import Iconify from 'src/components/iconify';
+// import Swal from 'sweetalert2'
 
 import {
     OutlinedInput,
@@ -64,6 +68,7 @@ import {
     MenuItem,
     Select,
 } from "@mui/material";
+import { createProductAction } from 'src/store/action/productAction';
 // import SizesTableModal from './child-create-product';
 // import { getColorAction } from 'src/store/action/colorAction';
 // import { ChildProductModal } from './child-create-product-modal';
@@ -79,18 +84,30 @@ const style = {
     p: 3,
 };
 
+const style2 = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    // p: 4,
+};
+
 const schema = yup.object({
     title: yup
         .string()
-        .min(4, "title must be above 2 characters")
+        .min(4, "title must be above 4 characters")
         .max(25, "title must be with in 25 characters")
         .required("please enter title"),
     price: yup.number().min(50, "price must be above 50").typeError("please enter price").required(),
     brand: yup.string().min(2).max(24).required("Please enter product brand"),
-    topLevelCategory: yup.string().min(2).max(24).required("Please enter product top level category"),
-    secondLevelCategory: yup.string().min(2).max(24).required("Please enter product second level category"),
-    thirdLevelCategory: yup.string().min(2).max(24).required("Please enter product third level category"),
-    description: yup.string().min(40).max(500).required("Please enter product description"),
+    topLevelCategory: yup.string().min(2).max(24).matches(/^\S*$/, "No whitespaces allowed").required("Please enter product top level category"),
+    secondLevelCategory: yup.string().min(2).max(24).matches(/^\S*$/, "No whitespaces allowed").required("Please enter product second level category"),
+    thirdLevelCategory: yup.string().min(2).max(24).matches(/^\S*$/, "No whitespaces allowed").required("Please enter product third level category"),
+    description: yup.string().min(40).max(800).required("Please enter product description"),
 });
 
 const sizes = [
@@ -130,14 +147,7 @@ function getStyles(name, personName, theme) {
 
 export default function ProductModal() {
 
-    // const { colorData } = useSelector((state) => state.color)
-
-    // const [sizeColorQuantity, setsizeColorQuantity] = useState([]);
-    // function setSize(table) {
-    //     setsizeColorQuantity(table)
-    // }
-
-    // const getSizeFromTable = TableAll.map((ele) => ele.size)
+    const { createProductPending, createProductData } = useSelector((state) => state.product)
 
     const {
         register,
@@ -159,7 +169,7 @@ export default function ProductModal() {
     const [selectedNames, setSelectedNames] = useState([]);
 
     // const navigate = useNavigate();
-    // const dispatch = useDispatch();
+    const dispatch = useDispatch();
 
     const theme = useTheme();
     const handleChange = (event) => {
@@ -255,17 +265,18 @@ export default function ProductModal() {
     };
 
     const table = []
-    const [color, setColor] = useState(0)
-    const [quantity, setQuantity] = React.useState(0);
+    const [color, setColor] = useState("")
+    const [quantity, setQuantity] = React.useState("");
     const [otherSize, setotherSize] = React.useState([]);
     const [TableAll, setTableAll] = useState([])
     const [firstSize, setfirstSize] = useState()
     const [editTableSize, setEditTableSize] = useState([])
     const [error, seterror] = useState()
     const [newRow, setNewRow] = useState(false)
+    const [sizeselect, setsizeselect] = React.useState('');
 
 
-    const getSizeFromTable = TableAll.map((ele) => ele.size);
+    const getSizeFromTable = TableAll && TableAll?.map((ele) => ele.size);
 
     function removeDuplicates(arr) {
         return [...new Set(arr)];
@@ -289,46 +300,40 @@ export default function ProductModal() {
     const saveData = (sizes, clr, quant) => {
 
         const id = Math.floor(Math.random() * 101010)
-        if (color.length > 0 && quantity.length > 0) {
+        if (color.length > 0 && quantity.length > "") {
             //create single table input array
             if (editTableSize && quant && quantity === 0) {
-                const filterTable = table.filter((tbl) => tbl.size === sizes)
                 if (table.length === 0) {
                     table.push({ "size": sizes, "quantity": quant, "color": color, "id": id })
                 } else {
-                    if (filterTable.length === 0) {
-                        table.push({ "size": sizes, "quantity": quant, "color": color, "id": id })
-                    }
+                    table.push({ "size": sizes, "quantity": quant, "color": color, "id": id })
                 }
-            } else if (editTableSize && clr && color === 0) {
-                const filterTable = table.filter((tbl) => tbl.size === sizes)
+            } else if (editTableSize && clr && color === "") {
                 if (table.length === 0) {
                     table.push({ "size": sizes, "quantity": quantity, "color": clr, "id": id })
                 } else {
-                    if (filterTable.length === 0) {
-                        table.push({ "size": sizes, "quantity": quantity, "color": clr, "id": id })
-                    }
+                    table.push({ "size": sizes, "quantity": quantity, "color": clr, "id": id })
                 }
             }
             else {
-                const filterTable = table.filter((tbl) => tbl.size === sizes)
+                // const filterTable = table.filter((tbl) => tbl.size === sizes)
                 if (table.length === 0) {
                     table.push({ "size": sizes, "quantity": quantity, "color": color, "id": id })
                 } else {
-                    if (filterTable.length === 0) {
-                        table.push({ "size": sizes, "quantity": quantity, "color": color, "id": id })
-                    }
+                    // if (filterTable.length === 0) {
+                    table.push({ "size": sizes, "quantity": quantity, "color": color, "id": id })
+                    // }
                 }
             }
 
             // create all table data input array
-            const filterTable2 = TableAll.filter((tbl) => tbl.size === sizes)
+            // const filterTable2 = TableAll && TableAll.filter((tbl) => tbl.size === sizes)
             if (TableAll.length === 0) {
                 TableAll.push({ "size": sizes, "quantity": quantity, "color": color, "id": id })
             } else {
-                if (filterTable2.length === 0) {
-                    TableAll.push({ "size": sizes, "quantity": quantity, "color": color, "id": id })
-                }
+                // if (filterTable2.length === 0) {
+                TableAll.push({ "size": sizes, "quantity": quantity, "color": color, "id": id })
+                // }
             }
             if (TableAll.length === 0) {
                 setTableAll(table)
@@ -357,7 +362,7 @@ export default function ProductModal() {
     }
 
     const deleteSizes = (id, size) => {
-        const removedSizes = TableAll.filter((ele) => ele.id !== id);
+        const removedSizes = TableAll && TableAll.filter((ele) => ele.id !== id);
         setTableAll(removedSizes);
     }
 
@@ -371,11 +376,9 @@ export default function ProductModal() {
         setColor(tableEdit.color)
         // setsizeselect(tableEdit.size)
 
-        const removedSizes = TableAll.filter((ele) => ele.id !== tableEdit.id);
+        const removedSizes = TableAll && TableAll.filter((ele) => ele.id !== tableEdit.id);
         setTableAll(removedSizes);
     }
-
-    const [sizeselect, setsizeselect] = React.useState('');
 
     const saveDataRow = () => {
         const id = Math.floor(Math.random() * 101010)
@@ -390,8 +393,8 @@ export default function ProductModal() {
         setQuantity("")
     }
 
-    const sizesFromTableAll = TableAll.map((table) => table.size);
-    const sizeWithOutDuplicate = sizesFromTableAll.filter((v, i) => sizesFromTableAll.indexOf(v) === i);
+    // const sizesFromTableAll = TableAll && TableAll.map((table) => table.size);
+    // const sizeWithOutDuplicate = sizesFromTableAll && sizesFromTableAll.filter((v, i) => sizesFromTableAll.indexOf(v) === i);
 
     const handleChangeSelectSize = (event) => {
         setsizeselect(event.target.value);
@@ -417,12 +420,40 @@ export default function ProductModal() {
             thumbnail: thumbnail,
             images: images,
         }
-        reset();
-        setimages("")
-        setthumbnail("")
-        setTableAll("")
         console.log(item);
+
+        if (images.length > 0 && TableAll.length > 0 && thumbnail.length > 0) {
+            dispatch(createProductAction(item))
+            if (images.length === 0) {
+                reset();
+            }
+            // setimages("")
+            // setthumbnail("")
+            // setTableAll([])
+        }
     }
+    const [openMSG, setOpenMSG] = React.useState(false);
+    const handleClose2 = () => setOpenMSG(false);
+    const [openSwal, setOpenSwal] = useState(false)
+
+    useEffect(() => {
+        setOpenSwal(true)
+        if (openSwal) {
+            handleClose2()
+            setOpenSwal(true)
+        }
+    }, [])
+    useEffect(() => {
+        if (createProductData && !createProductPending && openSwal) {
+            handleClose()
+            setOpenMSG(true)
+
+            setTimeout(() => {
+                setOpenMSG(false)
+                setOpenSwal(false)
+            }, 2000);
+        }
+    }, [createProductData, createProductPending])
 
     const [sizeValidation, setsizeValidation] = useState("")
     const validation = () => {
@@ -455,11 +486,25 @@ export default function ProductModal() {
         setthumbnail([]);
         setthumbnailerr("")
         setsizeValidation("")
+        setTableAll([])
     };
 
     return (
         <div>
-            <Button onClick={handleOpen} style={{ color: "white" }}>New Product</Button>
+            <Modal
+                open={openMSG}
+                onClose={handleClose2}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={style2}>
+                    <Typography id="modal-modal-title" variant="h6" component="h2">
+                        <img src='https://i.pinimg.com/originals/90/13/f7/9013f7b5eb6db0f41f4fd51d989491e7.gif' style={{ position: "relative" }} alt='success_gif' />
+                    </Typography>
+                    <p className='mt-3 font-bold text-black' style={{ position: "absolute", right: 55, top: 0, fontSize: "22px" }} >Product added successfully</p>
+                </Box>
+            </Modal>
+            <Button onClick={handleOpen} style={{ color: "white" }} className='py-2' variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>New Product</Button>
             <Modal
                 open={open}
                 onClose={handleClose}
@@ -468,14 +513,17 @@ export default function ProductModal() {
             >
                 <Box sx={style} className="style_modal">
                     <Typography id="modal-modal-title" variant="h6" component="h2">
-                        <div className='text-4xl font-bold float-right top-0 right-0'>
+                        <div className='text-4xl font-bold flex justify-between'>
+                            <h2 className="text-3xl font-semibold leading-7 text-gray-900">Add New Product</h2>
                             <IoClose onClick={() => handleClose()} style={{ cursor: "pointer" }} />
                         </div>
+                        {/* <div className='text-4xl font-bold float-right top-0 right-0'>
+                            <IoClose onClick={() => handleClose()} style={{ cursor: "pointer" }} />
+                        </div> */}
                     </Typography>
                     <Typography id="modal-modal-description" sx={{ mt: 6, maxHeight: "80vh", overflowY: "auto" }}>
                         <form className='-mt-4 p-4' onSubmit={handleSubmit(onSubmit)}>
                             <div className="border-b border-gray-900/10 pb-12">
-                                <h2 className="text-3xl font-semibold leading-7 text-gray-900">Add New Product</h2>
                                 <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-12">
                                     <div className="sm:col-span-6">
                                         <FormControl fullWidth sx={{ m: 0 }} size="large" >
@@ -545,9 +593,9 @@ export default function ProductModal() {
 
                                     <div className="sm:col-span-6">
                                         <FormControl sx={{ m: 0, width: "100%" }}>
-                                            <InputLabel id="demo-multiple-name-label" error={sizeValidation && errors.sizes?.message}>Sizes</InputLabel>
+                                            <InputLabel id="demo-multiple-name-label" error={sizeValidation && sizeValidation}>Sizes</InputLabel>
                                             <Select
-                                                error={sizeValidation && errors.sizes?.message}
+                                                error={sizeValidation && sizeValidation}
                                                 labelId="demo-multiple-name-label"
                                                 multiple
                                                 id="demo-multiple-name"
@@ -722,19 +770,19 @@ export default function ProductModal() {
                                             </table>
                                             {TableAll.length > 0 && !firstSize &&
                                                 <div className="sm:col-span-12">
-                                                    <Button variant="contained" className='my-3' disabled={newRow} color='success' onClick={() => setNewRow(true)} >Add New Row</Button>
-                                                    {sizeWithOutDuplicate.map((size) =>
+                                                    <Button variant="outlined" className='my-3' disabled={newRow} color='primary' onClick={() => setNewRow(true)} >Add New Row</Button>
+                                                    {/* {sizeWithOutDuplicate.map((size) =>
                                                         <div>
                                                             <p>{size}</p>
                                                         </div>
-                                                    )}
+                                                    )} */}
                                                 </div>
                                             }
                                         </div>
                                     }
                                     {thumbnail?.length === 0 &&
                                         <div className="sm:col-span-6">
-                                            <label htmlFor="uploadimg" style={{ minHeight: "52px", display: "flex", alignItems: "center", borderColor: thumbnailerr && "red", color: thumbnailerr && "red", opacity: thumbnailerr && 0.8 }} className="d-flex-align-items-center justify-content-center btn btn-outline-secondary col-12">Upload Product Thumbnail</label>
+                                            <label htmlFor="uploadimg" style={{ minHeight: "52px", display: "flex", alignItems: "center", fontWeight: "bold", borderColor: thumbnailerr && "red", color: thumbnailerr && "red", opacity: thumbnailerr ? 0.6 : 0.4 }} className=" btn-img d-flex-align-items-center justify-content-center btn btn-outline-secondary col-12">Upload Product Thumbnail</label>
                                             <FormControl fullWidth sx={{ m: 0 }} size="large" >
                                                 <input
                                                     id="uploadimg"
@@ -791,7 +839,7 @@ export default function ProductModal() {
 
                                     {images?.length === 0 &&
                                         <div className="sm:col-span-6">
-                                            <label htmlFor="uploadimg2" style={{ minHeight: "52px", display: "flex", alignItems: "center", borderColor: (imglenerr || imgerr) && "red", color: (imglenerr || imgerr) && "red", opacity: (imglenerr || imgerr) && 0.8 }} className="d-flex-align-items-center justify-content-center btn btn-outline-secondary col-12">Upload Product Images</label>
+                                            <label htmlFor="uploadimg2" style={{ minHeight: "52px", display: "flex", alignItems: "center", borderColor: (imglenerr || imgerr) && "red", color: (imglenerr || imgerr) && "red", fontWeight: "bold", opacity: (imglenerr || imgerr) ? 0.6 : 0.4 }} className=" btn-img d-flex-align-items-center justify-content-center btn btn-outline-secondary col-12">Upload Product Images</label>
                                             <FormControl fullWidth sx={{ m: 0 }} size="large" >
                                                 <input
                                                     id="uploadimg2"
@@ -904,7 +952,24 @@ export default function ProductModal() {
                                     clearErrors(),
                                     onReset(),
                                 ]} variant="contained">Cancel</Button>
-                                <Button type='submit' onClick={validation} color="success" variant="contained">Add Product</Button>
+                                <Button type='submit' onClick={validation} color="success" variant="contained">
+                                    {createProductPending ?
+                                        <div className='flex justify-center items-center' >
+                                            <ThreeDots
+                                                visible={true}
+                                                height="26"
+                                                width="50"
+                                                color="blue"
+                                                radius="9"
+                                                ariaLabel="three-dots-loading"
+                                                wrapperStyle={{}}
+                                                wrapperClass=""
+                                            />
+                                        </div>
+                                        :
+                                        "Add Product"
+                                    }
+                                </Button>
                             </div>
                         </form>
                     </Typography>

@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-undef */
 /* eslint-disable perfectionist/sort-imports */
 /* eslint-disable import/no-unresolved */
 import { useState } from 'react';
@@ -9,8 +11,7 @@ import Typography from '@mui/material/Typography';
 
 import { products } from 'src/_mock/products';
 
-import Iconify from 'src/components/iconify';
-import Button from '@mui/material/Button';
+// import Button from '@mui/material/Button';
 import ProductCard from '../product-card';
 import ProductSort from '../product-sort';
 import ProductFilters from '../product-filters';
@@ -34,9 +35,8 @@ export default function ProductsView() {
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Products</Typography>
 
-        <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
-          <ProductModal />
-        </Button>
+        {/* create product form modal  */}
+        <ProductModal />
       </Stack>
 
       <Stack

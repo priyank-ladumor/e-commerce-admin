@@ -1,3 +1,4 @@
+/* eslint-disable no-else-return */
 /* eslint-disable import/no-extraneous-dependencies */
 // eslint-disable-next-line import/no-extraneous-dependencies
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -5,16 +6,17 @@ import axios from "axios";
 import { createAsyncThunk } from "@reduxjs/toolkit"
 
 
-export const getColorAction = createAsyncThunk(
-    "color",
+export const createProductAction = createAsyncThunk(
+    "create/product",
     async (data, { rejectWithValue }) => {
         try {
-            const result = await axios.get(
-                `//color-names.herokuapp.com/v1/`,
-                // data,
+            const result = await axios.post(
+                `${import.meta.env.VITE_APP_BASE_URL}/admin/products`,
+                data,
                 {
                     headers: {
                         "Content-Type": "application/json",
+                        "Authorization":  localStorage.getItem("token")
                     },
                 }
             );
@@ -22,8 +24,9 @@ export const getColorAction = createAsyncThunk(
         } catch (error) {
             if (error.response && error.response.data.msg) {
                 return rejectWithValue(error.response.data.msg);
+            }else{
+                return rejectWithValue(error.message);
             }
-            return rejectWithValue(error.message);
         }
     }
 );
