@@ -61,7 +61,12 @@ import { TextareaAutosize } from '@mui/base/TextareaAutosize';
 import FormHelperText from '@mui/material/FormHelperText';
 import Iconify from 'src/components/iconify';
 // import Swal from 'sweetalert2'
-
+import { CTable } from '@coreui/react'
+import { CTableBody } from '@coreui/react'
+import { CTableDataCell } from '@coreui/react'
+import { CTableHead } from '@coreui/react'
+import { CTableHeaderCell } from '@coreui/react'
+import { CTableRow } from '@coreui/react'
 import {
     OutlinedInput,
     InputLabel,
@@ -501,7 +506,7 @@ export default function ProductModal() {
                     <Typography id="modal-modal-title" variant="h6" component="h2">
                         <img src='https://i.pinimg.com/originals/90/13/f7/9013f7b5eb6db0f41f4fd51d989491e7.gif' style={{ position: "relative" }} alt='success_gif' />
                     </Typography>
-                    <p className='mt-3 font-bold text-black' style={{ position: "absolute", right: 55, top: 0, fontSize: "22px" }} >Product added successfully</p>
+                    <p className='mt-3 font-bold text-black' style={{ position: "absolute", right: 40, top: 0, fontSize: "24px" }} >Product added successfully</p>
                 </Box>
             </Modal>
             <Button onClick={handleOpen} style={{ color: "white" }} className='py-2' variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>New Product</Button>
@@ -630,28 +635,28 @@ export default function ProductModal() {
                                     {(selectedNames?.length > 0 || getSizeFromTable.length > 0 || editTableSize.length > 0) &&
                                         <div className=" sm:col-span-12" style={{ width: "100%", overflowX: "auto" }}>
                                             {error && <Alert severity="error" className='flex justify-center' >{error}</Alert>}
-                                            <table style={{ width: "50%" }}>
-                                                <thead>
-                                                    <tr>
-                                                        <th>Sizes</th>
-                                                        <th>Colors</th>
-                                                        <th>Quantity</th>
-                                                        <th>Actions</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
+                                            <CTable striped className='table table-bordered border-primary'>
+                                                <CTableHead color="dark">
+                                                    <CTableRow className=''>
+                                                        <CTableHeaderCell scope="col">Sizes</CTableHeaderCell>
+                                                        <CTableHeaderCell scope="col">Colors</CTableHeaderCell>
+                                                        <CTableHeaderCell scope="col">Quantity</CTableHeaderCell>
+                                                        <CTableHeaderCell scope="col">Actions</CTableHeaderCell>
+                                                    </CTableRow>
+                                                </CTableHead>
+                                                <CTableBody color="light">
                                                     {editTableSize.length > 0 &&
                                                         editTableSize.map((table) => {
                                                             return (
                                                                 <>
-                                                                    <tr>
-                                                                        <td>{table.size}</td>
-                                                                        <td><input type='color' defaultValue={table.color} onChange={handleChangeColor} /></td>
-                                                                        <td> <TextField style={{ width: "60px", display: "flex", justifyContent: "center", textAlign: "center" }} inputProps={{ min: 0 }} type='number' defaultValue={table.quantity} onChange={handleChangeQuantity} id="standard-basic" label="" variant="standard" /></td>
-                                                                        <td>
+                                                                    <CTableRow>
+                                                                        <CTableDataCell>{table.size}</CTableDataCell>
+                                                                        <CTableDataCell><input type='color' defaultValue={table.color} onChange={handleChangeColor} /></CTableDataCell>
+                                                                        <CTableDataCell> <TextField style={{ width: "60px", display: "flex", justifyContent: "center", textAlign: "center" }} inputProps={{ min: 0 }} type='number' defaultValue={table.quantity} onChange={handleChangeQuantity} id="standard-basic" label="" variant="standard" /></CTableDataCell>
+                                                                        <CTableDataCell>
                                                                             <IoSave style={{ fontSize: "28px", color: "blue", cursor: "pointer" }} onClick={() => [saveData(table.size, table.color, table.quantity)]} >Save</IoSave>
-                                                                        </td>
-                                                                    </tr>
+                                                                        </CTableDataCell>
+                                                                    </CTableRow>
                                                                 </>
                                                             )
                                                         })
@@ -661,66 +666,68 @@ export default function ProductModal() {
                                                         TableAll.map((table) => {
                                                             return (
                                                                 <>
-                                                                    <tr>
-                                                                        <td>
+                                                                    <CTableRow color="light">
+                                                                        <CTableDataCell>
                                                                             {table.size}
-                                                                        </td>
-                                                                        <td><spam className='p-2 px-3 rounded-full' style={{ background: table.color }}>{"  "}</spam></td>
-                                                                        <td>
+                                                                        </CTableDataCell>
+                                                                        <CTableDataCell><spam className='p-2 px-3 rounded-full' style={{ background: table.color }}>{"  "}</spam></CTableDataCell>
+                                                                        <CTableDataCell>
                                                                             {table.quantity}
-                                                                        </td>
-                                                                        <td className='flex justify-evenly' >
+                                                                        </CTableDataCell>
+                                                                        <CTableDataCell className='flex'>
+                                                                        {/* <div className='flex justify-center items-center'> */}
                                                                             <MdEditSquare style={{ fontSize: "28px", color: "black", cursor: "pointer" }} onClick={() => [editSizes(table), setNewRow(false)]}>Edit</MdEditSquare>
-                                                                            <RiDeleteBin5Fill style={{ fontSize: "28px", color: "red", cursor: "pointer" }} onClick={() => deleteSizes(table.id, table.size)} >Delete</RiDeleteBin5Fill>
-                                                                        </td>
-                                                                    </tr>
+                                                                            <RiDeleteBin5Fill className='ms-3' style={{ fontSize: "28px", color: "red", cursor: "pointer" }} onClick={() => deleteSizes(table.id, table.size)} >Delete</RiDeleteBin5Fill>
+                                                                        {/* </div> */}
+                                                                        </CTableDataCell>
+                                                                    </CTableRow>
                                                                 </>
                                                             )
                                                         })
                                                     }
                                                     {/* if edit is not enable then it will show  */}
                                                     {editTableSize.length === 0 && firstSize &&
-                                                        <tr>
-                                                            <td>{firstSize}</td>
-                                                            <td><input type='color' value={color} onChange={handleChangeColor} /></td>
-                                                            <td> <TextField style={{ width: "60px", display: "flex", justifyContent: "center" }} inputProps={{ min: 0 }} type='number' value={quantity} onChange={handleChangeQuantity} id="standard-basic" label="" variant="standard" /></td>
-                                                            <td>
+                                                        <CTableRow>
+                                                            <CTableDataCell>{firstSize}</CTableDataCell>
+                                                            <CTableDataCell><input type='color' value={color} onChange={handleChangeColor} /></CTableDataCell>
+                                                            <CTableDataCell> <TextField style={{ width: "60px", display: "flex", justifyContent: "center" }} inputProps={{ min: 0 }} type='number' value={quantity} onChange={handleChangeQuantity} id="standard-basic" label="" variant="standard" /></CTableDataCell>
+                                                            <CTableDataCell>
                                                                 <IoSave style={{ fontSize: "28px", color: "blue", cursor: "pointer" }} onClick={() => saveData(firstSize)} >Save</IoSave>
-                                                            </td>
-                                                        </tr>
+                                                            </CTableDataCell>
+                                                        </CTableRow>
                                                     }
                                                     {/* if edit is enable then it will show  */}
                                                     {firstSize && editTableSize.length > 0 &&
-                                                        <tr>
-                                                            <td>{firstSize}</td>
-                                                            <td><input type='color' disabled onChange={handleChangeColor} /></td>
-                                                            <td> <TextField style={{ width: "60px", display: "flex", justifyContent: "center" }} disabled type='number' defaultValue={table.quantity} onChange={handleChangeQuantity} id="standard-basic" label="" variant="standard" /></td>
-                                                            <td>
+                                                        <CTableRow>
+                                                            <CTableDataCell>{firstSize}</CTableDataCell>
+                                                            <CTableDataCell><input type='color' disabled onChange={handleChangeColor} /></CTableDataCell>
+                                                            <CTableDataCell> <TextField style={{ width: "60px", display: "flex", justifyContent: "center" }} disabled type='number' defaultValue={table.quantity} onChange={handleChangeQuantity} id="standard-basic" label="" variant="standard" /></CTableDataCell>
+                                                            <CTableDataCell>
                                                                 <IoSave style={{ fontSize: "28px", color: "black", opacity: "0.5", cursor: "pointer" }} disabled color='success' >Save</IoSave>
-                                                            </td>
-                                                        </tr>
+                                                            </CTableDataCell>
+                                                        </CTableRow>
                                                     }
                                                     {otherSize &&
                                                         otherSize.map((sizes) => {
                                                             return (
                                                                 <>
-                                                                    <tr>
-                                                                        <td>
+                                                                    <CTableRow>
+                                                                        <CTableDataCell>
                                                                             {sizes}
-                                                                        </td>
-                                                                        <td><input type='color' disabled style={{ opacity: "0.5" }} /></td>
-                                                                        <td> <TextField style={{ width: "60px", display: "flex", justifyContent: "center", boxShadow: "none", textAlign: "center" }} disabled type='number' defaultValue={0} onChange={e => setQuantity(e.target.value)} className="standard-basic2" label="" variant="standard" /></td>
-                                                                        <td>
+                                                                        </CTableDataCell>
+                                                                        <CTableDataCell><input type='color' disabled style={{ opacity: "0.5" }} /></CTableDataCell>
+                                                                        <CTableDataCell> <TextField style={{ width: "60px", display: "flex", justifyContent: "center", boxShadow: "none", textAlign: "center" }} disabled type='number' defaultValue={0} onChange={e => setQuantity(e.target.value)} className="standard-basic2" label="" variant="standard" /></CTableDataCell>
+                                                                        <CTableDataCell>
                                                                             <IoSave style={{ fontSize: "28px", color: "black", opacity: "0.5" }} disabled >Save</IoSave>
-                                                                        </td>
-                                                                    </tr>
+                                                                        </CTableDataCell>
+                                                                    </CTableRow>
                                                                 </>
                                                             )
                                                         })
                                                     }
                                                     {newRow &&
-                                                        <tr>
-                                                            <td>
+                                                        <CTableRow>
+                                                            <CTableDataCell>
                                                                 <FormControl variant="standard" sx={{ m: 0 }}>
                                                                     <Select
                                                                         id="demo-simple-select-standard"
@@ -745,29 +752,26 @@ export default function ProductModal() {
                                                                         ))}
                                                                     </Select>
                                                                 </FormControl>
-                                                            </td>
-                                                            <td>
+                                                            </CTableDataCell>
+                                                            <CTableDataCell>
                                                                 <FormControl variant="standard" sx={{ m: 0 }}>
                                                                     <input type='color' value={color} onChange={handleChangeColor} />
                                                                 </FormControl>
-                                                            </td>
-                                                            <td>
+                                                            </CTableDataCell>
+                                                            <CTableDataCell>
                                                                 <FormControl variant="standard" sx={{ m: 0 }}>
                                                                     <TextField id="standard-basic" inputProps={{ min: 0 }} variant="standard" style={{ width: "60px", display: "flex", justifyContent: "center" }} type='number' value={quantity} onChange={handleChangeQuantity} size='sm' />
                                                                 </FormControl>
-                                                            </td>
-                                                            <td className='flex justify-evenly' >
+                                                            </CTableDataCell>
+                                                            <CTableDataCell className='flex' >
                                                                 <IoSave style={{ fontSize: "28px", color: "blue", cursor: "pointer" }} onClick={() => saveDataRow()} >Save</IoSave>
-                                                                <RiDeleteBin5Fill style={{ fontSize: "28px", color: "red", cursor: "pointer" }} onClick={() => setNewRow(false)} >Delete</RiDeleteBin5Fill>
-                                                            </td>
-                                                        </tr>
+                                                                <RiDeleteBin5Fill className='ms-3' style={{ fontSize: "28px", color: "red", cursor: "pointer" }} onClick={() => setNewRow(false)} >Delete</RiDeleteBin5Fill>
+                                                            </CTableDataCell>
+                                                        </CTableRow>
                                                     }
-                                                    {/* <tr className='font-bold bg-slate-300 text-wrap'>
-                                                        <td>{TableAll.length > 0 && TableAll.map((table) => <spam className='p-2 ml-1 px-3 rounded-full' style={{ background: table.color }}>{"  "}</spam>)}</td>
-                                                        <td>{TableAll.length > 0 && TableAll?.map((table) => Number(table.quantity)).reduce((a, b) => a + b)}</td>
-                                                    </tr> */}
-                                                </tbody>
-                                            </table>
+                                                </CTableBody>
+                                            </CTable>
+
                                             {TableAll.length > 0 && !firstSize &&
                                                 <div className="sm:col-span-12">
                                                     <Button variant="outlined" className='my-3' disabled={newRow} color='primary' onClick={() => setNewRow(true)} >Add New Row</Button>

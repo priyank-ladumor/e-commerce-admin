@@ -1,3 +1,4 @@
+/* eslint-disable perfectionist/sort-imports */
 /* eslint-disable import/no-duplicates */
 /* eslint-disable import/no-unresolved */
 import { lazy, Suspense } from 'react';
@@ -9,6 +10,7 @@ import { Outlet, useRoutes } from 'react-router-dom';
 import Login from 'src/pages/Login';
 // eslint-disable-next-line import/no-unresolved
 import DashboardLayout from 'src/layouts/dashboard';
+import CategoryPage from 'src/pages/Category';
 
 export const IndexPage = lazy(() => import('src/pages/app'));
 // eslint-disable-next-line import/no-unresolved
@@ -32,6 +34,10 @@ export default function Router() {
         { element: <IndexPage />, index: true },
         { path: 'user', element: <UserPage /> },
         { path: 'products', element: <ProductsPage /> },
+        {
+          path: '/category',
+          element: <CategoryPage />,
+        },
       ],
     },
     {

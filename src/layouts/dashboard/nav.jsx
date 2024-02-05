@@ -111,6 +111,7 @@ export default function Nav({ openNav, onCloseNav }) {
     </Box>
   );
 
+  // sidebar menu  list items
   const renderMenu = (
     <Stack component="nav" spacing={0.5} sx={{ px: 2 }}>
       {navConfig.map((item) => (
@@ -118,6 +119,7 @@ export default function Nav({ openNav, onCloseNav }) {
       ))}
     </Stack>
   );
+  // sidebar menu  list items
 
   const renderContent = (
     <Scrollbar

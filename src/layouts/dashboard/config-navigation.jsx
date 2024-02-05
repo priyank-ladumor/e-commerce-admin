@@ -1,5 +1,7 @@
+/* eslint-disable perfectionist/sort-imports */
 /* eslint-disable import/no-unresolved */
 import SvgColor from 'src/components/svg-color';
+import { MdCategory } from "react-icons/md";
 
 // ----------------------------------------------------------------------
 
@@ -22,6 +24,11 @@ const navConfig = [
     title: 'product',
     path: '/products',
     icon: icon('ic_cart'),
+  },
+  {
+    title: 'category',
+    path: '/category',
+    icon: <MdCategory style={{fontSize:"24px"}} />,
   }
 ];
 

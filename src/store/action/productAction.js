@@ -16,7 +16,7 @@ export const createProductAction = createAsyncThunk(
                 {
                     headers: {
                         "Content-Type": "application/json",
-                        "Authorization":  localStorage.getItem("token")
+                        "Authorization": localStorage.getItem("token")
                     },
                 }
             );
@@ -24,7 +24,7 @@ export const createProductAction = createAsyncThunk(
         } catch (error) {
             if (error.response && error.response.data.msg) {
                 return rejectWithValue(error.response.data.msg);
-            }else{
+            } else {
                 return rejectWithValue(error.message);
             }
         }
