@@ -25,8 +25,8 @@ import Button from '@mui/material/Button';
 import Iconify from '../../components/iconify/iconify';
 import { IoClose } from "react-icons/io5";
 import { CTable } from '@coreui/react'
-import { CPagination } from '@coreui/react'
-import { CPaginationItem } from '@coreui/react'
+// import { CPagination } from '@coreui/react'
+// import { CPaginationItem } from '@coreui/react'
 import { CTableBody } from '@coreui/react'
 import { CTableDataCell } from '@coreui/react'
 import { CTableHead } from '@coreui/react'
@@ -34,7 +34,7 @@ import { CTableHeaderCell } from '@coreui/react'
 import { CTableRow } from '@coreui/react'
 import { RiDeleteBin5Fill } from "react-icons/ri";
 import { MdEditSquare } from "react-icons/md";
-import { FaGreaterThan } from "react-icons/fa";
+// import { FaGreaterThan } from "react-icons/fa";
 import { useDispatch, useSelector } from 'react-redux';
 import { EditCategoriesAction, deleteCategoriesAction, getSecondLvlCategoriesAction, getThirdLvlCategoriesAction, getTopLvlCategoriesAction } from 'src/store/action/categoriesAction.js';
 import {
@@ -42,9 +42,14 @@ import {
     Select,
 } from "@mui/material";
 import FormControl from '@mui/material/FormControl';
-import { ToastContainer, toast } from 'react-toastify';
+// import { ToastContainer, toast } from 'react-toastify';
 import { IoSave } from "react-icons/io5";
 import TextField from '@mui/material/TextField';
+import Swal from 'sweetalert2'
+import { FaLessThan } from "react-icons/fa6";
+import { FaGreaterThan } from "react-icons/fa6";
+import { CreateThirdLvl } from './thirdlevel-category-create';
+// import InputLabel from '@mui/material/InputLabel';
 
 const style = {
     position: 'absolute',
@@ -87,11 +92,13 @@ export const Category = () => {
             pageNumber,
             CategoryID
         }
+
+        const query = `?pageNumber=${pageNumber}&pageSize=${pageSize}`
         dispatch(getTopLvlCategoriesAction(item))
-        dispatch(getSecondLvlCategoriesAction(item))
+        dispatch(getSecondLvlCategoriesAction(query))
         dispatch(getThirdLvlCategoriesAction(item))
 
-        if (CategoryID.length > 0) {
+        if (CategoryID.length !== 0 && !deletepopUp) {
             dispatch(deleteCategoriesAction(item))
             setdeletepopUp(true)
         }
@@ -99,31 +106,33 @@ export const Category = () => {
 
     React.useEffect(() => {
         if (deleteCategoriesMSG && deletepopUp) {
-            toast.success('category successfully deleted', {
-                position: "top-right",
-                autoClose: 2500,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-            });
+            <div className='swal2-container'>
+                {Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "Category successfully deleted",
+                    showConfirmButton: false,
+                    timer: 2500
+                })}
+            </div>
+            setdeletepopUp(false)
+            setCategoryID("")
         }
     }, [deleteCategoriesMSG])
 
     React.useEffect(() => {
-        if (EditCategoriesMSG && editpopUp) {
-            toast.success('category updated successfully', {
-                position: "top-right",
-                autoClose: 2500,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-            });
+        if (EditCategoriesMSG && editpopUp ) {
+            <div className='swal2-container'>
+                {Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "Category updated successfully",
+                    showConfirmButton: false,
+                    timer: 2500
+                })}
+            </div>
+            seteditpopUp(false)
+            setEditCategoryID("")
         }
     }, [EditCategoriesMSG])
 
@@ -172,13 +181,96 @@ export const Category = () => {
                     <Box sx={style}>
                         <Typography id="modal-modal-title" variant="h6" component="h2">
                             <div className='text-4xl font-bold flex justify-between'>
-                                <h2 className="text-3xl font-semibold leading-7 text-gray-900">Add New Product</h2>
+                                <h2 className="text-2xl font-semibold leading-7 text-gray-900">Add New Categories</h2>
                                 <IoClose onClick={() => handleClose()} style={{ cursor: "pointer" }} />
                             </div>
                         </Typography>
-                        {/* <Typography>
+                        <Typography id="modal-modal-description" sx={{ pt: 3, maxHeight: "80vh", overflowY: "auto" }}>
 
-                        </Typography> */}
+                            {/* top level  */}
+                            <div className=" grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-12">
+                                <div className="sm:col-span-12">
+                                    <FormControl fullWidth sx={{ m: 0 }} size="large" >
+                                        <TextField
+                                            // error={errors && errors.title?.message}
+                                            id="standard-error-helper-text"
+                                            label="Top Level Category"
+                                            type='text'
+                                            // {...register("title")}
+                                            // helperText={errors && errors.title?.message}
+                                            variant="outlined"
+                                        />
+                                    </FormControl>
+                                </div>
+                                <div className="sm:col-span-12 -mt-5">
+                                    <Button type='submit' color="success" variant="contained" style={{ width: "100%" }}>
+                                        {/* <div className='flex justify-center items-center' >
+                                            <ThreeDots
+                                                visible={true}
+                                                height="26"
+                                                width="50"
+                                                color="blue"
+                                                radius="9"
+                                                ariaLabel="three-dots-loading"
+                                                wrapperStyle={{}}
+                                                wrapperClass=""
+                                            />
+                                        </div>  */}
+                                        Add Top Level Category
+                                    </Button>
+                                </div>
+                            </div>
+
+                            {/* second level  */}
+                            <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-12">
+                                <div className="sm:col-span-6">
+                                    <FormControl fullWidth sx={{ m: 0 }} size="large" >
+                                        <TextField
+                                            // error={errors && errors.title?.message}
+                                            id="standard-error-helper-text"
+                                            label="Top Level Category"
+                                            type='text'
+                                            // {...register("title")}
+                                            // helperText={errors && errors.title?.message}
+                                            variant="outlined"
+                                        />
+                                    </FormControl>
+                                </div>
+                                <div className="sm:col-span-6">
+                                    <FormControl fullWidth sx={{ m: 0 }} size="large" >
+                                        <TextField
+                                            // error={errors && errors.title?.message}
+                                            id="standard-error-helper-text"
+                                            label="Second Level Category"
+                                            type='text'
+                                            // {...register("title")}
+                                            // helperText={errors && errors.title?.message}
+                                            variant="outlined"
+                                        />
+                                    </FormControl>
+                                </div>
+                                <div className="sm:col-span-12 -mt-5">
+                                    <Button type='submit' color="success" variant="contained" style={{ width: "100%" }}>
+                                        {/* <div className='flex justify-center items-center' >
+                                            <ThreeDots
+                                                visible={true}
+                                                height="26"
+                                                width="50"
+                                                color="blue"
+                                                radius="9"
+                                                ariaLabel="three-dots-loading"
+                                                wrapperStyle={{}}
+                                                wrapperClass=""
+                                            />
+                                        </div>  */}
+                                        Add Second Level Category
+                                    </Button>
+                                </div>
+                            </div>
+
+                            {/* third level  */}
+                            <CreateThirdLvl />
+                        </Typography>
                     </Box>
                 </Modal>
             </Stack>
@@ -195,7 +287,7 @@ export const Category = () => {
                     <CTableRow>
                         <CTableHeaderCell scope="row">1</CTableHeaderCell>
                         <CTableDataCell className='flex items-center'>
-                            <span className='text-blue-700 font-semibold cursor-pointer me-2' onClick={() => [setOpenTop(!openTop), setOpenSecond(false), setOpenThird(false), setpageSize(5), setpageNumber(1), setCategoryID(""), setEditCategoryID(""), setCategory(""), setCategoryLenErr("")]}> {openTop ? <FaGreaterThan style={{ transform: "rotate(90deg)" }} /> : <FaGreaterThan />} </span>
+                            <span className='text-blue-700 font-semibold cursor-pointer me-2' onClick={() => [setOpenTop(!openTop), setOpenSecond(false), setOpenThird(false), setdeletepopUp(false), seteditpopUp(false), setpageSize(5), setpageNumber(1), setCategoryID(""), setEditCategoryID(""), setCategory(""), setCategoryLenErr("")]}> {openTop ? <FaGreaterThan style={{ transform: "rotate(90deg)" }} /> : <FaGreaterThan />} </span>
                             Top Level Category
                         </CTableDataCell>
                         <CTableDataCell>
@@ -268,19 +360,12 @@ export const Category = () => {
                                             </Select>
                                         </FormControl>
                                     </span>
-                                    <CPagination aria-label="Page navigation example">
-                                        <CPaginationItem aria-label="Previous" onClick={() => [setpageNumber(pageNumber - 1)]} disabled={pageNumber === 1}>
-                                            <span aria-hidden="true">&laquo;</span>
-                                        </CPaginationItem>
-                                        {pageNumber === 1 ? "" : <CPaginationItem onClick={() => [setpageNumber(pageNumber - 1)]}>{pageNumber - 1}</CPaginationItem>}
-                                        <CPaginationItem active={pageNumber}>{pageNumber}</CPaginationItem>
-                                        {TopData.totalPages > pageNumber &&
-                                            <CPaginationItem onClick={() => [setpageNumber(pageNumber + 1)]} disabled={TopData.content.length === 0}>{pageNumber + 1}</CPaginationItem>
-                                        }
-                                        <CPaginationItem aria-label="Next" disabled={TopData.totalPages === pageNumber} onClick={() => [setpageNumber(pageNumber + 1)]}>
-                                            <span aria-hidden="true">&raquo;</span>
-                                        </CPaginationItem>
-                                    </CPagination>
+                                    <div className='flex justify-center items-center'>
+                                        <FaLessThan className='me-2 font-normal ' style={{ fontSize: "20px", opacity: pageNumber === 1 && "0.4", cursor: "pointer" }} onClick={() => [pageNumber === 1 ? "" : setpageNumber(pageNumber - 1), setdeletepopUp(false), seteditpopUp(false),]} />
+                                        <span style={{ fontSize: "21px", fontWeight: "medium" }}>{pageNumber}</span>
+                                        <FaGreaterThan className='ms-2' style={{ fontSize: "20px", opacity: TopData.totalPages === pageNumber && "0.4", cursor: "pointer" }} onClick={() => [TopData.totalPages === pageNumber ? "" : setpageNumber(pageNumber + 1), setdeletepopUp(false), seteditpopUp(false),]} />
+                                    </div>
+
                                     <span className='hide2'>Total Pages:  {TopData.totalPages}</span>
                                 </div>
                             </CTableHeaderCell>
@@ -291,7 +376,7 @@ export const Category = () => {
                     <CTableRow>
                         <CTableHeaderCell scope="row">2</CTableHeaderCell>
                         <CTableDataCell className='flex items-center'>
-                            <span className='text-blue-700 font-semibold cursor-pointer me-2' onClick={() => [setOpenSecond(!openSecond), setOpenTop(false), setOpenThird(false), setpageSize(5), setpageNumber(1), setCategoryID(""), setEditCategoryID(""), setCategory(""), setCategoryLenErr("")]}>{openSecond ? <FaGreaterThan style={{ transform: "rotate(90deg)" }} /> : <FaGreaterThan />} </span>
+                            <span className='text-blue-700 font-semibold cursor-pointer me-2' onClick={() => [setOpenSecond(!openSecond), setOpenTop(false), setdeletepopUp(false), seteditpopUp(false), setOpenThird(false), setpageSize(5), setpageNumber(1), setCategoryID(""), setEditCategoryID(""), setCategory(""), setCategoryLenErr("")]}>{openSecond ? <FaGreaterThan style={{ transform: "rotate(90deg)" }} /> : <FaGreaterThan />} </span>
                             Second Level Category
                         </CTableDataCell>
                         <CTableDataCell className=''>
@@ -364,19 +449,24 @@ export const Category = () => {
                                             </Select>
                                         </FormControl>
                                     </span>
-                                    <CPagination aria-label="Page navigation example">
-                                        <CPaginationItem aria-label="Previous" onClick={() => [setpageNumber(pageNumber - 1)]} disabled={pageNumber === 1}>
+                                    {/* <CPagination aria-label="Page navigation example">
+                                        <CPaginationItem aria-label="Previous" className='cursor-pointer' onClick={() => [setpageNumber(pageNumber - 1)]} disabled={pageNumber === 1}>
                                             <span aria-hidden="true">&laquo;</span>
                                         </CPaginationItem>
-                                        {pageNumber === 1 ? "" : <CPaginationItem onClick={() => [setpageNumber(pageNumber - 1)]}>{pageNumber - 1}</CPaginationItem>}
+                                        {pageNumber === 1 ? "" : <CPaginationItem className='cursor-pointer' onClick={() => [setpageNumber(pageNumber - 1)]}>{pageNumber - 1}</CPaginationItem>}
                                         <CPaginationItem active={pageNumber}>{pageNumber}</CPaginationItem>
                                         {SecondData.totalPages > pageNumber &&
-                                            <CPaginationItem onClick={() => [setpageNumber(pageNumber + 1)]} disabled={SecondData.content.length === 0}>{pageNumber + 1}</CPaginationItem>
+                                            <CPaginationItem className='cursor-pointer' onClick={() => [setpageNumber(pageNumber + 1)]} disabled={SecondData.content.length === 0}>{pageNumber + 1}</CPaginationItem>
                                         }
-                                        <CPaginationItem aria-label="Next" disabled={SecondData.totalPages === pageNumber} onClick={() => [setpageNumber(pageNumber + 1)]}>
+                                        <CPaginationItem aria-label="Next" className='cursor-pointer' disabled={SecondData.totalPages === pageNumber} onClick={() => [setpageNumber(pageNumber + 1)]}>
                                             <span aria-hidden="true">&raquo;</span>
                                         </CPaginationItem>
-                                    </CPagination>
+                                    </CPagination> */}
+                                    <div className='flex justify-center items-center'>
+                                        <FaLessThan className='me-2 font-normal ' style={{ fontSize: "20px", opacity: pageNumber === 1 && "0.4", cursor: "pointer" }} onClick={() => [pageNumber === 1 ? "" : setpageNumber(pageNumber - 1), setdeletepopUp(false), seteditpopUp(false),]} />
+                                        <span style={{ fontSize: "21px", fontWeight: "medium" }}>{pageNumber}</span>
+                                        <FaGreaterThan className='ms-2' style={{ fontSize: "20px", opacity: SecondData.totalPages === pageNumber && "0.4", cursor: "pointer" }} onClick={() => [SecondData.totalPages === pageNumber ? "" : setpageNumber(pageNumber + 1), setdeletepopUp(false), seteditpopUp(false),]} />
+                                    </div>
                                     <span className='hide2'>Total Pages:  {SecondData.totalPages}</span>
                                 </div>
                             </CTableHeaderCell>
@@ -387,7 +477,7 @@ export const Category = () => {
                     <CTableRow>
                         <CTableHeaderCell scope="row">3</CTableHeaderCell>
                         <CTableDataCell className='flex items-center'>
-                            <span className='text-blue-700 font-semibold cursor-pointer me-2' onClick={() => [setOpenThird(!openThird), setOpenTop(false), setOpenSecond(false), setpageSize(5), setpageNumber(1), setCategoryID(""), setEditCategoryID(""), setCategory(""), setCategoryLenErr("")]}>{openThird ? <FaGreaterThan style={{ transform: "rotate(90deg)" }} /> : <FaGreaterThan />} </span>
+                            <span className='text-blue-700 font-semibold cursor-pointer me-2' onClick={() => [setOpenThird(!openThird), setOpenTop(false), setdeletepopUp(false), seteditpopUp(false), setOpenSecond(false), setpageSize(5), setpageNumber(1), setCategoryID(""), setEditCategoryID(""), setCategory(""), setCategoryLenErr("")]}>{openThird ? <FaGreaterThan style={{ transform: "rotate(90deg)" }} /> : <FaGreaterThan />} </span>
                             Third Level Category
                         </CTableDataCell>
                         <CTableDataCell className=''>
@@ -460,19 +550,11 @@ export const Category = () => {
                                             </Select>
                                         </FormControl>
                                     </span>
-                                    <CPagination aria-label="Page navigation example">
-                                        <CPaginationItem aria-label="Previous" onClick={() => [setpageNumber(pageNumber - 1)]} disabled={pageNumber === 1}>
-                                            <span aria-hidden="true">&laquo;</span>
-                                        </CPaginationItem>
-                                        {pageNumber === 1 ? "" : <CPaginationItem onClick={() => [setpageNumber(pageNumber - 1)]}>{pageNumber - 1}</CPaginationItem>}
-                                        <CPaginationItem active={pageNumber}>{pageNumber}</CPaginationItem>
-                                        {ThirdData.totalPages > pageNumber &&
-                                            <CPaginationItem onClick={() => [setpageNumber(pageNumber + 1)]} disabled={ThirdData.content.length === 0}>{pageNumber + 1}</CPaginationItem>
-                                        }
-                                        <CPaginationItem aria-label="Next" disabled={ThirdData.totalPages === pageNumber} onClick={() => [setpageNumber(pageNumber + 1)]}>
-                                            <span aria-hidden="true">&raquo;</span>
-                                        </CPaginationItem>
-                                    </CPagination>
+                                    <div className='flex justify-center items-center'>
+                                        <FaLessThan className='me-2 font-normal ' style={{ fontSize: "20px", opacity: pageNumber === 1 && "0.4", cursor: "pointer" }} onClick={() => [pageNumber === 1 ? "" : setpageNumber(pageNumber - 1), setdeletepopUp(false), seteditpopUp(false),]} />
+                                        <span style={{ fontSize: "21px", fontWeight: "medium" }}>{pageNumber}</span>
+                                        <FaGreaterThan className='ms-2' style={{ fontSize: "20px", opacity: ThirdData.totalPages === pageNumber && "0.4", cursor: "pointer" }} onClick={() => [ThirdData.totalPages === pageNumber ? "" : setpageNumber(pageNumber + 1), setdeletepopUp(false), seteditpopUp(false),]} />
+                                    </div>
                                     <span className='hide2'>Total Pages:  {ThirdData.totalPages}</span>
                                 </div>
                             </CTableHeaderCell>
@@ -480,7 +562,7 @@ export const Category = () => {
                         </CTableRow>}
                 </CTableBody>
             </CTable>
-            <ToastContainer />
+            {/* <ToastContainer /> */}
         </Container>
     )
 }

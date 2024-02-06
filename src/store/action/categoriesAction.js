@@ -35,7 +35,7 @@ export const getSecondLvlCategoriesAction = createAsyncThunk(
     async (data, { rejectWithValue }) => {
         try {
             const result = await axios.get(
-                `${import.meta.env.VITE_APP_BASE_URL}/categories/secondlevel?pageNumber=${data.pageNumber}&pageSize=${data.pageSize}`,
+                `${import.meta.env.VITE_APP_BASE_URL}/categories/secondlevel/${data}`,
                 // data,
                 {
                     headers: {

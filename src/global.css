@@ -118,3 +118,19 @@ body{
         display: none;
     }
 }
+
+.swal2-container{
+    z-index: 100000;
+}
+
+#controllable-states-demo{
+    box-shadow: none;
+}
+
+#controllable-states-demo:focus{
+    box-shadow: none;
+}
+
+#controllable-states-demo:hover{
+    box-shadow: none;
+}

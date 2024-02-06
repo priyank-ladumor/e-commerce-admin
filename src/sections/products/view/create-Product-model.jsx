@@ -60,7 +60,7 @@ import { IoSave } from "react-icons/io5";
 import { TextareaAutosize } from '@mui/base/TextareaAutosize';
 import FormHelperText from '@mui/material/FormHelperText';
 import Iconify from 'src/components/iconify';
-// import Swal from 'sweetalert2'
+import Swal from 'sweetalert2'
 import { CTable } from '@coreui/react'
 import { CTableBody } from '@coreui/react'
 import { CTableDataCell } from '@coreui/react'
@@ -89,17 +89,6 @@ const style = {
     p: 3,
 };
 
-const style2 = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    // p: 4,
-};
 
 const schema = yup.object({
     title: yup
@@ -411,6 +400,8 @@ export default function ProductModal() {
         setQuantity(event.target.value)
     }
 
+    const [openSwal, setOpenSwal] = useState(false)
+
     const onSubmit = (data) => {
         const item = {
             title: data.title,
@@ -428,36 +419,27 @@ export default function ProductModal() {
 
         if (images.length > 0 && TableAll.length > 0 && thumbnail.length > 0) {
             dispatch(createProductAction(item))
-            if (images.length === 0) {
-                reset();
-            }
-            // setimages("")
-            // setthumbnail("")
-            // setTableAll([])
-        }
-    }
-    const [openMSG, setOpenMSG] = React.useState(false);
-    const handleClose2 = () => setOpenMSG(false);
-    const [openSwal, setOpenSwal] = useState(false)
-
-    useEffect(() => {
-        setOpenSwal(true)
-        if (openSwal) {
-            handleClose2()
+            reset();
+            setimages("")
+            setthumbnail("")
+            setTableAll([])
             setOpenSwal(true)
         }
-    }, [])
+    }
     useEffect(() => {
-        if (createProductData && !createProductPending && openSwal) {
-            handleClose()
-            setOpenMSG(true)
-
-            setTimeout(() => {
-                setOpenMSG(false)
-                setOpenSwal(false)
-            }, 2000);
+        if (createProductData && openSwal) {
+            handleClose();
+            <div className='swal2-container'>
+                {Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "Product created successfully",
+                    showConfirmButton: false,
+                    timer: 3000
+                })}
+            </div>
         }
-    }, [createProductData, createProductPending])
+    }, [createProductData])
 
     const [sizeValidation, setsizeValidation] = useState("")
     const validation = () => {
@@ -478,9 +460,6 @@ export default function ProductModal() {
         if (getSizeFromTable[0]) {
             setsizeValidation("")
         }
-        // else{
-        //     setsizeValidation("Please select product sizes")
-        // }
     }, [getSizeFromTable])
 
     const onReset = () => {
@@ -491,23 +470,12 @@ export default function ProductModal() {
         setthumbnailerr("")
         setsizeValidation("")
         setTableAll([])
+        //size select input none
+        setSelectedNames([])
     };
 
     return (
         <div>
-            <Modal
-                open={openMSG}
-                onClose={handleClose2}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-            >
-                <Box sx={style2}>
-                    <Typography id="modal-modal-title" variant="h6" component="h2">
-                        <img src='https://i.pinimg.com/originals/90/13/f7/9013f7b5eb6db0f41f4fd51d989491e7.gif' style={{ position: "relative" }} alt='success_gif' />
-                    </Typography>
-                    <p className='mt-3 font-bold text-black' style={{ position: "absolute", right: 40, top: 0, fontSize: "24px" }} >Product added successfully</p>
-                </Box>
-            </Modal>
             <Button onClick={handleOpen} style={{ color: "white" }} className='py-2' variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>New Product</Button>
             <Modal
                 open={open}
@@ -521,9 +489,6 @@ export default function ProductModal() {
                             <h2 className="text-3xl font-semibold leading-7 text-gray-900">Add New Product</h2>
                             <IoClose onClick={() => handleClose()} style={{ cursor: "pointer" }} />
                         </div>
-                        {/* <div className='text-4xl font-bold float-right top-0 right-0'>
-                            <IoClose onClick={() => handleClose()} style={{ cursor: "pointer" }} />
-                        </div> */}
                     </Typography>
                     <Typography id="modal-modal-description" sx={{ mt: 6, maxHeight: "80vh", overflowY: "auto" }}>
                         <form className='-mt-4 p-4' onSubmit={handleSubmit(onSubmit)}>
@@ -674,10 +639,10 @@ export default function ProductModal() {
                                                                             {table.quantity}
                                                                         </CTableDataCell>
                                                                         <CTableDataCell className='flex'>
-                                                                        {/* <div className='flex justify-center items-center'> */}
+                                                                            {/* <div className='flex justify-center items-center'> */}
                                                                             <MdEditSquare style={{ fontSize: "28px", color: "black", cursor: "pointer" }} onClick={() => [editSizes(table), setNewRow(false)]}>Edit</MdEditSquare>
                                                                             <RiDeleteBin5Fill className='ms-3' style={{ fontSize: "28px", color: "red", cursor: "pointer" }} onClick={() => deleteSizes(table.id, table.size)} >Delete</RiDeleteBin5Fill>
-                                                                        {/* </div> */}
+                                                                            {/* </div> */}
                                                                         </CTableDataCell>
                                                                     </CTableRow>
                                                                 </>
@@ -773,12 +738,7 @@ export default function ProductModal() {
 
                                             {TableAll.length > 0 && !firstSize &&
                                                 <div className="sm:col-span-12">
-                                                    <Button variant="outlined" className='my-3' disabled={newRow} color='primary' onClick={() => setNewRow(true)} >Add New Row</Button>
-                                                    {/* {sizeWithOutDuplicate.map((size) =>
-                                                        <div>
-                                                            <p>{size}</p>
-                                                        </div>
-                                                    )} */}
+                                                    <Button variant="outlined" className='' disabled={newRow} color='primary' onClick={() => setNewRow(true)} >Add New Row</Button>
                                                 </div>
                                             }
                                         </div>
