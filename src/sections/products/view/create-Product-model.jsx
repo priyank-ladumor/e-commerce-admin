@@ -425,7 +425,6 @@ export default function ProductModal() {
             thumbnail: thumbnail,
             images: images,
         }
-        console.log(item);
 
         if (images.length > 0 && TableAll.length > 0 && thumbnail.length > 0) {
             dispatch(createProductAction(item))

@@ -11,7 +11,7 @@ export const getTopLvlCategoriesAction = createAsyncThunk(
     async (data, { rejectWithValue }) => {
         try {
             const result = await axios.get(
-                `${import.meta.env.VITE_APP_BASE_URL}/categories/toplevel?pageNumber=${1}&pageSize=${9}`,
+                `${import.meta.env.VITE_APP_BASE_URL}/categories/toplevel?pageNumber=${data.pageNumber}&pageSize=${data.pageSize}`,
                 // data,
                 {
                     headers: {
@@ -35,7 +35,7 @@ export const getSecondLvlCategoriesAction = createAsyncThunk(
     async (data, { rejectWithValue }) => {
         try {
             const result = await axios.get(
-                `${import.meta.env.VITE_APP_BASE_URL}/categories/secondlevel?pageNumber=${1}&pageSize=${9}`,
+                `${import.meta.env.VITE_APP_BASE_URL}/categories/secondlevel?pageNumber=${data.pageNumber}&pageSize=${data.pageSize}`,
                 // data,
                 {
                     headers: {
@@ -59,8 +59,58 @@ export const getThirdLvlCategoriesAction = createAsyncThunk(
     async (data, { rejectWithValue }) => {
         try {
             const result = await axios.get(
-                `${import.meta.env.VITE_APP_BASE_URL}/categories/thirdlevel?pageNumber=${1}&pageSize=${9}`,
+                `${import.meta.env.VITE_APP_BASE_URL}/categories/thirdlevel?pageNumber=${data.pageNumber}&pageSize=${data.pageSize}`,
                 // data,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        // "Authorization": localStorage.getItem("token")
+                    },
+                }
+            );
+            return result.data;
+        } catch (error) {
+            if (error.response && error.response.data.msg) {
+                return rejectWithValue(error.response.data.msg);
+            } else {
+                return rejectWithValue(error.message);
+            }
+        }
+    }
+);
+
+export const deleteCategoriesAction = createAsyncThunk(
+    "delete/category",
+    async (data, { rejectWithValue }) => {
+        try {
+            const result = await axios.delete(
+                `${import.meta.env.VITE_APP_BASE_URL}/categories/${data.CategoryID}`,
+                // data,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        // "Authorization": localStorage.getItem("token")
+                    },
+                }
+            );
+            return result.data;
+        } catch (error) {
+            if (error.response && error.response.data.msg) {
+                return rejectWithValue(error.response.data.msg);
+            } else {
+                return rejectWithValue(error.message);
+            }
+        }
+    }
+);
+
+export const EditCategoriesAction = createAsyncThunk(
+    "edit/category",
+    async (data, { rejectWithValue }) => {
+        try {
+            const result = await axios.patch(
+                `${import.meta.env.VITE_APP_BASE_URL}/categories/${data.id}`,
+                data,
                 {
                     headers: {
                         "Content-Type": "application/json",
