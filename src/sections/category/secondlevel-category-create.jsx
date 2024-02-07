@@ -8,12 +8,7 @@
 /* eslint-disable perfectionist/sort-imports */
 /* eslint-disable arrow-body-style */
 import * as React from 'react';
-// import InputLabel from '@mui/material/InputLabel';
 import TextField from '@mui/material/TextField';
-// import {
-//     Select,
-//     MenuItem,
-// } from "@mui/material";
 import FormControl from '@mui/material/FormControl';
 import Button from '@mui/material/Button';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -80,7 +75,7 @@ export const CreateSecondLvl = ({ setsecondCategorypopUp, openSecondForm, setope
         <div>
             <span className='flex items-center mt-3 -mb-3' style={{ fontWeight: "700" }}>
                 Second Level Category
-                {openSecondForm ? <FaGreaterThan className="ms-2" onClick={() => setopenSecondForm(!openSecondForm)} style={{ transform: "rotate(90deg)", color: "blue", cursor: "pointer" }} /> : <FaGreaterThan className='ms-2' style={{ color: "blue", cursor: "pointer" }} onClick={() => [setopenSecondForm(!openSecondForm),setopenThirdForm(false),setopenTopForm(false)]} />}
+                {openSecondForm ? <FaGreaterThan className="ms-2" onClick={() => setopenSecondForm(!openSecondForm)} style={{ transform: "rotate(90deg)", color: "blue", cursor: "pointer" }} /> : <FaGreaterThan className='ms-2' style={{ color: "blue", cursor: "pointer" }} onClick={() => [setopenSecondForm(!openSecondForm), setopenThirdForm(false), setopenTopForm(false)]} />}
             </span>
             {openSecondForm &&
                 <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-12">
@@ -122,18 +117,6 @@ export const CreateSecondLvl = ({ setsecondCategorypopUp, openSecondForm, setope
                     </div>
                     <div className="sm:col-span-12 -mt-3">
                         <Button onClick={onsubmit} type='button' color="success" variant="contained" style={{ width: "100%" }}>
-                            {/* <div className='flex justify-center items-center' >
-                                            <ThreeDots
-                                                visible={true}
-                                                height="26"
-                                                width="50"
-                                                color="blue"
-                                                radius="9"
-                                                ariaLabel="three-dots-loading"
-                                                wrapperStyle={{}}
-                                                wrapperClass=""
-                                            />
-                                        </div>  */}
                             Add Second Level Category
                         </Button>
                     </div>

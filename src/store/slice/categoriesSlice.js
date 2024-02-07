@@ -2,7 +2,7 @@
 /* eslint-disable perfectionist/sort-imports */
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { createSlice } from "@reduxjs/toolkit";
-import { getTopLvlCategoriesAction, getSecondLvlCategoriesAction, getThirdLvlCategoriesAction, deleteCategoriesAction, EditCategoriesAction, createTopLvlCategoriesAction, createSecondLvlCategoriesAction, createThirdLvlCategoriesAction } from "../action/categoriesAction";
+import { getTopLvlCategoriesAction, getSecondLvlCategoriesAction, getThirdLvlCategoriesAction, deleteCategoriesAction, EditCategoriesAction, createTopLvlCategoriesAction, createSecondLvlCategoriesAction, createThirdLvlCategoriesAction, searchCategoriesAction } from "../action/categoriesAction";
 
 
 const initialState = {
@@ -20,6 +20,8 @@ const initialState = {
     createThirdLvlCategoriesSUCCESSMSG: null,
     createThirdLvlCategoriesERRORMSG: null,
     createThirdLvlCategoriesPENDING: false,
+    searchCategoriesData: null,
+    searchCategoriesPENDING: false,
 };
 
 const categoriesSlice = createSlice({
@@ -142,6 +144,21 @@ const categoriesSlice = createSlice({
             state.createThirdLvlCategoriesPENDING = false;
             state.createThirdLvlCategoriesERRORMSG = payload;
             state.createThirdLvlCategoriesSUCCESSMSG = null;
+        })
+
+        builder.addCase(searchCategoriesAction.pending, (state, { payload }) => {
+            state.searchCategoriesData = null;
+            state.searchCategoriesPENDING = true;
+        })
+
+        builder.addCase(searchCategoriesAction.fulfilled, (state, { payload }) => {
+            state.searchCategoriesData = payload;
+            state.searchCategoriesPENDING = false;
+        })
+
+        builder.addCase(searchCategoriesAction.rejected, (state, { payload }) => {
+            state.searchCategoriesData = null;
+            state.searchCategoriesPENDING = false;
         })
     }
 });

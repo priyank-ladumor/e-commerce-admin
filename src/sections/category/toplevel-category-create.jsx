@@ -80,18 +80,6 @@ export const CreateTopLvl = ({ settopCategorypopUp, openTopForm, setopenTopForm,
                     </div>
                     <div className="sm:col-span-12 -mt-3">
                         <Button onClick={onsubmit} type='button' color="success" variant="contained" style={{ width: "100%" }}>
-                            {/* <div className='flex justify-center items-center' >
-                                            <ThreeDots
-                                                visible={true}
-                                                height="26"
-                                                width="50"
-                                                color="blue"
-                                                radius="9"
-                                                ariaLabel="three-dots-loading"
-                                                wrapperStyle={{}}
-                                                wrapperClass=""
-                                            />
-                                        </div>  */}
                             Add Top Level Category
                         </Button>
                     </div>

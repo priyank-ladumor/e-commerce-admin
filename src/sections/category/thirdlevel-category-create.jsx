@@ -8,12 +8,7 @@
 /* eslint-disable perfectionist/sort-imports */
 /* eslint-disable arrow-body-style */
 import * as React from 'react';
-// import InputLabel from '@mui/material/InputLabel';
 import TextField from '@mui/material/TextField';
-// import {
-//     Select,
-//     MenuItem,
-// } from "@mui/material";
 import FormControl from '@mui/material/FormControl';
 import Button from '@mui/material/Button';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -168,18 +163,6 @@ export const CreateThirdLvl = ({ setthirdCategorypopUp, openThirdForm, setopenTh
                     </div>
                     <div className="sm:col-span-12 -mt-3">
                         <Button onClick={onsubmit} type='button' color="success" variant="contained" style={{ width: "100%" }}>
-                            {/* <div className='flex justify-center items-center' >
-                                            <ThreeDots
-                                                visible={true}
-                                                height="26"
-                                                width="50"
-                                                color="blue"
-                                                radius="9"
-                                                ariaLabel="three-dots-loading"
-                                                wrapperStyle={{}}
-                                                wrapperClass=""
-                                            />
-                                        </div>  */}
                             Add Third Level Category
                         </Button>
                     </div>

@@ -58,9 +58,9 @@ export const getThirdLvlCategoriesAction = createAsyncThunk(
     "get/thirdLvl/category",
     async (data, { rejectWithValue }) => {
         try {
-            const result = await axios.get(
-                `${import.meta.env.VITE_APP_BASE_URL}/categories/thirdlevel?pageNumber=${data.pageNumber}&pageSize=${data.pageSize}`,
-                // data,
+            const result = await axios.post(
+                `${import.meta.env.VITE_APP_BASE_URL}/categories/thirdlevel/`,
+                data,
                 {
                     headers: {
                         "Content-Type": "application/json",
@@ -189,6 +189,33 @@ export const createThirdLvlCategoriesAction = createAsyncThunk(
         try {
             const result = await axios.post(
                 `${import.meta.env.VITE_APP_BASE_URL}/categories/thirdlevel/create`,
+                data,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        // "Authorization": localStorage.getItem("token")
+                    },
+                }
+            );
+            return result.data;
+        } catch (error) {
+            if (error.response && error.response.data.error) {
+                return rejectWithValue(error.response.data.error);
+            } else if (error.message) {
+                return rejectWithValue(error.message);
+            } else {
+                return rejectWithValue(error.response.data.msg)
+            }
+        }
+    }
+);
+
+export const searchCategoriesAction = createAsyncThunk(
+    "search/category",
+    async (data, { rejectWithValue }) => {
+        try {
+            const result = await axios.post(
+                `${import.meta.env.VITE_APP_BASE_URL}/categories/search`,
                 data,
                 {
                     headers: {

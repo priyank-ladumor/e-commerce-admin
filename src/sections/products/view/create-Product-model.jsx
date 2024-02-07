@@ -74,6 +74,9 @@ import {
     Select,
 } from "@mui/material";
 import { createProductAction } from 'src/store/action/productAction';
+import Autocomplete from '@mui/material/Autocomplete';
+import { getSecondLvlCategoriesAction, getThirdLvlCategoriesAction, getTopLvlCategoriesAction } from 'src/store/action/categoriesAction';
+
 // import SizesTableModal from './child-create-product';
 // import { getColorAction } from 'src/store/action/colorAction';
 // import { ChildProductModal } from './child-create-product-modal';
@@ -98,9 +101,9 @@ const schema = yup.object({
         .required("please enter title"),
     price: yup.number().min(50, "price must be above 50").typeError("please enter price").required(),
     brand: yup.string().min(2).max(24).required("Please enter product brand"),
-    topLevelCategory: yup.string().min(2).max(24).matches(/^\S*$/, "No whitespaces allowed").required("Please enter product top level category"),
-    secondLevelCategory: yup.string().min(2).max(24).matches(/^\S*$/, "No whitespaces allowed").required("Please enter product second level category"),
-    thirdLevelCategory: yup.string().min(2).max(24).matches(/^\S*$/, "No whitespaces allowed").required("Please enter product third level category"),
+    // topLevelCategory: yup.string().min(2).max(24).matches(/^\S*$/, "No whitespaces allowed").required("Please enter product top level category"),
+    // secondLevelCategory: yup.string().min(2).max(24).matches(/^\S*$/, "No whitespaces allowed").required("Please enter product second level category"),
+    // thirdLevelCategory: yup.string().min(2).max(24).matches(/^\S*$/, "No whitespaces allowed").required("Please enter product third level category"),
     description: yup.string().min(40).max(800).required("Please enter product description"),
 });
 
@@ -261,14 +264,101 @@ export default function ProductModal() {
     const table = []
     const [color, setColor] = useState("")
     const [quantity, setQuantity] = React.useState("");
+
+    //other sizes means sizes[1,2..]
     const [otherSize, setotherSize] = React.useState([]);
+
+    //sizeColorQuantity Array
     const [TableAll, setTableAll] = useState([])
+
+    //for first(size[0]) input filed for showing data to save from sizes 
     const [firstSize, setfirstSize] = useState()
+
+    //for edit size
     const [editTableSize, setEditTableSize] = useState([])
+
+    //for error
     const [error, seterror] = useState()
+
+    //for table new row
     const [newRow, setNewRow] = useState(false)
+
+    //size select input
     const [sizeselect, setsizeselect] = React.useState('');
 
+    //for top/second/third category input
+    const [topCategory, settopCategory] = useState("")
+    const [secondCategory, setsecondCategory] = useState("")
+    const [thirdCategory, setthirdCategory] = useState("")
+
+    //for top/second/third category input Error
+    const [thirdCategoryError, setthirdCategoryError] = useState("")
+
+    //for top/second/third categories data
+    const [topCategoryData, settopCategoryData] = useState("")
+    const [secondCategoryData, setsecondCategoryData] = useState("")
+    const [thirdCategoryData, setthirdCategoryData] = useState("")
+
+    //for second/third parent id
+    const [secondParentId, setsecondParentId] = useState("")
+    const [thirdParentId, setthirdParentId] = useState("")
+
+    const { getTopLvlCategoriesData, getSecondLvlCategoriesData, getThirdLvlCategoriesData } = useSelector(state => state.categories)
+
+    React.useEffect(() => {
+        if (thirdCategory?.length > 0) {
+            setthirdCategoryError("")
+        }
+    }, [thirdCategory])
+
+    React.useEffect(() => {
+        const secondParent = topCategoryData && topCategory && topCategoryData.content.filter((data) => data.name === topCategory)
+        if (secondParent) {
+            setsecondParentId(secondParent[0]._id)
+        }
+        const thirdParent = secondCategoryData && secondCategory && secondCategoryData.content.filter((data) => data.name === secondCategory)
+        if (thirdParent) {
+            setthirdParentId(thirdParent[0]._id)
+        }
+    }, [topCategory, secondCategory])
+
+    React.useEffect(() => {
+        const item = {
+            pageNumber: 0,
+            pageSize: 0
+        }
+        dispatch(getTopLvlCategoriesAction(item))
+    }, [])
+
+    React.useEffect(() => {
+        if (secondParentId) {
+            const query = `?parentCategory=${secondParentId}`
+            dispatch(getSecondLvlCategoriesAction(query))
+        }
+    }, [secondParentId])
+
+    React.useEffect(() => {
+        if (thirdParentId) {
+            const item = {
+                pageSize: 0,
+                pageNumber: 0,
+                parentCategory: thirdParentId
+            }
+            dispatch(getThirdLvlCategoriesAction(item))
+        }
+    }, [thirdParentId])
+
+    React.useEffect(() => {
+        if (getTopLvlCategoriesData) {
+            settopCategoryData(getTopLvlCategoriesData)
+        }
+        if (getSecondLvlCategoriesData && secondParentId !== "") {
+            setsecondCategoryData(getSecondLvlCategoriesData)
+        }
+        if (getThirdLvlCategoriesData && thirdParentId !== "") {
+            setthirdCategoryData(getThirdLvlCategoriesData)
+        }
+    }, [getTopLvlCategoriesData, getSecondLvlCategoriesData, secondParentId, thirdParentId, getThirdLvlCategoriesData])
 
     const getSizeFromTable = TableAll && TableAll?.map((ele) => ele.size);
 
@@ -406,9 +496,9 @@ export default function ProductModal() {
         const item = {
             title: data.title,
             brand: data.brand,
-            topLevelCategory: data.topLevelCategory,
-            secondLevelCategory: data.secondLevelCategory,
-            thirdLevelCategory: data.thirdLevelCategory,
+            topLevelCategory: topCategory,
+            secondLevelCategory: secondCategory,
+            thirdLevelCategory: thirdCategory,
             price: data.price,
             discountPercentage: data.discountPercentage,
             description: data.description,
@@ -417,13 +507,18 @@ export default function ProductModal() {
             images: images,
         }
 
-        if (images.length > 0 && TableAll.length > 0 && thumbnail.length > 0) {
+        if (images.length > 0 && TableAll.length > 0 && thumbnail.length > 0 && topCategory?.length > 0 && secondCategory?.length > 0 && thirdCategory?.length > 0) {
             dispatch(createProductAction(item))
             reset();
+            settopCategory("")
+            setsecondCategory("")
+            setthirdCategory("")
             setimages("")
             setthumbnail("")
             setTableAll([])
             setOpenSwal(true)
+            setsecondParentId("")
+            setthirdParentId("")
         }
     }
     useEffect(() => {
@@ -454,6 +549,9 @@ export default function ProductModal() {
         if (!getSizeFromTable[0]) {
             setsizeValidation("Please select product sizes")
         }
+        if (thirdCategory?.length === 0) {
+            setthirdCategoryError("Please enter product top,second and third level category")
+        }
     };
 
     useEffect(() => {
@@ -463,6 +561,7 @@ export default function ProductModal() {
     }, [getSizeFromTable])
 
     const onReset = () => {
+        reset();
         setimages([]);
         setimgerr("")
         setimglenerr("")
@@ -472,6 +571,12 @@ export default function ProductModal() {
         setTableAll([])
         //size select input none
         setSelectedNames([])
+        settopCategory("")
+        setsecondCategory("")
+        setthirdCategory("")
+        setthirdCategoryError("")
+        setsecondParentId("")
+        setthirdParentId("")
     };
 
     return (
@@ -492,7 +597,7 @@ export default function ProductModal() {
                     </Typography>
                     <Typography id="modal-modal-description" sx={{ mt: 6, minWidth: "210px", maxHeight: "80vh", overflowY: "auto" }}>
                         <form className='-mt-4 p-4' onSubmit={handleSubmit(onSubmit)}>
-                            <div className="border-b border-gray-900/10 pb-12">
+                            <div className="pb-12">
                                 <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-12">
                                     <div className="sm:col-span-6">
                                         <FormControl fullWidth sx={{ m: 0 }} size="large" >
@@ -519,7 +624,7 @@ export default function ProductModal() {
                                                 variant="outlined" />
                                         </FormControl>
                                     </div>
-
+                                    {/* 
                                     <div className="sm:col-span-6">
                                         <FormControl fullWidth sx={{ m: 0 }} size="large" >
                                             <TextField
@@ -532,8 +637,30 @@ export default function ProductModal() {
                                                 variant="outlined"
                                             />
                                         </FormControl>
-                                    </div>
+                                    </div> */}
+
                                     <div className="sm:col-span-6">
+                                        <Autocomplete
+                                            value={topCategory}
+                                            onChange={(event, newValue) => [
+                                                setsecondCategoryData(""),
+                                                setthirdCategory(""),
+                                                setthirdCategoryData(""),
+                                                setthirdParentId(""),
+                                                settopCategory(newValue),
+                                                setsecondParentId(""),
+                                                setsecondCategory("")
+                                            ]}
+                                            id="controllable-states-demo"
+                                            options={topCategoryData && topCategoryData?.content.map((data) =>
+                                                data.name
+                                            )}
+                                            sx={{ width: "100%" }}
+                                            renderInput={(params) => <TextField {...params} label="Top Level Category" />}
+                                        />
+                                    </div>
+
+                                    {/* <div className="sm:col-span-6">
                                         <FormControl fullWidth sx={{ m: 0 }} size="large" >
                                             <TextField
                                                 error={errors && errors.secondLevelCategory?.message}
@@ -544,9 +671,28 @@ export default function ProductModal() {
                                                 helperText={errors && errors.secondLevelCategory?.message}
                                                 variant="outlined" />
                                         </FormControl>
-                                    </div>
+                                    </div> */}
 
                                     <div className="sm:col-span-6">
+                                        <Autocomplete
+                                            value={secondCategory}
+                                            onChange={(event, newValue) => [
+                                                setthirdCategoryData(""),
+                                                setsecondCategory(newValue),
+                                                setthirdParentId(""),
+                                                setthirdCategory("")
+                                            ]}
+                                            disabled={secondParentId.length === 0}
+                                            id="controllable-states-demo"
+                                            options={secondCategoryData && secondCategoryData?.content.map((data) =>
+                                                data.name
+                                            )}
+                                            sx={{ width: "100%" }}
+                                            renderInput={(params) => <TextField  {...params} label="Second Level Category" />}
+                                        />
+                                    </div>
+
+                                    {/* <div className="sm:col-span-6">
                                         <FormControl fullWidth sx={{ m: 0 }} size="large" >
                                             <TextField
                                                 error={errors && errors.thirdLevelCategory?.message}
@@ -558,6 +704,22 @@ export default function ProductModal() {
                                                 variant="outlined"
                                             />
                                         </FormControl>
+                                    </div> */}
+
+                                    <div className="sm:col-span-6">
+                                        <Autocomplete
+                                            value={thirdCategory}
+                                            onChange={(event, newValue) => [
+                                                setthirdCategory(newValue)
+                                            ]}
+                                            disabled={thirdParentId.length === 0}
+                                            id={thirdCategoryError ? "" : "controllable-states-demo"}
+                                            options={thirdCategoryData && thirdCategoryData?.content.map((data) =>
+                                                data.name
+                                            )}
+                                            sx={{ width: "100%" }}
+                                            renderInput={(params) => <TextField error={thirdCategoryError} helperText={thirdCategoryError && thirdCategoryError} {...params} label="Third Level Category" />}
+                                        />
                                     </div>
 
                                     <div className="sm:col-span-6">
