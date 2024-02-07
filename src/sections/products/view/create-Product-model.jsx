@@ -490,7 +490,7 @@ export default function ProductModal() {
                             <IoClose onClick={() => handleClose()} style={{ cursor: "pointer" }} />
                         </div>
                     </Typography>
-                    <Typography id="modal-modal-description" sx={{ mt: 6, maxHeight: "80vh", overflowY: "auto" }}>
+                    <Typography id="modal-modal-description" sx={{ mt: 6, minWidth: "210px", maxHeight: "80vh", overflowY: "auto" }}>
                         <form className='-mt-4 p-4' onSubmit={handleSubmit(onSubmit)}>
                             <div className="border-b border-gray-900/10 pb-12">
                                 <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-12">

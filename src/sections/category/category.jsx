@@ -49,6 +49,8 @@ import Swal from 'sweetalert2'
 import { FaLessThan } from "react-icons/fa6";
 import { FaGreaterThan } from "react-icons/fa6";
 import { CreateThirdLvl } from './thirdlevel-category-create';
+import { CreateSecondLvl } from './secondlevel-category-create';
+import { CreateTopLvl } from './toplevel-category-create';
 // import InputLabel from '@mui/material/InputLabel';
 
 const style = {
@@ -64,6 +66,7 @@ const style = {
 
 export const Category = () => {
     const { getTopLvlCategoriesData, getSecondLvlCategoriesData, getThirdLvlCategoriesData, deleteCategoriesMSG, EditCategoriesMSG } = useSelector(state => state.categories)
+    const { createTopLvlCategoriesSUCCESSMSG, createSecondLvlCategoriesSUCCESSMSG, createThirdLvlCategoriesSUCCESSMSG } = useSelector(state => state.categories)
 
     const [open, setOpen] = React.useState(false);
     const [openTop, setOpenTop] = React.useState(false);
@@ -80,19 +83,24 @@ export const Category = () => {
     const [CategoryLenErr, setCategoryLenErr] = React.useState("");
     const [deletepopUp, setdeletepopUp] = React.useState(false)
     const [editpopUp, seteditpopUp] = React.useState(false)
+    const [topCategorypopUp, settopCategorypopUp] = React.useState(false)
+    const [secondCategorypopUp, setsecondCategorypopUp] = React.useState(false)
+    const [thirdCategorypopUp, setthirdCategorypopUp] = React.useState(false)
+    const [openTopForm, setopenTopForm] = React.useState(false);
+    const [openSecondForm, setopenSecondForm] = React.useState(false);
+    const [openThirdForm, setopenThirdForm] = React.useState(true);
 
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+    const handleOpen = () => [setOpen(true), setOpenTop(false), setOpenSecond(false), setOpenThird(true)];
+    const handleClose = () => [setOpen(false), setOpenTop(false), setOpenSecond(false), setOpenThird(true)];
 
     const dispatch = useDispatch()
-    React.useEffect(() => {
 
+    React.useEffect(() => {
         const item = {
             pageSize,
             pageNumber,
             CategoryID
         }
-
         const query = `?pageNumber=${pageNumber}&pageSize=${pageSize}`
         dispatch(getTopLvlCategoriesAction(item))
         dispatch(getSecondLvlCategoriesAction(query))
@@ -102,7 +110,7 @@ export const Category = () => {
             dispatch(deleteCategoriesAction(item))
             setdeletepopUp(true)
         }
-    }, [pageSize, pageNumber, CategoryID, EditCategoryID])
+    }, [pageSize, pageNumber, CategoryID, EditCategoryID, open])
 
     React.useEffect(() => {
         if (deleteCategoriesMSG && deletepopUp) {
@@ -121,7 +129,52 @@ export const Category = () => {
     }, [deleteCategoriesMSG])
 
     React.useEffect(() => {
-        if (EditCategoriesMSG && editpopUp ) {
+        if (createTopLvlCategoriesSUCCESSMSG && topCategorypopUp) {
+            <div className='swal2-container'>
+                {Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: createTopLvlCategoriesSUCCESSMSG?.msg,
+                    showConfirmButton: false,
+                    timer: 2500
+                })}
+            </div>
+            settopCategorypopUp(false)
+        }
+    }, [createTopLvlCategoriesSUCCESSMSG])
+
+    React.useEffect(() => {
+        if (createSecondLvlCategoriesSUCCESSMSG && secondCategorypopUp) {
+            <div className='swal2-container'>
+                {Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: createSecondLvlCategoriesSUCCESSMSG?.msg,
+                    showConfirmButton: false,
+                    timer: 2500
+                })}
+            </div>
+            setsecondCategorypopUp(false)
+        }
+    }, [createSecondLvlCategoriesSUCCESSMSG])
+
+    React.useEffect(() => {
+        if (createThirdLvlCategoriesSUCCESSMSG && thirdCategorypopUp) {
+            <div className='swal2-container'>
+                {Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: createThirdLvlCategoriesSUCCESSMSG?.msg,
+                    showConfirmButton: false,
+                    timer: 2500
+                })}
+            </div>
+            setthirdCategorypopUp(false)
+        }
+    }, [createThirdLvlCategoriesSUCCESSMSG])
+
+    React.useEffect(() => {
+        if (EditCategoriesMSG && editpopUp) {
             <div className='swal2-container'>
                 {Swal.fire({
                     position: "top-end",
@@ -185,91 +238,16 @@ export const Category = () => {
                                 <IoClose onClick={() => handleClose()} style={{ cursor: "pointer" }} />
                             </div>
                         </Typography>
-                        <Typography id="modal-modal-description" sx={{ pt: 3, maxHeight: "80vh", overflowY: "auto" }}>
+                        <Typography id="modal-modal-description" sx={{ pt: 3, p: 3, minWidth: "300px", maxHeight: "80vh", overflowY: "auto", overflowX: "hidden" }}>
 
                             {/* top level  */}
-                            <div className=" grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-12">
-                                <div className="sm:col-span-12">
-                                    <FormControl fullWidth sx={{ m: 0 }} size="large" >
-                                        <TextField
-                                            // error={errors && errors.title?.message}
-                                            id="standard-error-helper-text"
-                                            label="Top Level Category"
-                                            type='text'
-                                            // {...register("title")}
-                                            // helperText={errors && errors.title?.message}
-                                            variant="outlined"
-                                        />
-                                    </FormControl>
-                                </div>
-                                <div className="sm:col-span-12 -mt-5">
-                                    <Button type='submit' color="success" variant="contained" style={{ width: "100%" }}>
-                                        {/* <div className='flex justify-center items-center' >
-                                            <ThreeDots
-                                                visible={true}
-                                                height="26"
-                                                width="50"
-                                                color="blue"
-                                                radius="9"
-                                                ariaLabel="three-dots-loading"
-                                                wrapperStyle={{}}
-                                                wrapperClass=""
-                                            />
-                                        </div>  */}
-                                        Add Top Level Category
-                                    </Button>
-                                </div>
-                            </div>
+                            <CreateTopLvl settopCategorypopUp={settopCategorypopUp} openTopForm={openTopForm} setopenTopForm={setopenTopForm} setopenSecondForm={setopenSecondForm} setopenThirdForm={setopenThirdForm} />
 
                             {/* second level  */}
-                            <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-12">
-                                <div className="sm:col-span-6">
-                                    <FormControl fullWidth sx={{ m: 0 }} size="large" >
-                                        <TextField
-                                            // error={errors && errors.title?.message}
-                                            id="standard-error-helper-text"
-                                            label="Top Level Category"
-                                            type='text'
-                                            // {...register("title")}
-                                            // helperText={errors && errors.title?.message}
-                                            variant="outlined"
-                                        />
-                                    </FormControl>
-                                </div>
-                                <div className="sm:col-span-6">
-                                    <FormControl fullWidth sx={{ m: 0 }} size="large" >
-                                        <TextField
-                                            // error={errors && errors.title?.message}
-                                            id="standard-error-helper-text"
-                                            label="Second Level Category"
-                                            type='text'
-                                            // {...register("title")}
-                                            // helperText={errors && errors.title?.message}
-                                            variant="outlined"
-                                        />
-                                    </FormControl>
-                                </div>
-                                <div className="sm:col-span-12 -mt-5">
-                                    <Button type='submit' color="success" variant="contained" style={{ width: "100%" }}>
-                                        {/* <div className='flex justify-center items-center' >
-                                            <ThreeDots
-                                                visible={true}
-                                                height="26"
-                                                width="50"
-                                                color="blue"
-                                                radius="9"
-                                                ariaLabel="three-dots-loading"
-                                                wrapperStyle={{}}
-                                                wrapperClass=""
-                                            />
-                                        </div>  */}
-                                        Add Second Level Category
-                                    </Button>
-                                </div>
-                            </div>
+                            <CreateSecondLvl setsecondCategorypopUp={setsecondCategorypopUp} openSecondForm={openSecondForm} setopenSecondForm={setopenSecondForm} setopenThirdForm={setopenThirdForm} setopenTopForm={setopenTopForm} />
 
                             {/* third level  */}
-                            <CreateThirdLvl />
+                            <CreateThirdLvl setthirdCategorypopUp={setthirdCategorypopUp} openThirdForm={openThirdForm} setopenThirdForm={setopenThirdForm} setopenTopForm={setopenTopForm} setopenSecondForm={setopenSecondForm} />
                         </Typography>
                     </Box>
                 </Modal>

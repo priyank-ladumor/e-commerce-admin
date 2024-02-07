@@ -2,7 +2,7 @@
 /* eslint-disable perfectionist/sort-imports */
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { createSlice } from "@reduxjs/toolkit";
-import { getTopLvlCategoriesAction, getSecondLvlCategoriesAction, getThirdLvlCategoriesAction, deleteCategoriesAction, EditCategoriesAction } from "../action/categoriesAction";
+import { getTopLvlCategoriesAction, getSecondLvlCategoriesAction, getThirdLvlCategoriesAction, deleteCategoriesAction, EditCategoriesAction, createTopLvlCategoriesAction, createSecondLvlCategoriesAction, createThirdLvlCategoriesAction } from "../action/categoriesAction";
 
 
 const initialState = {
@@ -11,6 +11,15 @@ const initialState = {
     getThirdLvlCategoriesData: null,
     deleteCategoriesMSG: null,
     EditCategoriesMSG: null,
+    createTopLvlCategoriesSUCCESSMSG: null,
+    createTopLvlCategoriesERRORMSG: null,
+    createTopLvlCategoriesPENDING: false,
+    createSecondLvlCategoriesSUCCESSMSG: null,
+    createSecondLvlCategoriesERRORMSG: null,
+    createSecondLvlCategoriesPENDING: false,
+    createThirdLvlCategoriesSUCCESSMSG: null,
+    createThirdLvlCategoriesERRORMSG: null,
+    createThirdLvlCategoriesPENDING: false,
 };
 
 const categoriesSlice = createSlice({
@@ -79,6 +88,60 @@ const categoriesSlice = createSlice({
 
         builder.addCase(EditCategoriesAction.rejected, (state, { payload }) => {
             state.EditCategoriesMSG = null;
+        })
+
+        builder.addCase(createTopLvlCategoriesAction.pending, (state, { payload }) => {
+            state.createTopLvlCategoriesPENDING = true;
+            state.createTopLvlCategoriesERRORMSG = null;
+            state.createTopLvlCategoriesSUCCESSMSG = null;
+        })
+
+        builder.addCase(createTopLvlCategoriesAction.fulfilled, (state, { payload }) => {
+            state.createTopLvlCategoriesPENDING = false;
+            state.createTopLvlCategoriesERRORMSG = null;
+            state.createTopLvlCategoriesSUCCESSMSG = payload;
+        })
+
+        builder.addCase(createTopLvlCategoriesAction.rejected, (state, { payload }) => {
+            state.createTopLvlCategoriesPENDING = false;
+            state.createTopLvlCategoriesERRORMSG = payload;
+            state.createTopLvlCategoriesSUCCESSMSG = null;
+        })
+
+        builder.addCase(createSecondLvlCategoriesAction.pending, (state, { payload }) => {
+            state.createSecondLvlCategoriesPENDING = true;
+            state.createSecondLvlCategoriesERRORMSG = null;
+            state.createSecondLvlCategoriesSUCCESSMSG = null;
+        })
+
+        builder.addCase(createSecondLvlCategoriesAction.fulfilled, (state, { payload }) => {
+            state.createSecondLvlCategoriesPENDING = false;
+            state.createSecondLvlCategoriesERRORMSG = null;
+            state.createSecondLvlCategoriesSUCCESSMSG = payload;
+        })
+
+        builder.addCase(createSecondLvlCategoriesAction.rejected, (state, { payload }) => {
+            state.createSecondLvlCategoriesPENDING = false;
+            state.createSecondLvlCategoriesERRORMSG = payload;
+            state.createSecondLvlCategoriesSUCCESSMSG = null;
+        })
+
+        builder.addCase(createThirdLvlCategoriesAction.pending, (state, { payload }) => {
+            state.createThirdLvlCategoriesPENDING = true;
+            state.createThirdLvlCategoriesERRORMSG = null;
+            state.createThirdLvlCategoriesSUCCESSMSG = null;
+        })
+
+        builder.addCase(createThirdLvlCategoriesAction.fulfilled, (state, { payload }) => {
+            state.createThirdLvlCategoriesPENDING = false;
+            state.createThirdLvlCategoriesERRORMSG = null;
+            state.createThirdLvlCategoriesSUCCESSMSG = payload;
+        })
+
+        builder.addCase(createThirdLvlCategoriesAction.rejected, (state, { payload }) => {
+            state.createThirdLvlCategoriesPENDING = false;
+            state.createThirdLvlCategoriesERRORMSG = payload;
+            state.createThirdLvlCategoriesSUCCESSMSG = null;
         })
     }
 });
