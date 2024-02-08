@@ -1,3 +1,6 @@
+/* eslint-disable no-unused-expressions */
+/* eslint-disable perfectionist/sort-named-imports */
+/* eslint-disable spaced-comment */
 /* eslint-disable react/self-closing-comp */
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable arrow-body-style */
@@ -21,7 +24,7 @@ import { FaTrash } from "react-icons/fa"
 import { CAlert } from '@coreui/react'
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import { getAllUserDetailsAction } from 'src/store/action/userAction';
+import { getAllUserDetailsAction, userBannedAction, userDeleteAction, userUnBannedAction } from 'src/store/action/userAction';
 import { useSearchParams } from "react-router-dom";
 import { useLocation } from 'react-router-dom';
 import { FaLessThan } from "react-icons/fa6";
@@ -31,44 +34,65 @@ import {
   MenuItem,
 } from "@mui/material";
 import FormControl from '@mui/material/FormControl';
+import Swal from 'sweetalert2'
+import { GoVerified } from "react-icons/go";
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
 
 
 export default function UserView() {
   const location = useLocation()
   const dispatch = useDispatch();
-  const { getAllUserDetailsDATA } = useSelector((state) => state.user)
+  const { getAllUserDetailsDATA, userDeleteMSG, userBannedMSG, userUnBannedMSG } = useSelector((state) => state.user)
   const [usesearch, setUsesearch] = useSearchParams()
 
-  // const locationPageNumber = Number(location.search.split("=")[2])
   const locationPageNumber = +usesearch.get("pageNumber") === 0 ? (+usesearch.get("pageNumber") + 1) : +usesearch.get("pageNumber")
-  const locationPageSize = +usesearch.get("pageSize") === 0 ? 5 : +usesearch.get("pageSize")
+  const locationPageSize = +usesearch.get("pageSize") === 0 ? 7 : +usesearch.get("pageSize")
+  const locationSearch = usesearch.get("search")
 
   const [pageSize, setpageSize] = React.useState(locationPageSize);
   const [pageNumber, setpageNumber] = React.useState(locationPageNumber);
+  const [search, setSearch] = React.useState(locationSearch)
 
   const [userData, setUserData] = React.useState("")
+  //for delete and banning user
+  const [userId, setUserId] = React.useState("")
+  const [userBanId, setUserBanId] = React.useState("")
+  const [userUnBanId, setUserUnBanId] = React.useState("")
+
+  const [deletePopUp, setdeletePopUp] = React.useState(false)
+  const [bannedPopUp, setbannedPopUp] = React.useState(false)
+  const [unbannedPopUp, setunbannedPopUp] = React.useState(false)
+  
 
   useEffect(() => {
     const items = {
       pageSize,
-      pageNumber
+      pageNumber,
+      search
     }
     setUsesearch(items)
-  }, [pageSize, pageNumber])
+  }, [pageSize, pageNumber, search])
 
   useEffect(() => {
     const items = {
       pageSize,
-      pageNumber
+      pageNumber,
+      search
     }
-    const query = `?pageSize=5&pageNumber=1`
+    const query = `?pageSize=7&pageNumber=1&search=${search}`
     if (location.search) {
       dispatch(getAllUserDetailsAction(location.search))
     } else {
       dispatch(getAllUserDetailsAction(query))
       setUsesearch(items)
     }
-  }, [location])
+    if(search.length > 0){
+      dispatch(getAllUserDetailsAction(query))
+    }else{
+      dispatch(getAllUserDetailsAction(location.search))
+    }
+  }, [location, userDeleteMSG, userBannedMSG, userUnBannedMSG, search])
 
   useEffect(() => {
     if (getAllUserDetailsDATA) {
@@ -76,14 +100,102 @@ export default function UserView() {
     }
   }, [getAllUserDetailsDATA])
 
+  useEffect(() => {
+    if (userId.length > 0) {
+      const item = {
+        id: userId
+      }
+      dispatch(userDeleteAction(item))
+      setdeletePopUp(true)
+      setUserId("")
+    }
+  }, [userId])
 
-  console.log(locationPageNumber, "location");
-  console.log(userData, "userData");
+  useEffect(() => {
+    if (userUnBanId.length > 0) {
+      const item = {
+        id: userUnBanId
+      }
+      dispatch(userUnBannedAction(item))
+      setunbannedPopUp(true)
+      setUserUnBanId("")
+    }
+  }, [userUnBanId])
+
+  useEffect(() => {
+    if (userBanId.length > 0) {
+      const item = {
+        id: userBanId
+      }
+      dispatch(userBannedAction(item))
+      setbannedPopUp(true)
+      setUserBanId("")
+    }
+  }, [userBanId])
+
+
+  //delete user popup
+  React.useEffect(() => {
+    if (userDeleteMSG && deletePopUp) {
+      <div className='swal2-container'>
+        {Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: userDeleteMSG?.msg,
+          showConfirmButton: false,
+          timer: 2500
+        })}
+      </div>
+      setdeletePopUp(false)
+      setUserId("")
+    }
+  }, [userDeleteMSG])
+
+  //banned user popup
+  React.useEffect(() => {
+    if (userBannedMSG && bannedPopUp) {
+      <div className='swal2-container'>
+        {Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: userBannedMSG?.msg,
+          showConfirmButton: false,
+          timer: 2500
+        })}
+      </div>
+      setbannedPopUp(false)
+      setUserBanId("")
+    }
+  }, [userBannedMSG])
+
+  //unbanned user popup
+  React.useEffect(() => {
+    if (userUnBannedMSG && unbannedPopUp) {
+      <div className='swal2-container'>
+        {Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: userUnBannedMSG?.msg,
+          showConfirmButton: false,
+          timer: 2500
+        })}
+      </div>
+      setunbannedPopUp(false)
+      setUserUnBanId("")
+    }
+  }, [userUnBannedMSG])
+
   return (
     <Container>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Users</Typography>
       </Stack>
+
+      {/* search input filed  */}
+      <div className='flex items-center'>
+        <TextField className='mb-2 me-2' onChange={e => [setSearch(e.target.value.trim().toLowerCase()), setpageNumber(1), setpageSize(7)]} value={search} placeholder='Search by name and email' style={{ width: "200px", display: "flex", justifyContent: "center", textAlign: "center" }} type='text' id="standard-basic" label="" variant="standard" />
+        {search.length > 0 && <Button onClick={() => [setSearch(""), setpageNumber(1), setpageSize(7)]} type='button' color="error" variant="contained" size='small'>Clear</Button>}
+      </div>
 
       <div style={{ minWidth: "400px", overflowX: "auto" }}>
         <CTable striped className='table table-bordered border-dark'>
@@ -100,7 +212,7 @@ export default function UserView() {
           </CTableHead>
           <CTableBody>
             {userData && userData.content?.length > 0 ? userData.content?.map((ele) => {
-              const id = (userData.content.indexOf(ele) + 1) * (+pageNumber)
+              const id = (userData.content.indexOf(ele) + 1) + (pageNumber > 1 && (+pageSize * (+pageNumber - 1)))
               return (
                 <CTableRow striped color='light'>
                   <CTableHeaderCell scope="row">{id}</CTableHeaderCell>
@@ -115,8 +227,12 @@ export default function UserView() {
                   <CTableDataCell>{ele.createdAt.split("T")[0]}</CTableDataCell>
                   <CTableDataCell >
                     <div className='flex items-center'>
-                      <FaBan className='text-red-600 text-2xl cursor-pointer' />
-                      <FaTrash className='ms-2 text-red-600 text-2xl cursor-pointer' />
+                      {ele.status === "Banned" ?
+                        <GoVerified className='text-2xl cursor-pointer text-gray-950 font-bold' onClick={() => setUserUnBanId(ele._id)} />
+                        :
+                        <FaBan className='text-red-600 text-2xl cursor-pointer' onClick={() => setUserBanId(ele._id)} />
+                      }
+                      <FaTrash className='ms-2 text-red-600 text-2xl cursor-pointer' onClick={() => [setUserId(ele._id)]} />
                     </div>
                   </CTableDataCell>
                 </CTableRow>
@@ -128,7 +244,7 @@ export default function UserView() {
               </CTableRow>
             }
 
-            {userData && userData.totalPages > 1 && 
+            {userData && userData.totalPages > 1 &&
               <CTableRow color="primary">
                 <CTableHeaderCell colSpan={7}>
                   <div className='my-1 flex items-center justify-around sm:flex'>
@@ -160,7 +276,7 @@ export default function UserView() {
                     <div className='flex justify-center items-center'>
                       <FaLessThan className='me-2 font-normal ' style={{ fontSize: "20px", opacity: pageNumber === 1 && "0.4", cursor: "pointer" }} onClick={() => [pageNumber === 1 ? "" : setpageNumber(pageNumber - 1)]} />
                       <span style={{ fontSize: "21px", fontWeight: "medium" }}>{pageNumber}</span>
-                      <FaGreaterThan className='ms-2' style={{ fontSize: "20px", opacity: (userData.totalPages === pageNumber || userData.content?.length === 0) && "0.4", cursor: "pointer" }} onClick={() => [(userData.totalPages === pageNumber || userData.content?.length === 0)  ? "" : setpageNumber(pageNumber + 1)]} />
+                      <FaGreaterThan className='ms-2' style={{ fontSize: "20px", opacity: (userData.totalPages === pageNumber || userData.content?.length === 0) && "0.4", cursor: "pointer" }} onClick={() => [(userData.totalPages === pageNumber || userData.content?.length === 0) ? "" : setpageNumber(pageNumber + 1)]} />
                     </div>
 
                     <span className='hide2'>Total Pages:  {userData.totalPages}</span>

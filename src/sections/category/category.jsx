@@ -267,6 +267,40 @@ export const Category = () => {
         }
     }, [searchCategoriesData])
 
+    //convert number to roman
+    // function convertToRoman(num) {
+    //     let numberArr = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1];
+    //     let RomanArr = [
+    //         "M",
+    //         "CM",
+    //         "D",
+    //         "CD",
+    //         "C",
+    //         "XC",
+    //         "L",
+    //         "XL",
+    //         "X",
+    //         "IX",
+    //         "V",
+    //         "IV",
+    //         "I"
+    //     ];
+    //     let result = [];
+
+    //     const findElement = e => {
+    //         return e <= num;
+    //     };
+
+    //     while (num > 0) {
+    //         let nextHighest = numberArr.find(findElement);
+
+    //         result.push(RomanArr[numberArr.indexOf(nextHighest)]);
+    //         num -= nextHighest;
+    //     }
+    //     let newResult = result.join("");
+
+    //     return newResult;
+    // }
     return (
         <Container>
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
@@ -321,7 +355,7 @@ export const Category = () => {
                     <CTableBody color="light">
                         {/* top level  */}
                         <CTableRow>
-                            <CTableHeaderCell scope="row">1</CTableHeaderCell>
+                            <CTableHeaderCell scope="row">I</CTableHeaderCell>
                             <CTableDataCell className='flex items-center'>
                                 <span className='text-blue-700 font-semibold cursor-pointer me-2' onClick={() => [setOpenTop(!openTop), setOpenSecond(false), setOpenThird(false), setdeletepopUp(false), seteditpopUp(false), setpageSize(5), setpageNumber(1), setCategoryID(""), setEditCategoryID(""), setCategory(""), setCategoryLenErr("")]}> {openTop ? <FaGreaterThan style={{ transform: "rotate(90deg)" }} /> : <FaGreaterThan />} </span>
                                 Top Level Category
@@ -333,9 +367,11 @@ export const Category = () => {
                         {
                             openTop && TopData &&
                             TopData.content.map((data) => {
+                                const id = (TopData.content.indexOf(data) + 1) + (pageNumber > 1 && (+pageSize * (+pageNumber - 1)))
+
                                 return (
                                     <CTableRow color="success">
-                                        <CTableDataCell scope="row"></CTableDataCell>
+                                        <CTableDataCell scope="row" style={{ fontWeight: "100" }} >{id}</CTableDataCell>
                                         {
                                             EditCategoryID === data._id ?
                                                 <CTableDataCell>
@@ -410,7 +446,7 @@ export const Category = () => {
 
                         {/* second level */}
                         <CTableRow>
-                            <CTableHeaderCell scope="row">2</CTableHeaderCell>
+                            <CTableHeaderCell scope="row">II</CTableHeaderCell>
                             <CTableDataCell className='flex items-center'>
                                 <span className='text-blue-700 font-semibold cursor-pointer me-2' onClick={() => [setOpenSecond(!openSecond), setOpenTop(false), setdeletepopUp(false), seteditpopUp(false), setOpenThird(false), setpageSize(5), setpageNumber(1), setCategoryID(""), setEditCategoryID(""), setCategory(""), setCategoryLenErr("")]}>{openSecond ? <FaGreaterThan style={{ transform: "rotate(90deg)" }} /> : <FaGreaterThan />} </span>
                                 Second Level Category
@@ -422,9 +458,10 @@ export const Category = () => {
                         {
                             openSecond && SecondData &&
                             SecondData.content.map((data) => {
+                                const id = (SecondData.content.indexOf(data) + 1) + (pageNumber > 1 && (+pageSize * (+pageNumber - 1)))
                                 return (
                                     <CTableRow color="success">
-                                        <CTableDataCell scope="row"></CTableDataCell>
+                                        <CTableDataCell scope="row" style={{ fontWeight: "100" }} >{id}</CTableDataCell>
                                         {
                                             EditCategoryID === data._id ?
                                                 <CTableDataCell>
@@ -511,7 +548,7 @@ export const Category = () => {
 
                         {/* third level  */}
                         <CTableRow>
-                            <CTableHeaderCell scope="row">3</CTableHeaderCell>
+                            <CTableHeaderCell scope="row">III</CTableHeaderCell>
                             <CTableDataCell className='flex items-center'>
                                 <span className='text-blue-700 font-semibold cursor-pointer me-2' onClick={() => [setOpenThird(!openThird), setOpenTop(false), setdeletepopUp(false), seteditpopUp(false), setOpenSecond(false), setpageSize(5), setpageNumber(1), setCategoryID(""), setEditCategoryID(""), setCategory(""), setCategoryLenErr("")]}>{openThird ? <FaGreaterThan style={{ transform: "rotate(90deg)" }} /> : <FaGreaterThan />} </span>
                                 Third Level Category
@@ -523,9 +560,10 @@ export const Category = () => {
                         {
                             openThird && ThirdData &&
                             ThirdData.content.map((data) => {
+                                const id = (ThirdData.content.indexOf(data) + 1) + (pageNumber > 1 && (+pageSize * (+pageNumber - 1)))
                                 return (
                                     <CTableRow color="success">
-                                        <CTableDataCell scope="row"></CTableDataCell>
+                                        <CTableDataCell scope="row" style={{ fontWeight: "100" }} >{id}</CTableDataCell>
                                         {
                                             EditCategoryID === data._id ?
                                                 <CTableDataCell>
@@ -604,9 +642,10 @@ export const Category = () => {
                         searchData &&
                         <CTableBody color='light'>
                             {searchData.content.map((data) => {
+                                const id = (searchData.content.indexOf(data) + 1) + (pageNumber > 1 && (+pageSize * (+pageNumber - 1)))
                                 return (
                                     <CTableRow color="success">
-                                        <CTableDataCell scope="row"></CTableDataCell>
+                                        <CTableDataCell scope="row">{id}</CTableDataCell>
                                         {
                                             EditCategoryID === data._id ?
                                                 <CTableDataCell>
