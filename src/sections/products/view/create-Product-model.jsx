@@ -713,7 +713,7 @@ export default function ProductModal() {
                                                 setthirdCategory(newValue)
                                             ]}
                                             disabled={thirdParentId.length === 0}
-                                            id={thirdCategoryError ? "" : "controllable-states-demo"}
+                                            id="controllable-states-demo"
                                             options={thirdCategoryData && thirdCategoryData?.content.map((data) =>
                                                 data.name
                                             )}

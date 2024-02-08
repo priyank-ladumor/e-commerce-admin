@@ -1,3 +1,4 @@
+/* eslint-disable spaced-comment */
 /* eslint-disable import/no-extraneous-dependencies */
 // eslint-disable-next-line import/no-extraneous-dependencies
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -31,6 +32,7 @@ export const adminLogin = createAsyncThunk(
     }
 );
 
+//admin profile data
 export const adminLoginData = createAsyncThunk(
     "admin/data",
     async (data, { rejectWithValue }) => {

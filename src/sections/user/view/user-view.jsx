@@ -1,174 +1,175 @@
+/* eslint-disable react/self-closing-comp */
+/* eslint-disable react-hooks/rules-of-hooks */
+/* eslint-disable arrow-body-style */
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable import/no-duplicates */
+/* eslint-disable perfectionist/sort-imports */
 /* eslint-disable import/no-unresolved */
-import { useState } from 'react';
-
-import Card from '@mui/material/Card';
+import * as React from 'react';
 import Stack from '@mui/material/Stack';
-import Table from '@mui/material/Table';
-import Button from '@mui/material/Button';
+// import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
-import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
-import TableContainer from '@mui/material/TableContainer';
-import TablePagination from '@mui/material/TablePagination';
+import { CTable } from '@coreui/react'
+import { CTableBody } from '@coreui/react'
+import { CTableDataCell } from '@coreui/react'
+import { CTableHead } from '@coreui/react'
+import { CTableHeaderCell } from '@coreui/react'
+import { CTableRow } from '@coreui/react'
+import { FaBan } from "react-icons/fa";
+import { FaTrash } from "react-icons/fa"
+import { CAlert } from '@coreui/react'
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { getAllUserDetailsAction } from 'src/store/action/userAction';
+import { useSearchParams } from "react-router-dom";
+import { useLocation } from 'react-router-dom';
+import { FaLessThan } from "react-icons/fa6";
+import { FaGreaterThan } from "react-icons/fa6";
+import {
+  Select,
+  MenuItem,
+} from "@mui/material";
+import FormControl from '@mui/material/FormControl';
 
-import { users } from 'src/_mock/user';
 
-import Iconify from 'src/components/iconify';
-import Scrollbar from 'src/components/scrollbar';
+export default function UserView() {
+  const location = useLocation()
+  const dispatch = useDispatch();
+  const { getAllUserDetailsDATA } = useSelector((state) => state.user)
+  const [usesearch, setUsesearch] = useSearchParams()
 
-import TableNoData from '../table-no-data';
-import UserTableRow from '../user-table-row';
-import UserTableHead from '../user-table-head';
-import TableEmptyRows from '../table-empty-rows';
-import UserTableToolbar from '../user-table-toolbar';
-import { emptyRows, applyFilter, getComparator } from '../utils';
+  // const locationPageNumber = Number(location.search.split("=")[2])
+  const locationPageNumber = +usesearch.get("pageNumber") === 0 ? (+usesearch.get("pageNumber") + 1) : +usesearch.get("pageNumber")
+  const locationPageSize = +usesearch.get("pageSize") === 0 ? 5 : +usesearch.get("pageSize")
 
-// ----------------------------------------------------------------------
+  const [pageSize, setpageSize] = React.useState(locationPageSize);
+  const [pageNumber, setpageNumber] = React.useState(locationPageNumber);
 
-export default function UserPage() {
-  const [page, setPage] = useState(0);
+  const [userData, setUserData] = React.useState("")
 
-  const [order, setOrder] = useState('asc');
-
-  const [selected, setSelected] = useState([]);
-
-  const [orderBy, setOrderBy] = useState('name');
-
-  const [filterName, setFilterName] = useState('');
-
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-
-  const handleSort = (event, id) => {
-    const isAsc = orderBy === id && order === 'asc';
-    if (id !== '') {
-      setOrder(isAsc ? 'desc' : 'asc');
-      setOrderBy(id);
+  useEffect(() => {
+    const items = {
+      pageSize,
+      pageNumber
     }
-  };
+    setUsesearch(items)
+  }, [pageSize, pageNumber])
 
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = users.map((n) => n.name);
-      setSelected(newSelecteds);
-      return;
+  useEffect(() => {
+    const items = {
+      pageSize,
+      pageNumber
     }
-    setSelected([]);
-  };
-
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
+    const query = `?pageSize=5&pageNumber=1`
+    if (location.search) {
+      dispatch(getAllUserDetailsAction(location.search))
+    } else {
+      dispatch(getAllUserDetailsAction(query))
+      setUsesearch(items)
     }
-    setSelected(newSelected);
-  };
+  }, [location])
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+  useEffect(() => {
+    if (getAllUserDetailsDATA) {
+      setUserData(getAllUserDetailsDATA)
+    }
+  }, [getAllUserDetailsDATA])
 
-  const handleChangeRowsPerPage = (event) => {
-    setPage(0);
-    setRowsPerPage(parseInt(event.target.value, 10));
-  };
 
-  const handleFilterByName = (event) => {
-    setPage(0);
-    setFilterName(event.target.value);
-  };
-
-  const dataFiltered = applyFilter({
-    inputData: users,
-    comparator: getComparator(order, orderBy),
-    filterName,
-  });
-
-  const notFound = !dataFiltered.length && !!filterName;
-
+  console.log(locationPageNumber, "location");
+  console.log(userData, "userData");
   return (
     <Container>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Users</Typography>
-
-        <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
-          New User
-        </Button>
       </Stack>
 
-      <Card>
-        <UserTableToolbar
-          numSelected={selected.length}
-          filterName={filterName}
-          onFilterName={handleFilterByName}
-        />
+      <div style={{ minWidth: "400px", overflowX: "auto" }}>
+        <CTable striped className='table table-bordered border-dark'>
+          <CTableHead>
+            <CTableRow color="dark">
+              <CTableHeaderCell scope="col">#</CTableHeaderCell>
+              <CTableHeaderCell scope="col">Name</CTableHeaderCell>
+              <CTableHeaderCell scope="col">Email</CTableHeaderCell>
+              <CTableHeaderCell scope="col">Verified</CTableHeaderCell>
+              <CTableHeaderCell scope="col">Status</CTableHeaderCell>
+              <CTableHeaderCell scope="col">CreatedAt</CTableHeaderCell>
+              <CTableHeaderCell scope="col">Actions</CTableHeaderCell>
+            </CTableRow>
+          </CTableHead>
+          <CTableBody>
+            {userData && userData.content?.length > 0 ? userData.content?.map((ele) => {
+              const id = (userData.content.indexOf(ele) + 1) * (+pageNumber)
+              return (
+                <CTableRow striped color='light'>
+                  <CTableHeaderCell scope="row">{id}</CTableHeaderCell>
+                  <CTableDataCell>{ele.firstName.charAt(0).toUpperCase() + ele.firstName.slice(1)}{" "}{ele.lastName.charAt(0).toUpperCase() + ele.lastName.slice(1)}</CTableDataCell>
+                  <CTableDataCell>{ele.email}</CTableDataCell>
+                  <CTableDataCell>{ele.isEmailVerified === true ? "Yes" : "No"}</CTableDataCell>
+                  <CTableDataCell>
+                    <CAlert color={ele.status === "Active" ? "success" : "danger"} className=' mb-0 flex justify-center items-center p-1 px-auto text-black'>
+                      {ele.status}
+                    </CAlert>
+                  </CTableDataCell>
+                  <CTableDataCell>{ele.createdAt.split("T")[0]}</CTableDataCell>
+                  <CTableDataCell >
+                    <div className='flex items-center'>
+                      <FaBan className='text-red-600 text-2xl cursor-pointer' />
+                      <FaTrash className='ms-2 text-red-600 text-2xl cursor-pointer' />
+                    </div>
+                  </CTableDataCell>
+                </CTableRow>
+              )
+            })
+              :
+              <CTableRow color="danger">
+                <CTableDataCell colSpan={7}><span className='h-20 text-3xl flex justify-center items-center text-red-900'>No users data available on this page</span></CTableDataCell>
+              </CTableRow>
+            }
 
-        <Scrollbar>
-          <TableContainer sx={{ overflow: 'unset' }}>
-            <Table sx={{ minWidth: 800 }}>
-              <UserTableHead
-                order={order}
-                orderBy={orderBy}
-                rowCount={users.length}
-                numSelected={selected.length}
-                onRequestSort={handleSort}
-                onSelectAllClick={handleSelectAllClick}
-                headLabel={[
-                  { id: 'name', label: 'Name' },
-                  { id: 'company', label: 'Company' },
-                  { id: 'role', label: 'Role' },
-                  { id: 'isVerified', label: 'Verified', align: 'center' },
-                  { id: 'status', label: 'Status' },
-                  { id: '' },
-                ]}
-              />
-              <TableBody>
-                {dataFiltered
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row) => (
-                    <UserTableRow
-                      key={row.id}
-                      name={row.name}
-                      role={row.role}
-                      status={row.status}
-                      company={row.company}
-                      avatarUrl={row.avatarUrl}
-                      isVerified={row.isVerified}
-                      selected={selected.indexOf(row.name) !== -1}
-                      handleClick={(event) => handleClick(event, row.name)}
-                    />
-                  ))}
+            {userData && userData.totalPages > 1 && 
+              <CTableRow color="primary">
+                <CTableHeaderCell colSpan={7}>
+                  <div className='my-1 flex items-center justify-around sm:flex'>
+                    <span className='hide'>Rows per page:
+                      <FormControl variant="standard" className='ms-1' sx={{ m: 0 }}>
+                        <Select
+                          id="demo-simple-select-standard"
+                          value={pageSize}
+                          onChange={e => [setpageSize(e.target.value), setpageNumber(1)]}
+                          displayEmpty
+                          style={{ padding: "0px", width: "30px" }}
+                          inputProps={{ 'aria-label': 'Without label' }}
+                        >
+                          <MenuItem value="3">
+                            <em>3</em>
+                          </MenuItem>
+                          <MenuItem value="5">
+                            <em>5</em>
+                          </MenuItem>
+                          <MenuItem value="7">
+                            <em>7</em>
+                          </MenuItem>
+                          <MenuItem value="9">
+                            <em>9</em>
+                          </MenuItem>
+                        </Select>
+                      </FormControl>
+                    </span>
+                    <div className='flex justify-center items-center'>
+                      <FaLessThan className='me-2 font-normal ' style={{ fontSize: "20px", opacity: pageNumber === 1 && "0.4", cursor: "pointer" }} onClick={() => [pageNumber === 1 ? "" : setpageNumber(pageNumber - 1)]} />
+                      <span style={{ fontSize: "21px", fontWeight: "medium" }}>{pageNumber}</span>
+                      <FaGreaterThan className='ms-2' style={{ fontSize: "20px", opacity: (userData.totalPages === pageNumber || userData.content?.length === 0) && "0.4", cursor: "pointer" }} onClick={() => [(userData.totalPages === pageNumber || userData.content?.length === 0)  ? "" : setpageNumber(pageNumber + 1)]} />
+                    </div>
 
-                <TableEmptyRows
-                  height={77}
-                  emptyRows={emptyRows(page, rowsPerPage, users.length)}
-                />
-
-                {notFound && <TableNoData query={filterName} />}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Scrollbar>
-
-        <TablePagination
-          page={page}
-          component="div"
-          count={users.length}
-          rowsPerPage={rowsPerPage}
-          onPageChange={handleChangePage}
-          rowsPerPageOptions={[5, 10, 25]}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </Card>
+                    <span className='hide2'>Total Pages:  {userData.totalPages}</span>
+                  </div>
+                </CTableHeaderCell>
+              </CTableRow>}
+          </CTableBody>
+        </CTable>
+      </div>
     </Container>
   );
 }

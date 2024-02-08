@@ -1,9 +1,11 @@
+/* eslint-disable perfectionist/sort-imports */
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { configureStore } from "@reduxjs/toolkit";
 
 import authSlice from "./slice/authSlice";
 import productSlice from "./slice/productSlice";
 import categoriesSlice from "./slice/categoriesSlice";
+import userSlice from "./slice/userSlice";
 
 
 const store = configureStore({
@@ -11,6 +13,7 @@ const store = configureStore({
     auth: authSlice,
     product: productSlice,
     categories: categoriesSlice,
+    user: userSlice,
   },
 });
 
