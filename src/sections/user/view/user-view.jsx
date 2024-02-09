@@ -1,3 +1,5 @@
+/* eslint-disable no-nested-ternary */
+/* eslint-disable react/jsx-boolean-value */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable perfectionist/sort-named-imports */
 /* eslint-disable spaced-comment */
@@ -38,17 +40,18 @@ import Swal from 'sweetalert2'
 import { GoVerified } from "react-icons/go";
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import { MagnifyingGlass } from 'react-loader-spinner'
 
 
 export default function UserView() {
   const location = useLocation()
   const dispatch = useDispatch();
-  const { getAllUserDetailsDATA, userDeleteMSG, userBannedMSG, userUnBannedMSG } = useSelector((state) => state.user)
+  const { getAllUserDetailsDATA, userDeleteMSG, userBannedMSG, userUnBannedMSG, getAllUserDetailsPENDING } = useSelector((state) => state.user)
   const [usesearch, setUsesearch] = useSearchParams()
 
   const locationPageNumber = +usesearch.get("pageNumber") === 0 ? (+usesearch.get("pageNumber") + 1) : +usesearch.get("pageNumber")
   const locationPageSize = +usesearch.get("pageSize") === 0 ? 7 : +usesearch.get("pageSize")
-  const locationSearch = usesearch.get("search")
+  const locationSearch = usesearch.get("search") === null ? "" : usesearch.get("search")
 
   const [pageSize, setpageSize] = React.useState(locationPageSize);
   const [pageNumber, setpageNumber] = React.useState(locationPageNumber);
@@ -63,7 +66,7 @@ export default function UserView() {
   const [deletePopUp, setdeletePopUp] = React.useState(false)
   const [bannedPopUp, setbannedPopUp] = React.useState(false)
   const [unbannedPopUp, setunbannedPopUp] = React.useState(false)
-  
+
 
   useEffect(() => {
     const items = {
@@ -73,6 +76,15 @@ export default function UserView() {
     }
     setUsesearch(items)
   }, [pageSize, pageNumber, search])
+
+  const handleClearSearch = () => {
+    setSearch("")
+    setpageNumber(1)
+    setpageSize(7)
+
+    const query = `?pageSize=7&pageNumber=1&search=`
+    dispatch(getAllUserDetailsAction(query))
+  }
 
   useEffect(() => {
     const items = {
@@ -87,10 +99,11 @@ export default function UserView() {
       dispatch(getAllUserDetailsAction(query))
       setUsesearch(items)
     }
-    if(search.length > 0){
+    if (search.length > 0) {
       dispatch(getAllUserDetailsAction(query))
-    }else{
-      dispatch(getAllUserDetailsAction(location.search))
+    } else {
+      const query2 = `?pageSize=7&pageNumber=1&search=`
+      dispatch(getAllUserDetailsAction(query2))
     }
   }, [location, userDeleteMSG, userBannedMSG, userUnBannedMSG, search])
 
@@ -193,8 +206,8 @@ export default function UserView() {
 
       {/* search input filed  */}
       <div className='flex items-center'>
-        <TextField className='mb-2 me-2' onChange={e => [setSearch(e.target.value.trim().toLowerCase()), setpageNumber(1), setpageSize(7)]} value={search} placeholder='Search by name and email' style={{ width: "200px", display: "flex", justifyContent: "center", textAlign: "center" }} type='text' id="standard-basic" label="" variant="standard" />
-        {search.length > 0 && <Button onClick={() => [setSearch(""), setpageNumber(1), setpageSize(7)]} type='button' color="error" variant="contained" size='small'>Clear</Button>}
+        <TextField className='mb-2 me-2' onChange={e => [setSearch(e.target.value.trim().toLowerCase()), setpageNumber(1), setpageSize(7)]} value={search} placeholder='Search by email' style={{ width: "200px", display: "flex", justifyContent: "center", textAlign: "center" }} type='text' id="standard-basic" label="" variant="standard" />
+        {search?.length > 0 && <Button onClick={() => handleClearSearch()} type='button' color="error" variant="contained" size='small'>Clear</Button>}
       </div>
 
       <div style={{ minWidth: "400px", overflowX: "auto" }}>
@@ -211,7 +224,7 @@ export default function UserView() {
             </CTableRow>
           </CTableHead>
           <CTableBody>
-            {userData && userData.content?.length > 0 ? userData.content?.map((ele) => {
+            {userData && getAllUserDetailsPENDING === false && userData.content?.length > 0 ? userData.content?.map((ele) => {
               const id = (userData.content.indexOf(ele) + 1) + (pageNumber > 1 && (+pageSize * (+pageNumber - 1)))
               return (
                 <CTableRow striped color='light'>
@@ -239,12 +252,30 @@ export default function UserView() {
               )
             })
               :
-              <CTableRow color="danger">
-                <CTableDataCell colSpan={7}><span className='h-20 text-3xl flex justify-center items-center text-red-900'>No users data available on this page</span></CTableDataCell>
-              </CTableRow>
+              getAllUserDetailsPENDING === true ?
+                <CTableRow color="light">
+                  <CTableDataCell colSpan={7}>
+                    <div className='flex items-center justify-center' style={{ height: "200px" }}>
+                      <MagnifyingGlass
+                        visible={true}
+                        height="80"
+                        width="80"
+                        ariaLabel="magnifying-glass-loading"
+                        wrapperStyle={{}}
+                        wrapperClass="magnifying-glass-wrapper"
+                        glassColor="#c0efff"
+                        color="#e15b64"
+                      />
+                    </div>
+                  </CTableDataCell>
+                </CTableRow>
+                :
+                <CTableRow color="danger">
+                  <CTableDataCell colSpan={7}><span className='h-20 text-3xl flex justify-center items-center text-red-900'>No users data available on this page</span></CTableDataCell>
+                </CTableRow>
             }
 
-            {userData && userData.totalPages > 1 &&
+            {userData && getAllUserDetailsPENDING === false && userData.totalPages > 1 &&
               <CTableRow color="primary">
                 <CTableHeaderCell colSpan={7}>
                   <div className='my-1 flex items-center justify-around sm:flex'>
@@ -283,6 +314,7 @@ export default function UserView() {
                   </div>
                 </CTableHeaderCell>
               </CTableRow>}
+
           </CTableBody>
         </CTable>
       </div>

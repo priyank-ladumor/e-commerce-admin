@@ -154,7 +154,7 @@ export const CreateThirdLvl = ({ setthirdCategorypopUp, openThirdForm, setopenTh
                                 label="Third Level"
                                 type='text'
                                 disabled={!SecondInput}
-                                onChange={(e) => setThirdInput(e.target.value.trim())}
+                                onChange={(e) => setThirdInput(e.target.value.trim().toLowerCase())}
                                 value={ThirdInput}
                                 helperText={ThirdInputErr && ThirdInputErr}
                                 variant="outlined"

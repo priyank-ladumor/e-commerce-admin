@@ -108,7 +108,7 @@ export const CreateSecondLvl = ({ setsecondCategorypopUp, openSecondForm, setope
                                 label="Second Level"
                                 type='text'
                                 disabled={!TopInput}
-                                onChange={(e) => setSecondInput(e.target.value.trim())}
+                                onChange={(e) => setSecondInput(e.target.value.trim().toLowerCase())}
                                 value={SecondInput}
                                 helperText={SecondInputErr && SecondInputErr}
                                 variant="outlined"

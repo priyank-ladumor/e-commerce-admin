@@ -76,6 +76,7 @@ import {
 import { createProductAction } from 'src/store/action/productAction';
 import Autocomplete from '@mui/material/Autocomplete';
 import { getSecondLvlCategoriesAction, getThirdLvlCategoriesAction, getTopLvlCategoriesAction } from 'src/store/action/categoriesAction';
+import { getSizesAction } from 'src/store/action/sizeAction';
 
 // import SizesTableModal from './child-create-product';
 // import { getColorAction } from 'src/store/action/colorAction';
@@ -107,20 +108,20 @@ const schema = yup.object({
     description: yup.string().min(40).max(800).required("Please enter product description"),
 });
 
-const sizes = [
-    {
-        label: 'sizes',
-        options: [
-            'XS',
-            'S',
-            'M',
-            'L',
-            'XL',
-            'XLL',
-            'XXS'
-        ],
-    },
-];
+// const sizes = [
+//     {
+//         label: 'sizes',
+//         options: [
+//             'XS',
+//             'S',
+//             'M',
+//             'L',
+//             'XL',
+//             'XLL',
+//             'XXS'
+//         ],
+//     },
+// ];
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -155,6 +156,7 @@ export default function ProductModal() {
     } = useForm({
         resolver: yupResolver(schema),
     });
+    const { getSizesDATA } = useSelector((state) => state.size)
 
     const [open, setOpen] = React.useState(false);
     const [images, setimages] = useState([]);
@@ -164,6 +166,9 @@ export default function ProductModal() {
     const [thumbnailerr, setthumbnailerr] = useState();
 
     const [selectedNames, setSelectedNames] = useState([]);
+    const [getSizeData, setgetSizeData] = useState()
+
+
 
     // const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -181,7 +186,15 @@ export default function ProductModal() {
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
-
+    useEffect(() => {
+        dispatch(getSizesAction())
+    }, [])
+    useEffect(() => {
+        if (getSizesDATA?.length > 0) {
+            setgetSizeData(getSizesDATA)
+        }
+        console.log(getSizeData, "in size");
+    }, [getSizesDATA])
 
     useEffect(() => {
         if (images?.length > 0) {
@@ -738,10 +751,9 @@ export default function ProductModal() {
                                                 MenuProps={MenuProps}
                                                 disabled={getSizeFromTable.length > 0}
                                             >
-                                                {sizes.map((name) => (
-                                                    <ListSubheader ><div className='text-lg text-700'>{name.label}:</div></ListSubheader>
-                                                ))}
-                                                {sizes.map((name) => (
+
+                                                <ListSubheader ><div className='text-lg text-700'>Sizes:</div></ListSubheader>
+                                                {getSizeData && getSizeData.map((name) => (
                                                     name.options.map((opt) => (
                                                         <MenuItem
                                                             key={opt}
@@ -860,13 +872,13 @@ export default function ProductModal() {
                                                                         value={sizeselect}
                                                                         onChange={handleChangeSelectSize}
                                                                         displayEmpty
-                                                                        style={{ padding: "0px", width: "60px" }}
+                                                                        style={{ padding: "0px", width: "65px" }}
                                                                         inputProps={{ 'aria-label': 'Without label' }}
                                                                     >
                                                                         <MenuItem value="">
-                                                                            <em>Size</em>
+                                                                            <em>Sizes</em>
                                                                         </MenuItem>
-                                                                        {sizes.map((name) => (
+                                                                        {getSizeData && getSizeData.map((name) => (
                                                                             name.options.map((opt) => (
                                                                                 <MenuItem
                                                                                     key={opt}

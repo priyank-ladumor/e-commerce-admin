@@ -71,7 +71,7 @@ export const CreateTopLvl = ({ settopCategorypopUp, openTopForm, setopenTopForm,
                                 id="standard-error-helper-text"
                                 label="Top Level"
                                 type='text'
-                                onChange={(e) => setTopInput(e.target.value.trim())}
+                                onChange={(e) => setTopInput(e.target.value.trim().toLowerCase())}
                                 value={TopInput}
                                 helperText={TopInputErr && TopInputErr}
                                 variant="outlined"

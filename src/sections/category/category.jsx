@@ -306,7 +306,7 @@ export const Category = () => {
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                 <Typography variant="h4">Category</Typography>
 
-                <Button onClick={handleOpen} variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>Category</Button>
+                <Button onClick={handleOpen} variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>New Category</Button>
                 <Modal
                     open={open}
                     onClose={handleClose}

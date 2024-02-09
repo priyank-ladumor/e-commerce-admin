@@ -1,7 +1,9 @@
+/* eslint-disable import/no-duplicates */
 /* eslint-disable perfectionist/sort-imports */
 /* eslint-disable import/no-unresolved */
 import SvgColor from 'src/components/svg-color';
 import { MdCategory } from "react-icons/md";
+import { MdFormatSize  } from "react-icons/md";
 
 // ----------------------------------------------------------------------
 
@@ -29,6 +31,11 @@ const navConfig = [
     title: 'category',
     path: '/category',
     icon: <MdCategory style={{fontSize:"24px"}} />,
+  },
+  {
+    title: 'size',
+    path: '/size',
+    icon: <MdFormatSize  style={{fontSize:"24px"}} />,
   }
 ];
 
