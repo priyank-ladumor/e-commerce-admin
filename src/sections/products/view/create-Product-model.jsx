@@ -98,14 +98,14 @@ const schema = yup.object({
     title: yup
         .string()
         .min(4, "title must be above 4 characters")
-        .max(25, "title must be with in 25 characters")
+        .max(55, "title must be with in 25 characters")
         .required("please enter title"),
     price: yup.number().min(50, "price must be above 50").typeError("please enter price").required(),
-    brand: yup.string().min(2).max(24).required("Please enter product brand"),
+    // brand: yup.string().min(2).max(24),
     // topLevelCategory: yup.string().min(2).max(24).matches(/^\S*$/, "No whitespaces allowed").required("Please enter product top level category"),
     // secondLevelCategory: yup.string().min(2).max(24).matches(/^\S*$/, "No whitespaces allowed").required("Please enter product second level category"),
     // thirdLevelCategory: yup.string().min(2).max(24).matches(/^\S*$/, "No whitespaces allowed").required("Please enter product third level category"),
-    description: yup.string().min(40).max(800).required("Please enter product description"),
+    description: yup.string().min(20).max(800).required("Please enter product description"),
 });
 
 // const sizes = [
@@ -164,6 +164,8 @@ export default function ProductModal() {
     const [imglenerr, setimglenerr] = useState();
     const [thumbnail, setthumbnail] = useState([]);
     const [thumbnailerr, setthumbnailerr] = useState();
+    const [brand, setbrand] = useState();
+    const [Fabric, setFabric] = useState();
 
     const [selectedNames, setSelectedNames] = useState([]);
     const [getSizeData, setgetSizeData] = useState()
@@ -508,7 +510,7 @@ export default function ProductModal() {
     const onSubmit = (data) => {
         const item = {
             title: data.title,
-            brand: data.brand,
+            brand: brand,
             topLevelCategory: topCategory,
             secondLevelCategory: secondCategory,
             thirdLevelCategory: thirdCategory,
@@ -518,6 +520,7 @@ export default function ProductModal() {
             sizesAndColor: TableAll,
             thumbnail: thumbnail,
             images: images,
+            fabric: Fabric
         }
 
         if (images.length > 0 && TableAll.length > 0 && thumbnail.length > 0 && topCategory?.length > 0 && secondCategory?.length > 0 && thirdCategory?.length > 0) {
@@ -590,6 +593,8 @@ export default function ProductModal() {
         setthirdCategoryError("")
         setsecondParentId("")
         setthirdParentId("")
+        setbrand("")
+        setFabric("")
     };
 
     return (
@@ -628,12 +633,28 @@ export default function ProductModal() {
                                     <div className="sm:col-span-6">
                                         <FormControl fullWidth sx={{ m: 0 }} size="large" >
                                             <TextField
-                                                error={errors && errors.brand?.message}
+                                                // error={errors && errors.brand?.message}
                                                 id="standard-error-helper-text"
                                                 label="Brand"
+                                                value={brand}
                                                 type='text'
-                                                {...register("brand")}
-                                                helperText={errors && errors.brand?.message}
+                                                onChange={(e) => setbrand(e.target.value)}
+                                                // {...register("brand")}
+                                                // helperText={errors && errors.brand?.message}
+                                                variant="outlined" />
+                                        </FormControl>
+                                    </div>
+                                    <div className="sm:col-span-12">
+                                        <FormControl fullWidth sx={{ m: 0 }} size="large" >
+                                            <TextField
+                                                // error={errors && errors.brand?.message}
+                                                id="standard-error-helper-text"
+                                                label="Fabric "
+                                                value={Fabric}
+                                                type='text'
+                                                onChange={(e) => setFabric(e.target.value)}
+                                                // {...register("brand")}
+                                                // helperText={errors && errors.brand?.message}
                                                 variant="outlined" />
                                         </FormControl>
                                     </div>
@@ -923,7 +944,7 @@ export default function ProductModal() {
                                             <FormControl fullWidth sx={{ m: 0 }} size="large" >
                                                 <input
                                                     id="uploadimg"
-                                                    accept="image/png, image/gif, image/jpeg"
+                                                    accept="image/png, image/gif, image/jpeg, image/webp"
                                                     type="file"
                                                     className="form-control"
                                                     name="photoo"
@@ -981,7 +1002,7 @@ export default function ProductModal() {
                                                 <input
                                                     id="uploadimg2"
                                                     multiple
-                                                    accept="image/png, image/gif, image/jpeg"
+                                                    accept="image/png, image/gif, image/jpeg, image/webp"
                                                     type="file"
                                                     className="form-control"
                                                     name="photoo"
