@@ -30,3 +30,28 @@ export const createProductAction = createAsyncThunk(
         }
     }
 );
+
+export const getFilterProductAction = createAsyncThunk(
+    "get/product",
+    async (data, { rejectWithValue }) => {
+        try {
+            const result = await axios.get(
+                `${import.meta.env.VITE_APP_BASE_URL}/products`,
+                // data,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        // "Authorization": localStorage.getItem("token")
+                    },
+                }
+            );
+            return result.data;
+        } catch (error) {
+            if (error.response && error.response.data.msg) {
+                return rejectWithValue(error.response.data.msg);
+            } else {
+                return rejectWithValue(error.message);
+            }
+        }
+    }
+);

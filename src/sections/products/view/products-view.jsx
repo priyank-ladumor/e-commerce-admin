@@ -1,25 +1,30 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable perfectionist/sort-named-imports */
+/* eslint-disable import/order */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 /* eslint-disable perfectionist/sort-imports */
 /* eslint-disable import/no-unresolved */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 
-import { products } from 'src/_mock/products';
-
 // import Button from '@mui/material/Button';
 import ProductCard from '../product-card';
 import ProductSort from '../product-sort';
 import ProductFilters from '../product-filters';
 import ProductModal from './create-Product-model';
+import { useDispatch, useSelector } from 'react-redux';
+import { getFilterProductAction } from 'src/store/action/productAction';
 
 // ----------------------------------------------------------------------
 
 export default function ProductsView() {
+  const dispatch = useDispatch()
+  const { getFilterProductDATA, createProductData } = useSelector((state) => state.product)
   const [openFilter, setOpenFilter] = useState(false);
 
   const handleOpenFilter = () => {
@@ -30,6 +35,18 @@ export default function ProductsView() {
     setOpenFilter(false);
   };
 
+  const [getProducts, setgetProducts] = useState()
+
+  useEffect(() => {
+    dispatch(getFilterProductAction())
+  }, [createProductData])
+
+  useEffect(() => {
+    if (getFilterProductDATA) {
+      setgetProducts(getFilterProductDATA.content)
+    }
+  }, [getFilterProductDATA])
+  
   return (
     <Container>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
@@ -58,7 +75,7 @@ export default function ProductsView() {
       </Stack>
 
       <Grid container spacing={3}>
-        {products.map((product) => (
+        {getProducts && getProducts.map((product) => (
           <Grid key={product.id} xs={12} sm={6} md={3}>
             <ProductCard product={product} />
           </Grid>

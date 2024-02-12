@@ -166,6 +166,7 @@ export default function ProductModal() {
     const [thumbnailerr, setthumbnailerr] = useState();
     const [brand, setbrand] = useState();
     const [Fabric, setFabric] = useState();
+    const [Material , setMaterial ] = useState();
 
     const [selectedNames, setSelectedNames] = useState([]);
     const [getSizeData, setgetSizeData] = useState()
@@ -520,7 +521,8 @@ export default function ProductModal() {
             sizesAndColor: TableAll,
             thumbnail: thumbnail,
             images: images,
-            fabric: Fabric
+            fabric: Fabric,
+            material: Material
         }
 
         if (images.length > 0 && TableAll.length > 0 && thumbnail.length > 0 && topCategory?.length > 0 && secondCategory?.length > 0 && thirdCategory?.length > 0) {
@@ -535,6 +537,9 @@ export default function ProductModal() {
             setOpenSwal(true)
             setsecondParentId("")
             setthirdParentId("")
+            setbrand("")
+            setFabric("")
+            setMaterial("")
         }
     }
     useEffect(() => {
@@ -595,6 +600,7 @@ export default function ProductModal() {
         setthirdParentId("")
         setbrand("")
         setFabric("")
+        setMaterial("")
     };
 
     return (
@@ -644,7 +650,7 @@ export default function ProductModal() {
                                                 variant="outlined" />
                                         </FormControl>
                                     </div>
-                                    <div className="sm:col-span-12">
+                                    <div className="sm:col-span-6">
                                         <FormControl fullWidth sx={{ m: 0 }} size="large" >
                                             <TextField
                                                 // error={errors && errors.brand?.message}
@@ -653,6 +659,20 @@ export default function ProductModal() {
                                                 value={Fabric}
                                                 type='text'
                                                 onChange={(e) => setFabric(e.target.value)}
+                                                // {...register("brand")}
+                                                // helperText={errors && errors.brand?.message}
+                                                variant="outlined" />
+                                        </FormControl>
+                                    </div>
+                                    <div className="sm:col-span-6">
+                                        <FormControl fullWidth sx={{ m: 0 }} size="large" >
+                                            <TextField
+                                                // error={errors && errors.brand?.message}
+                                                id="standard-error-helper-text"
+                                                label="Material "
+                                                value={Material}
+                                                type='text'
+                                                onChange={(e) => setMaterial(e.target.value)}
                                                 // {...register("brand")}
                                                 // helperText={errors && errors.brand?.message}
                                                 variant="outlined" />

@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable import/no-unresolved */
 import PropTypes from 'prop-types';
 
@@ -16,9 +17,10 @@ import { ColorPreview } from 'src/components/color-utils';
 
 export default function ShopProductCard({ product }) {
   const renderStatus = (
+    product.createdAt.split("T")[0] === new Date().toISOString().split("T")[0] &&
     <Label
       variant="filled"
-      color={(product.status === 'sale' && 'error') || 'info'}
+      color='info'
       sx={{
         zIndex: 9,
         top: 16,
@@ -27,15 +29,16 @@ export default function ShopProductCard({ product }) {
         textTransform: 'uppercase',
       }}
     >
-      {product.status}
+      new
     </Label>
   );
 
   const renderImg = (
+    product &&
     <Box
       component="img"
-      alt={product.name}
-      src={product.cover}
+      alt={product?.title}
+      src={product && product?.thumbnail[0]}
       sx={{
         top: 0,
         width: 1,
@@ -56,28 +59,28 @@ export default function ShopProductCard({ product }) {
           textDecoration: 'line-through',
         }}
       >
-        {product.priceSale && fCurrency(product.priceSale)}
+        {product?.price && fCurrency(product?.price)}
       </Typography>
       &nbsp;
-      {fCurrency(product.price)}
+      {fCurrency(product?.discountPrice)}
     </Typography>
   );
 
+  const Pcolors = product && product.sizesAndColor.map((clr) => clr.color)
+  const rmvSameClr = [...new Set(Pcolors)];
   return (
     <Card>
       <Box sx={{ pt: '100%', position: 'relative' }}>
-        {product.status && renderStatus}
+        {renderStatus && renderStatus}
 
         {renderImg}
-      </Box>
-
-      <Stack spacing={2} sx={{ p: 3 }}>
+      </Box><Stack spacing={2} sx={{ p: 3 }}>
         <Link color="inherit" underline="hover" variant="subtitle2" noWrap>
-          {product.name}
+          {product.title}
         </Link>
 
         <Stack direction="row" alignItems="center" justifyContent="space-between">
-          <ColorPreview colors={product.colors} />
+          <ColorPreview colors={rmvSameClr} />
           {renderPrice}
         </Stack>
       </Stack>
