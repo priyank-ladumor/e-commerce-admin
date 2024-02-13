@@ -62,14 +62,14 @@ export default function ShopProductCard({ product }) {
       >
         {/* {product?.price && FaRupeeSign(product?.price)} */}
         <div className='flex items-center justify-center'>
-        <FaRupeeSign style={{fontSize:"16px"}} />{product?.price}
+          <FaRupeeSign style={{ fontSize: "16px" }} />{product?.price}
         </div>
       </Typography>
       &nbsp;
       {/* {fCurrency(product?.discountPrice)} */}
       <div className='flex  items-center justify-center'>
-        <FaRupeeSign style={{fontSize:"16px"}} />{product?.discountPrice}
-        </div>
+        <FaRupeeSign style={{ fontSize: "16px" }} />{product?.discountPrice}
+      </div>
     </Typography>
   );
 

@@ -9,6 +9,7 @@ const initialState = {
     createProductMSG: null,
     createProductPending: false,
     getFilterProductDATA: null,
+    getFilterProductPENDING: false,
 };
 
 const productSlice = createSlice({
@@ -39,14 +40,17 @@ const productSlice = createSlice({
 
         builder.addCase(getFilterProductAction.pending, (state, { payload }) => {
             state.getFilterProductDATA = null;
+            state.getFilterProductPENDING = true;
         })
 
         builder.addCase(getFilterProductAction.fulfilled, (state, { payload }) => {
             state.getFilterProductDATA = payload;
+            state.getFilterProductPENDING = false;
         })
 
         builder.addCase(getFilterProductAction.rejected, (state, { payload }) => {
             state.getFilterProductDATA = null;
+            state.getFilterProductPENDING = false;
         })
     }
 });

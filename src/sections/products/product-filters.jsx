@@ -1,3 +1,7 @@
+/* eslint-disable arrow-body-style */
+/* eslint-disable react/prop-types */
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable perfectionist/sort-imports */
 /* eslint-disable import/no-unresolved */
 import PropTypes from 'prop-types';
 
@@ -8,16 +12,20 @@ import Button from '@mui/material/Button';
 import Drawer from '@mui/material/Drawer';
 import Rating from '@mui/material/Rating';
 import Divider from '@mui/material/Divider';
-import Checkbox from '@mui/material/Checkbox';
-import FormGroup from '@mui/material/FormGroup';
+// import Checkbox from '@mui/material/Checkbox';
+// import FormGroup from '@mui/material/FormGroup';
 import RadioGroup from '@mui/material/RadioGroup';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import FormControlLabel from '@mui/material/FormControlLabel';
-
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 import { ColorPicker } from 'src/components/color-utils';
+// import { useEffect, useState } from 'react';
+// import { useDispatch, useSelector } from 'react-redux';
+// import { getTopLvlCategoriesAction } from 'src/store/action/categoriesAction';
 
 // ----------------------------------------------------------------------
 
@@ -27,8 +35,7 @@ export const SORT_OPTIONS = [
   { value: 'priceDesc', label: 'Price: High-Low' },
   { value: 'priceAsc', label: 'Price: Low-High' },
 ];
-export const GENDER_OPTIONS = ['Men', 'Women', 'Kids'];
-export const CATEGORY_OPTIONS = ['All', 'Shose', 'Apparel', 'Accessories'];
+// export const CATEGORY_OPTIONS = ['All', 'Shose', 'Apparel', 'Accessories'];
 export const RATING_OPTIONS = ['up4Star', 'up3Star', 'up2Star', 'up1Star'];
 export const PRICE_OPTIONS = [
   { value: 'below', label: 'Below $25' },
@@ -48,26 +55,52 @@ export const COLOR_OPTIONS = [
 
 // ----------------------------------------------------------------------
 
-export default function ProductFilters({ openFilter, onOpenFilter, onCloseFilter }) {
+export default function ProductFilters({ openFilter, onOpenFilter, onCloseFilter, gettoplvl, settopCategory, topCategory,
+  getsecondlvl, setsecondCategory, secondCategory
+}) {
+
   const renderGender = (
     <Stack spacing={1}>
-      <Typography variant="subtitle2">Gender</Typography>
-      <FormGroup>
-        {GENDER_OPTIONS.map((item) => (
-          <FormControlLabel key={item} control={<Checkbox />} label={item} />
-        ))}
-      </FormGroup>
+      <FormControl>
+        <FormLabel id="demo-radio-buttons-group-label">Gender</FormLabel>
+        <RadioGroup
+          aria-labelledby="demo-radio-buttons-group-label"
+          name="radio-buttons-group"
+          value={topCategory}
+          onChange={e => settopCategory(e.target.value)}
+        >
+          {
+            gettoplvl?.length > 0 && gettoplvl.map((ele) =>
+              <FormControlLabel value={ele.name} control={<Radio />} label={ele.name.charAt(0).toUpperCase() + ele.name.slice(1)} />
+            )
+          }
+        </RadioGroup>
+      </FormControl>
     </Stack>
   );
 
+        const parentId = gettoplvl && gettoplvl.map((ele) => ele)
+console.log(parentId[0]._id);
   const renderCategory = (
     <Stack spacing={1}>
-      <Typography variant="subtitle2">Category</Typography>
-      <RadioGroup>
-        {CATEGORY_OPTIONS.map((item) => (
-          <FormControlLabel key={item} value={item} control={<Radio />} label={item} />
-        ))}
-      </RadioGroup>
+      <FormControl>
+        <FormLabel id="demo-radio-buttons-group-label">Men</FormLabel>
+        <RadioGroup
+          aria-labelledby="demo-radio-buttons-group-label"
+          name="radio-buttons-group"
+          value={secondCategory}
+          onChange={e => setsecondCategory(e.target.value)}
+        >
+          {
+            getsecondlvl?.length > 0 && getsecondlvl.map((ele) => {
+              return (
+                <FormControlLabel value={ele.name} control={<Radio />} label={ele.name.split("men_")[1]} />
+              )
+            }
+            )
+          }
+        </RadioGroup>
+      </FormControl>
     </Stack>
   );
 

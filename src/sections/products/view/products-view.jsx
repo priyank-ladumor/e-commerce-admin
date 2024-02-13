@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-boolean-value */
+/* eslint-disable no-nested-ternary */
 /* eslint-disable object-shorthand */
 /* eslint-disable import/no-duplicates */
 /* eslint-disable react-hooks/exhaustive-deps */
@@ -27,25 +29,59 @@ import { getFilterProductAction } from 'src/store/action/productAction';
 import Pagination from '@mui/material/Pagination';
 import { useSearchParams } from "react-router-dom";
 import { useLocation } from 'react-router-dom';
+import { getSecondLvlCategoriesAction, getTopLvlCategoriesAction } from 'src/store/action/categoriesAction';
+import { Bars } from 'react-loader-spinner'
 
 // ----------------------------------------------------------------------
 
 export default function ProductsView() {
   const dispatch = useDispatch()
   const location = useLocation()
+  const { getTopLvlCategoriesData, getSecondLvlCategoriesData } = useSelector((state) => state.categories)
+  const { getFilterProductDATA, createProductData, getFilterProductPENDING } = useSelector((state) => state.product)
+
   const [usesearch, setUsesearch] = useSearchParams()
 
   const locationPageNumber = +usesearch.get("pageNumber") === 0 ? (+usesearch.get("pageNumber") + 1) : +usesearch.get("pageNumber")
   const locationPageSize = +usesearch.get("pageSize") === 0 ? 12 : +usesearch.get("pageSize")
-  const locationSort = usesearch.get("sort") === null ? "high_to_low" : usesearch.get("sort")
-
-  const { getFilterProductDATA, createProductData } = useSelector((state) => state.product)
-  const [openFilter, setOpenFilter] = useState(false);
-
+  const locationSort = usesearch.get("sort") === null ? "" : usesearch.get("sort")
+  const locationGender = usesearch.get("gender") === null ? "" : usesearch.get("gender")
+  const locationCategory = usesearch.get("category") === null ? "" : usesearch.get("category")
 
   const [pageNumber, setpageNumber] = useState(locationPageNumber);
   const [pageSize, setpageSize] = useState(locationPageSize);
   const [sort, setsort] = useState(locationSort);
+  const [topCategory, settopCategory] = useState(locationGender)
+  const [secondCategory, setsecondCategory] = useState(locationCategory)
+
+
+
+  const [gettoplvl, setgettoplvl] = useState("")
+  const [getsecondlvl, setgetsecondlvl] = useState("")
+
+  useEffect(() => {
+    dispatch(getTopLvlCategoriesAction())
+  }, [])
+
+  useEffect(() => {
+    if (getTopLvlCategoriesData) {
+      setgettoplvl(getTopLvlCategoriesData?.content)
+    }
+  }, [getTopLvlCategoriesData])
+
+  useEffect(() => {
+    const query = `?pageNumber=0&pageSize=0`
+    dispatch(getSecondLvlCategoriesAction(query))
+  }, [])
+
+  useEffect(() => {
+    if (getSecondLvlCategoriesData) {
+      setgetsecondlvl(getSecondLvlCategoriesData?.content)
+    }
+  }, [getSecondLvlCategoriesData])
+
+  console.log(getsecondlvl);
+  const [openFilter, setOpenFilter] = useState(false);
 
   const handleOpenFilter = () => {
     setOpenFilter(true);
@@ -55,11 +91,17 @@ export default function ProductsView() {
     setOpenFilter(false);
   };
 
-  const [getProducts, setgetProducts] = useState()
+  useEffect(() => {
+    setUsesearch({ pageSize, pageNumber, sort, gender: topCategory, category: secondCategory })
+  }, [location.search, pageSize, pageNumber, sort, topCategory, secondCategory])
 
   useEffect(() => {
     dispatch(getFilterProductAction(location.search))
   }, [createProductData, location.search])
+
+
+  const [getProducts, setgetProducts] = useState()
+
 
   useEffect(() => {
     if (getFilterProductDATA) {
@@ -78,13 +120,8 @@ export default function ProductsView() {
   }
 
   useEffect(() => {
-    setUsesearch({ pageSize, pageNumber, sort })
-  }, [location.search, pageSize, pageNumber, sort])
-
-  useEffect(() => {
     window.scrollTo(0, 0)
   }, [getProducts])
-  console.log(usesearch);
 
   return (
     <Container>
@@ -139,9 +176,12 @@ export default function ProductsView() {
                 value={sort}
                 onChange={handleChangeSort}
                 displayEmpty
-                style={{ padding: "0px", width: "145px" }}
+                style={{ padding: "0px", width: sort.length > 0 ? "145px" : "61px" }}
                 inputProps={{ 'aria-label': 'Without label' }}
               >
+                <MenuItem value="">
+                  <em>none</em>
+                </MenuItem>
                 <MenuItem value="high_to_low">
                   <em>Price: High-Low</em>
                 </MenuItem>
@@ -157,17 +197,43 @@ export default function ProductsView() {
             openFilter={openFilter}
             onOpenFilter={handleOpenFilter}
             onCloseFilter={handleCloseFilter}
+            gettoplvl={gettoplvl}
+            settopCategory={settopCategory}
+            topCategory={topCategory}
+            getsecondlvl={getsecondlvl}
+            setsecondCategory={setsecondCategory}
+            secondCategory={secondCategory}
           />
-
         </Stack>
       </Stack>
 
       <Grid container spacing={3} className="mb-5" >
-        {getProducts && getProducts?.content.map((product) => (
-          <Grid key={product.id} xs={12} sm={6} md={3}>
-            <ProductCard product={product} />
-          </Grid>
-        ))}
+        {
+          getFilterProductPENDING ?
+            <div className='flex justify-center items-center  h-80 w-[100%]'>
+              <Bars
+                visible={true}
+                height="80"
+                width="80"
+                ariaLabel="magnifying-glass-loading"
+                wrapperStyle={{}}
+                wrapperClass="magnifying-glass-wrapper"
+                glassColor="#c0efff"
+                color="blue"
+              />
+            </div>
+            :
+            getProducts && getProducts.content.length > 0 ?
+              getProducts.content.map((product) => (
+                <Grid key={product.id} xs={12} sm={6} md={3}>
+                  <ProductCard product={product} />
+                </Grid>
+              ))
+              :
+              <div className='flex justify-center items-center bg-red-100 h-60 w-[100%]'>
+                <span className='font-bold' style={{ fontSize: "35px" }} >No filtered product found</span>
+              </div>
+        }
       </Grid>
 
       <Stack spacing={2} className='flex items-center justify-center mt-10' >
