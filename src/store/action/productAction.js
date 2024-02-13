@@ -36,7 +36,7 @@ export const getFilterProductAction = createAsyncThunk(
     async (data, { rejectWithValue }) => {
         try {
             const result = await axios.get(
-                `${import.meta.env.VITE_APP_BASE_URL}/products`,
+                `${import.meta.env.VITE_APP_BASE_URL}/products/${data}`,
                 // data,
                 {
                     headers: {

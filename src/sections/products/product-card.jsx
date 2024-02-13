@@ -1,3 +1,4 @@
+/* eslint-disable perfectionist/sort-imports */
 /* eslint-disable react/prop-types */
 /* eslint-disable import/no-unresolved */
 import PropTypes from 'prop-types';
@@ -8,7 +9,7 @@ import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { fCurrency } from 'src/utils/format-number';
+import { FaRupeeSign } from "react-icons/fa";
 
 import Label from 'src/components/label';
 import { ColorPreview } from 'src/components/color-utils';
@@ -50,7 +51,7 @@ export default function ShopProductCard({ product }) {
   );
 
   const renderPrice = (
-    <Typography variant="subtitle1">
+    <Typography variant="subtitle1 flex">
       <Typography
         component="span"
         variant="body1"
@@ -59,10 +60,16 @@ export default function ShopProductCard({ product }) {
           textDecoration: 'line-through',
         }}
       >
-        {product?.price && fCurrency(product?.price)}
+        {/* {product?.price && FaRupeeSign(product?.price)} */}
+        <div className='flex items-center justify-center'>
+        <FaRupeeSign style={{fontSize:"16px"}} />{product?.price}
+        </div>
       </Typography>
       &nbsp;
-      {fCurrency(product?.discountPrice)}
+      {/* {fCurrency(product?.discountPrice)} */}
+      <div className='flex  items-center justify-center'>
+        <FaRupeeSign style={{fontSize:"16px"}} />{product?.discountPrice}
+        </div>
     </Typography>
   );
 
