@@ -166,7 +166,7 @@ export default function ProductModal() {
     const [thumbnailerr, setthumbnailerr] = useState();
     const [brand, setbrand] = useState();
     const [Fabric, setFabric] = useState();
-    const [Material , setMaterial ] = useState();
+    const [Material, setMaterial] = useState();
 
     const [selectedNames, setSelectedNames] = useState([]);
     const [getSizeData, setgetSizeData] = useState()
@@ -192,11 +192,11 @@ export default function ProductModal() {
     useEffect(() => {
         dispatch(getSizesAction())
     }, [])
+    
     useEffect(() => {
         if (getSizesDATA?.length > 0) {
             setgetSizeData(getSizesDATA)
         }
-        console.log(getSizeData, "in size");
     }, [getSizesDATA])
 
     useEffect(() => {

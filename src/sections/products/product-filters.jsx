@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable no-unneeded-ternary */
 /* eslint-disable react/jsx-no-bind */
 /* eslint-disable arrow-body-style */
@@ -27,7 +29,9 @@ import Scrollbar from 'src/components/scrollbar';
 import { CompactPicker } from 'react-color'
 import Slider from '@mui/material/Slider';
 import TextField from '@mui/material/TextField';
-
+// import {
+//   MenuItem,
+// } from "@mui/material";
 
 // import { useEffect, useState } from 'react';
 // import { useDispatch, useSelector } from 'react-redux';
@@ -40,13 +44,14 @@ import TextField from '@mui/material/TextField';
 // ----------------------------------------------------------------------
 
 export default function ProductFilters({ openFilter, onOpenFilter, onCloseFilter, gettoplvl, settopCategory, topCategory,
-  getsecondlvl, setsecondCategory, secondCategory, parentId, setparentId, setcolor, color, setmaxPrice, setminPrice
+  getsecondlvl, setsecondCategory, secondCategory, parentId, setparentId, setcolor, color, setmaxPrice, setminPrice,
+  getsizedata, sizes, setsizes, available, setavailable, minDiscount, setminDiscount
 }) {
 
   const renderGender = (
     <Stack spacing={1}>
       <FormControl>
-        <FormLabel id="demo-radio-buttons-group-label">Gender</FormLabel>
+        <FormLabel id="demo-radio-buttons-group-label">Gender:</FormLabel>
         <RadioGroup
           aria-labelledby="demo-radio-buttons-group-label"
           name="radio-buttons-group"
@@ -63,12 +68,11 @@ export default function ProductFilters({ openFilter, onOpenFilter, onCloseFilter
     </Stack>
   );
 
-
   const renderCategory = (
     parentId &&
     <Stack spacing={1}>
       <FormControl>
-        <FormLabel id="demo-radio-buttons-group-label">Category</FormLabel>
+        <FormLabel id="demo-radio-buttons-group-label">Category:</FormLabel>
         <RadioGroup
           aria-labelledby="demo-radio-buttons-group-label"
           name="radio-buttons-group"
@@ -90,7 +94,7 @@ export default function ProductFilters({ openFilter, onOpenFilter, onCloseFilter
 
   const renderColors = (
     <Stack spacing={1}>
-      <FormLabel id="demo-radio-buttons-group-label">Colors</FormLabel>
+      <FormLabel id="demo-radio-buttons-group-label">Colors:</FormLabel>
       <CompactPicker color={color} onChange={(clr) => setcolor(clr.hex)} />
     </Stack>
   );
@@ -108,7 +112,7 @@ export default function ProductFilters({ openFilter, onOpenFilter, onCloseFilter
       label: '',
     },
   ];
-
+  console.log(getsizedata && getsizedata);
   const handleChange = (_, newValue) => {
     setprice(newValue);
     SetMIN(newValue[0]);
@@ -121,20 +125,21 @@ export default function ProductFilters({ openFilter, onOpenFilter, onCloseFilter
     setprice([MIN, MAX])
   }, [MIN, MAX])
 
-
   const handlecngMIN = (e) => {
     setminPrice(e.target.value.trim())
     SetMIN(e.target.value.trim())
     setprice([MIN, MAX])
   }
+
   const handlecngMAX = (e) => {
     setmaxPrice(e.target.value.trim())
     SetMAX(e.target.value.trim())
     setprice([MIN, MAX])
   }
+
   const renderPrice = (
     <Stack spacing={1}>
-      <FormLabel id="demo-radio-buttons-group-label">Price</FormLabel>
+      <FormLabel id="demo-radio-buttons-group-label">Price:</FormLabel>
       <Box sx={{ width: 240 }}>
         <Slider
           marks={marks}
@@ -159,12 +164,54 @@ export default function ProductFilters({ openFilter, onOpenFilter, onCloseFilter
     </Stack>
   );
 
-  const renderRating = (
+  const renderSizes = (
     <Stack spacing={1}>
-      <FormLabel id="demo-radio-buttons-group-label">Size</FormLabel>
-
+      <FormLabel id="demo-radio-buttons-group-label">Size:</FormLabel>
+      <div className=" grid grid-cols-4 ">
+        {getsizedata && getsizedata.map((name) => (
+          name.options.map((opt) => (
+            <div onClick={() => setsizes(opt)}
+              className='flex m-2 cursor-pointer font-semibold rounded-full justify-center items-center p-[10px]'
+              style={{ width: "50px", fontSize: "16px", border: sizes === opt ? "2px black solid" : "2px gray solid", }} >
+              {opt.split("_")[0]}
+            </div>
+          ))
+        ))}
+      </div>
     </Stack>
   );
+
+  const renderminDiscount = (
+    <Stack spacing={1}>
+      {/* <FormControl> */}
+        <div className='flex items-center' >
+          <FormLabel id="demo-radio-buttons-group-label">Min Discount:</FormLabel>
+          <TextField className='ms-2' type='number' InputProps={{ inputProps: { min: 0, max: 99 } }}
+             onChange={e => setminDiscount(e.target.value)} value={minDiscount} style={{ width: "40px" }} id="standard-basic" variant="standard" />
+        </div>
+      {/* </FormControl> */}
+    </Stack>
+  )
+
+  const renderAvailable = (
+    <Stack spacing={1}>
+      <FormControl>
+        <FormLabel id="demo-radio-buttons-group-label">Available:</FormLabel>
+        <RadioGroup
+          defaultValue="female"
+          aria-labelledby="demo-customized-radios"
+          name="customized-radios"
+          value={available}
+          onChange={(e) => setavailable(e.target.value)}
+        >
+          <div className='flex text-black font-semibold'>
+            <FormControlLabel value="in_stock" control={<Radio />} label="In stock" />
+            <FormControlLabel value="out_of_stock" control={<Radio />} label="Out of stock" />
+          </div>
+        </RadioGroup>
+      </FormControl>
+    </Stack>
+  )
 
   return (
     <>
@@ -211,7 +258,11 @@ export default function ProductFilters({ openFilter, onOpenFilter, onCloseFilter
 
             {renderPrice}
 
-            {renderRating}
+            {renderSizes}
+
+            {renderminDiscount}
+
+            {renderAvailable}
           </Stack>
         </Scrollbar>
 
@@ -223,7 +274,7 @@ export default function ProductFilters({ openFilter, onOpenFilter, onCloseFilter
             color="inherit"
             variant="outlined"
             onClick={() => [setparentId(""), settopCategory(""), setsecondCategory(""), setcolor(""), setprice([0, 10000]), SetMIN(0), SetMAX(10000),
-            setmaxPrice(""), setminPrice("")]}
+            setmaxPrice(""), setminPrice(""), setsizes(""), setavailable(""), setminDiscount("")]}
             startIcon={<Iconify icon="ic:round-clear-all" />}
           >
             Clear All
