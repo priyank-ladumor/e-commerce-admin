@@ -1,16 +1,18 @@
+/* eslint-disable no-unneeded-ternary */
+/* eslint-disable react/jsx-no-bind */
 /* eslint-disable arrow-body-style */
 /* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable perfectionist/sort-imports */
 /* eslint-disable import/no-unresolved */
 import PropTypes from 'prop-types';
+import * as React from 'react';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Radio from '@mui/material/Radio';
 import Button from '@mui/material/Button';
 import Drawer from '@mui/material/Drawer';
-import Rating from '@mui/material/Rating';
 import Divider from '@mui/material/Divider';
 // import Checkbox from '@mui/material/Checkbox';
 // import FormGroup from '@mui/material/FormGroup';
@@ -22,41 +24,23 @@ import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
-import { ColorPicker } from 'src/components/color-utils';
+import { CompactPicker } from 'react-color'
+import Slider from '@mui/material/Slider';
+import TextField from '@mui/material/TextField';
+
+
 // import { useEffect, useState } from 'react';
 // import { useDispatch, useSelector } from 'react-redux';
 // import { getTopLvlCategoriesAction } from 'src/store/action/categoriesAction';
 
 // ----------------------------------------------------------------------
 
-export const SORT_OPTIONS = [
-  { value: 'featured', label: 'Featured' },
-  { value: 'newest', label: 'Newest' },
-  { value: 'priceDesc', label: 'Price: High-Low' },
-  { value: 'priceAsc', label: 'Price: Low-High' },
-];
-// export const CATEGORY_OPTIONS = ['All', 'Shose', 'Apparel', 'Accessories'];
-export const RATING_OPTIONS = ['up4Star', 'up3Star', 'up2Star', 'up1Star'];
-export const PRICE_OPTIONS = [
-  { value: 'below', label: 'Below $25' },
-  { value: 'between', label: 'Between $25 - $75' },
-  { value: 'above', label: 'Above $75' },
-];
-export const COLOR_OPTIONS = [
-  '#00AB55',
-  '#000000',
-  '#FFFFFF',
-  '#FFC0CB',
-  '#FF4842',
-  '#1890FF',
-  '#94D82D',
-  '#FFC107',
-];
+
 
 // ----------------------------------------------------------------------
 
 export default function ProductFilters({ openFilter, onOpenFilter, onCloseFilter, gettoplvl, settopCategory, topCategory,
-  getsecondlvl, setsecondCategory, secondCategory
+  getsecondlvl, setsecondCategory, secondCategory, parentId, setparentId, setcolor, color, setmaxPrice, setminPrice
 }) {
 
   const renderGender = (
@@ -67,11 +51,11 @@ export default function ProductFilters({ openFilter, onOpenFilter, onCloseFilter
           aria-labelledby="demo-radio-buttons-group-label"
           name="radio-buttons-group"
           value={topCategory}
-          onChange={e => settopCategory(e.target.value)}
+          onChange={e => [settopCategory(e.target.value), setsecondCategory("")]}
         >
           {
             gettoplvl?.length > 0 && gettoplvl.map((ele) =>
-              <FormControlLabel value={ele.name} control={<Radio />} label={ele.name.charAt(0).toUpperCase() + ele.name.slice(1)} />
+              <FormControlLabel value={ele.name} control={<Radio />} onClick={() => setparentId(ele._id)} label={ele.name.charAt(0).toUpperCase() + ele.name.slice(1)} />
             )
           }
         </RadioGroup>
@@ -79,12 +63,12 @@ export default function ProductFilters({ openFilter, onOpenFilter, onCloseFilter
     </Stack>
   );
 
-        const parentId = gettoplvl && gettoplvl.map((ele) => ele)
-console.log(parentId[0]._id);
+
   const renderCategory = (
+    parentId &&
     <Stack spacing={1}>
       <FormControl>
-        <FormLabel id="demo-radio-buttons-group-label">Men</FormLabel>
+        <FormLabel id="demo-radio-buttons-group-label">Category</FormLabel>
         <RadioGroup
           aria-labelledby="demo-radio-buttons-group-label"
           name="radio-buttons-group"
@@ -94,7 +78,7 @@ console.log(parentId[0]._id);
           {
             getsecondlvl?.length > 0 && getsecondlvl.map((ele) => {
               return (
-                <FormControlLabel value={ele.name} control={<Radio />} label={ele.name.split("men_")[1]} />
+                <FormControlLabel value={ele.name} control={<Radio />} label={ele.name.includes("kids_") ? ele.name.split("kids_")[1].charAt(0).toUpperCase() + ele.name.split("kids_")[1].slice(1) : ele.name.split("men_" && "_")[1].charAt(0).toUpperCase() + ele.name.split("men_" && "_")[1].slice(1)} />
               )
             }
             )
@@ -106,61 +90,79 @@ console.log(parentId[0]._id);
 
   const renderColors = (
     <Stack spacing={1}>
-      <Typography variant="subtitle2">Colors</Typography>
-      <ColorPicker
-        name="colors"
-        selected={[]}
-        colors={COLOR_OPTIONS}
-        onSelectColor={(color) => [].includes(color)}
-        sx={{ maxWidth: 38 * 4 }}
-      />
+      <FormLabel id="demo-radio-buttons-group-label">Colors</FormLabel>
+      <CompactPicker color={color} onChange={(clr) => setcolor(clr.hex)} />
     </Stack>
   );
 
+  const [MIN, SetMIN] = React.useState(0)
+  const [MAX, SetMAX] = React.useState(10000)
+  const [price, setprice] = React.useState([MIN, MAX])
+  const marks = [
+    {
+      value: MIN,
+      label: '',
+    },
+    {
+      value: MAX,
+      label: '',
+    },
+  ];
+
+  const handleChange = (_, newValue) => {
+    setprice(newValue);
+    SetMIN(newValue[0]);
+    SetMAX(newValue[1]);
+    setminPrice(newValue[0])
+    setmaxPrice(newValue[1])
+  };
+
+  React.useEffect(() => {
+    setprice([MIN, MAX])
+  }, [MIN, MAX])
+
+
+  const handlecngMIN = (e) => {
+    setminPrice(e.target.value.trim())
+    SetMIN(e.target.value.trim())
+    setprice([MIN, MAX])
+  }
+  const handlecngMAX = (e) => {
+    setmaxPrice(e.target.value.trim())
+    SetMAX(e.target.value.trim())
+    setprice([MIN, MAX])
+  }
   const renderPrice = (
     <Stack spacing={1}>
-      <Typography variant="subtitle2">Price</Typography>
-      <RadioGroup>
-        {PRICE_OPTIONS.map((item) => (
-          <FormControlLabel
-            key={item.value}
-            value={item.value}
-            control={<Radio />}
-            label={item.label}
-          />
-        ))}
-      </RadioGroup>
+      <FormLabel id="demo-radio-buttons-group-label">Price</FormLabel>
+      <Box sx={{ width: 240 }}>
+        <Slider
+          marks={marks}
+          step={10}
+          value={price}
+          valueLabelDisplay="auto"
+          min={0}
+          max={MAX > 10000 ? MAX : 10000}
+          onChange={handleChange}
+        />
+        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div className='flex items-center'>
+            <TextField className='mb-2 me-2' inputProps={{ min: 0 }}
+              type='number' onChange={e => handlecngMIN(e)} label="Min" value={MIN} style={{ width: "50px", display: "flex", justifyContent: "center", textAlign: "center" }} id="standard-basic" variant="standard" />
+          </div>
+          <div className='flex items-center'>
+            <TextField className='mb-2 me-2' inputProps={{ min: 10 }}
+              type='number' onChange={e => handlecngMAX(e)} value={MAX} style={{ width: "50px", display: "flex", justifyContent: "center", textAlign: "center" }} id="standard-basic" label="Max" variant="standard" />
+          </div>
+        </Box>
+      </Box>
     </Stack>
   );
 
   const renderRating = (
     <Stack spacing={1}>
-      <Typography variant="subtitle2">Rating</Typography>
-      <RadioGroup>
-        {RATING_OPTIONS.map((item, index) => (
-          <FormControlLabel
-            key={item}
-            value={item}
-            control={
-              <Radio
-                disableRipple
-                color="default"
-                icon={<Rating readOnly value={4 - index} />}
-                checkedIcon={<Rating readOnly value={4 - index} />}
-                sx={{
-                  '&:hover': { bgcolor: 'transparent' },
-                }}
-              />
-            }
-            label="& Up"
-            sx={{
-              my: 0.5,
-              borderRadius: 1,
-              '&:hover': { opacity: 0.48 },
-            }}
-          />
-        ))}
-      </RadioGroup>
+      <FormLabel id="demo-radio-buttons-group-label">Size</FormLabel>
+
     </Stack>
   );
 
@@ -200,7 +202,7 @@ console.log(parentId[0]._id);
         <Divider />
 
         <Scrollbar>
-          <Stack spacing={3} sx={{ p: 3 }}>
+          <Stack spacing={3} sx={{ p: 2 }}>
             {renderGender}
 
             {renderCategory}
@@ -220,6 +222,8 @@ console.log(parentId[0]._id);
             type="submit"
             color="inherit"
             variant="outlined"
+            onClick={() => [setparentId(""), settopCategory(""), setsecondCategory(""), setcolor(""), setprice([0, 10000]), SetMIN(0), SetMAX(10000),
+            setmaxPrice(""), setminPrice("")]}
             startIcon={<Iconify icon="ic:round-clear-all" />}
           >
             Clear All

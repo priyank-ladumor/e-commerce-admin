@@ -1,3 +1,4 @@
+/* eslint-disable use-isnan */
 /* eslint-disable react/jsx-boolean-value */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable object-shorthand */
@@ -45,20 +46,27 @@ export default function ProductsView() {
   const locationPageNumber = +usesearch.get("pageNumber") === 0 ? (+usesearch.get("pageNumber") + 1) : +usesearch.get("pageNumber")
   const locationPageSize = +usesearch.get("pageSize") === 0 ? 12 : +usesearch.get("pageSize")
   const locationSort = usesearch.get("sort") === null ? "" : usesearch.get("sort")
+  const locationColor = usesearch.get("color") === null ? "" : usesearch.get("color")
   const locationGender = usesearch.get("gender") === null ? "" : usesearch.get("gender")
   const locationCategory = usesearch.get("category") === null ? "" : usesearch.get("category")
+  const locationMaxPrice = +usesearch.get("maxPrice") === 0 ? "" : usesearch.get("maxPrice")
+  const locationMinPrice = +usesearch.get("minPrice") === 0 ? "" : usesearch.get("minPrice")
 
   const [pageNumber, setpageNumber] = useState(locationPageNumber);
   const [pageSize, setpageSize] = useState(locationPageSize);
   const [sort, setsort] = useState(locationSort);
+  const [color, setcolor] = useState(locationColor);
   const [topCategory, settopCategory] = useState(locationGender)
   const [secondCategory, setsecondCategory] = useState(locationCategory)
-
-
+  const [maxPrice, setmaxPrice] = useState(locationMaxPrice);
+  const [minPrice, setminPrice] = useState(locationMinPrice);
 
   const [gettoplvl, setgettoplvl] = useState("")
+  // for category find
+  const [parentId, setparentId] = useState("")
   const [getsecondlvl, setgetsecondlvl] = useState("")
 
+  console.log(+usesearch.get("maxPrice"), "duefhe");
   useEffect(() => {
     dispatch(getTopLvlCategoriesAction())
   }, [])
@@ -70,9 +78,11 @@ export default function ProductsView() {
   }, [getTopLvlCategoriesData])
 
   useEffect(() => {
-    const query = `?pageNumber=0&pageSize=0`
+    // const query = `?pageNumber=0&pageSize=0`
+    // const secondparentId = gettoplvl && gettoplvl.map((ele) => ele)
+    const query = `?parentCategory=${parentId}`
     dispatch(getSecondLvlCategoriesAction(query))
-  }, [])
+  }, [parentId])
 
   useEffect(() => {
     if (getSecondLvlCategoriesData) {
@@ -80,7 +90,6 @@ export default function ProductsView() {
     }
   }, [getSecondLvlCategoriesData])
 
-  console.log(getsecondlvl);
   const [openFilter, setOpenFilter] = useState(false);
 
   const handleOpenFilter = () => {
@@ -92,8 +101,8 @@ export default function ProductsView() {
   };
 
   useEffect(() => {
-    setUsesearch({ pageSize, pageNumber, sort, gender: topCategory, category: secondCategory })
-  }, [location.search, pageSize, pageNumber, sort, topCategory, secondCategory])
+    setUsesearch({ pageSize, pageNumber, sort, gender: topCategory, category: secondCategory, color, minPrice, maxPrice })
+  }, [location.search, pageSize, pageNumber, sort, topCategory, secondCategory, color, minPrice, maxPrice])
 
   useEffect(() => {
     dispatch(getFilterProductAction(location.search))
@@ -203,6 +212,12 @@ export default function ProductsView() {
             getsecondlvl={getsecondlvl}
             setsecondCategory={setsecondCategory}
             secondCategory={secondCategory}
+            parentId={parentId}
+            setparentId={setparentId}
+            setcolor={setcolor}
+            color={color}
+            setmaxPrice={setmaxPrice}
+            setminPrice={setminPrice}
           />
         </Stack>
       </Stack>
