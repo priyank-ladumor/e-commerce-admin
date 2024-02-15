@@ -43,6 +43,8 @@ export default function ProductsView() {
   const { getTopLvlCategoriesData, getSecondLvlCategoriesData } = useSelector((state) => state.categories)
   const { getSizesDATA } = useSelector((state) => state.size)
   const { getFilterProductDATA, createProductData, getFilterProductPENDING } = useSelector((state) => state.product)
+  const { deleteProductMSG } = useSelector((state) => state.product)
+
 
   const [usesearch, setUsesearch] = useSearchParams()
 
@@ -78,9 +80,14 @@ export default function ProductsView() {
   const [parentId, setparentId] = useState("")
   const [getsecondlvl, setgetsecondlvl] = useState("")
 
+  // del product id 
+  const [delProductPopUp, setdelProductPopUp] = useState(false)
+
+console.log(deleteProductMSG);
+
   useEffect(() => {
     dispatch(getTopLvlCategoriesAction())
-  }, [])
+  }, [deleteProductMSG])
 
   useEffect(() => {
     if (getTopLvlCategoriesData) {
@@ -103,7 +110,7 @@ export default function ProductsView() {
 
   useEffect(() => {
     dispatch(getSizesAction())
-  }, [])
+  }, [deleteProductMSG])
 
   useEffect(() => {
     if (getSizesDATA) {
@@ -127,7 +134,7 @@ export default function ProductsView() {
 
   useEffect(() => {
     dispatch(getFilterProductAction(location.search))
-  }, [createProductData, location.search])
+  }, [createProductData, location.search, deleteProductMSG])
 
 
   const [getProducts, setgetProducts] = useState()
@@ -154,7 +161,7 @@ export default function ProductsView() {
   }, [getProducts])
 
   return (
-    <Container>
+    <Container className='mt-8' >
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Products</Typography>
 
@@ -163,7 +170,7 @@ export default function ProductsView() {
       </Stack>
       <div className='block' >
         <div className='flex items-center float-start'>
-          <TextField className='' onChange={e => [setSearch(e.target.value.trim().toLowerCase()), setpageNumber(1), setpageSize(12)]} value={search} placeholder='Search Products By Title' style={{ width: "200px", display: "flex", justifyContent: "center", textAlign: "center" }} type='text' id="standard-basic" label="" variant="standard" />
+          <TextField className='' onChange={e => [setSearch(e.target.value.toLowerCase()), setpageNumber(1), setpageSize(12)]} value={search} placeholder='Search Products By Title' style={{ width: "200px", display: "flex", justifyContent: "center", textAlign: "center" }} type='text' id="standard-basic" label="" variant="standard" />
           {search.length > 0 && <Button className='ms-2' onClick={() => [setSearch(""), setpageNumber(1), setpageSize(12)]} type='button' color="error" variant="contained" size='small'>Clear</Button>}
         </div>
         <Stack
@@ -253,6 +260,7 @@ export default function ProductsView() {
               setavailable={setavailable}
               minDiscount={minDiscount}
               setminDiscount={setminDiscount}
+              setpageNumber={setpageNumber}
             />
           {/* </Stack> */}
         </Stack>
@@ -277,7 +285,7 @@ export default function ProductsView() {
             getProducts && getProducts.content.length > 0 ?
               getProducts.content.map((product) => (
                 <Grid key={product.id} xs={12} sm={6} md={3}>
-                  <ProductCard product={product} />
+                  <ProductCard product={product} setdelProductPopUp={setdelProductPopUp} delProductPopUp={delProductPopUp} />
                 </Grid>
               ))
               :

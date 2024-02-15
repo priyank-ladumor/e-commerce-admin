@@ -1,3 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-unused-expressions */
+/* eslint-disable no-undef */
 /* eslint-disable perfectionist/sort-imports */
 /* eslint-disable import/no-duplicates */
 /* eslint-disable import/no-unresolved */
@@ -5,7 +8,7 @@ import { lazy, Suspense } from 'react';
 // eslint-disable-next-line import/no-duplicates
 import { Navigate } from 'react-router-dom';
 import { Outlet, useRoutes } from 'react-router-dom';
-
+// import Swal from 'sweetalert2';
 // eslint-disable-next-line import/no-unresolved
 import Login from 'src/pages/Login';
 // eslint-disable-next-line import/no-unresolved
@@ -21,6 +24,25 @@ export const ProductsPage = lazy(() => import('src/pages/products'));
 // ----------------------------------------------------------------------
 
 export default function Router() {
+  // const navigate = useNavigate()
+  // useEffect(() => {
+  //   !auth &&
+  //     <div className='z-100' >
+  //       {Swal.fire({
+  //         title: "Are you sure Login?",
+  //         text: "You won't be able to see this page without login!",
+  //         icon: "warning",
+  //         // showCancelButton: true,
+  //         confirmButtonColor: "#3085d6",
+  //         // cancelButtonColor: "#d33",
+  //         confirmButtonText: "Go to login page"
+  //       }).then((result) => {
+  //         if (result.isConfirmed) {
+  //           navigate("/login")
+  //         }
+  //       })}
+  //     </div>
+  // }, [])
   const auth = localStorage.getItem("token")
   const routes = useRoutes([
     {
@@ -28,6 +50,7 @@ export default function Router() {
         <DashboardLayout>
           <Suspense>
             {auth ? <Outlet /> : <Navigate to="/login" replace />}
+            {/* {auth?.length > 0 && <Outlet />} */}
           </Suspense>
         </DashboardLayout>
       ),
@@ -42,17 +65,18 @@ export default function Router() {
         {
           path: '/size',
           element: <SizePage />,
-        },
+        }
       ],
     },
-    {
+    !auth && {
       path: '/login',
       element: <Login />,
     },
-    // {
-    //   path: '*',
-    //   element: <Navigate to="/404" replace />,
-    // },
+    {
+      path: '*',
+      element: <h1>404</h1>,
+      // element: <Navigate to="/404" replace />,
+    },
   ]);
 
   return routes;

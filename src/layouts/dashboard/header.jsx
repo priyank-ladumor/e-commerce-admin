@@ -50,7 +50,11 @@ export default function Header({ onOpenNav }) {
       </Stack>
     </>
   );
+  const auth = localStorage.getItem("token")
+
   return (
+    auth &&
+
     <AppBar
       sx={{
         boxShadow: 'none',
@@ -68,9 +72,14 @@ export default function Header({ onOpenNav }) {
         }),
       }}
     >
+      {/* header css for background,boxshadow  */}
       <Toolbar
         sx={{
           height: 1,
+          background: "white",
+          // background: "aliceblue",
+          boxShadow: "rgba(0, 0, 0, 0.45) 0px 25px 20px -20px",
+          color: "black",
           px: { lg: 5 },
         }}
       >

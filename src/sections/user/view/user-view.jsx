@@ -87,25 +87,12 @@ export default function UserView() {
   }
 
   useEffect(() => {
-    const items = {
-      pageSize,
-      pageNumber,
-      search
-    }
-    const query = `?pageSize=7&pageNumber=1&search=${search}`
-    if (location.search) {
-      dispatch(getAllUserDetailsAction(location.search))
-    } else {
-      dispatch(getAllUserDetailsAction(query))
-      setUsesearch(items)
-    }
-    if (search.length > 0) {
-      dispatch(getAllUserDetailsAction(query))
-    } else {
-      const query2 = `?pageSize=7&pageNumber=1&search=`
-      dispatch(getAllUserDetailsAction(query2))
-    }
-  }, [location, userDeleteMSG, userBannedMSG, userUnBannedMSG, search])
+    setUsesearch({ pageNumber, pageSize, search})
+  }, [location.search, search, pageNumber, pageSize])
+
+  useEffect(() => {
+    dispatch(getAllUserDetailsAction(location.search))
+  }, [location.search, userDeleteMSG, userBannedMSG, userUnBannedMSG])
 
   useEffect(() => {
     if (getAllUserDetailsDATA) {
@@ -199,7 +186,7 @@ export default function UserView() {
   }, [userUnBannedMSG])
 
   return (
-    <Container>
+    <Container className='mt-8'>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Users</Typography>
       </Stack>
@@ -321,3 +308,27 @@ export default function UserView() {
     </Container>
   );
 }
+
+
+
+  // useEffect(() => {
+  //   const items = {
+  //     pageSize,
+  //     pageNumber,
+  //     search
+  //   }
+  //   const query = `?pageSize=${pageSize}&pageNumber=${pageNumber}&search=${search}`
+  //   if (location.search) {
+  //     dispatch(getAllUserDetailsAction(location.search))
+  //   } else {
+  //     dispatch(getAllUserDetailsAction(query))
+  //     setUsesearch(items)
+  //   }
+  //   if (search.length > 0) {
+  //     dispatch(getAllUserDetailsAction(query))
+  //   } else {
+  //     // const query2 = `?pageSize=7&pageNumber=1&search=`
+  //     const query2 = `?pageSize=${pageSize}&pageNumber=${pageNumber}&search=${search}&search=`
+  //     dispatch(getAllUserDetailsAction(query2))
+  //   }
+  // }, [location.search, userDeleteMSG, userBannedMSG, userUnBannedMSG, ])

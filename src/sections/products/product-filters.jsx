@@ -45,7 +45,7 @@ import TextField from '@mui/material/TextField';
 
 export default function ProductFilters({ openFilter, onOpenFilter, onCloseFilter, gettoplvl, settopCategory, topCategory,
   getsecondlvl, setsecondCategory, secondCategory, parentId, setparentId, setcolor, color, setmaxPrice, setminPrice,
-  getsizedata, sizes, setsizes, available, setavailable, minDiscount, setminDiscount
+  getsizedata, sizes, setsizes, available, setavailable, minDiscount, setminDiscount, setpageNumber
 }) {
 
   const renderGender = (
@@ -56,7 +56,7 @@ export default function ProductFilters({ openFilter, onOpenFilter, onCloseFilter
           aria-labelledby="demo-radio-buttons-group-label"
           name="radio-buttons-group"
           value={topCategory}
-          onChange={e => [settopCategory(e.target.value), setsecondCategory("")]}
+          onChange={e => [settopCategory(e.target.value), setsecondCategory(""),setpageNumber(1)]}
         >
           {
             gettoplvl?.length > 0 && gettoplvl.map((ele) =>
@@ -77,7 +77,7 @@ export default function ProductFilters({ openFilter, onOpenFilter, onCloseFilter
           aria-labelledby="demo-radio-buttons-group-label"
           name="radio-buttons-group"
           value={secondCategory}
-          onChange={e => setsecondCategory(e.target.value)}
+          onChange={e => [setsecondCategory(e.target.value),setpageNumber(1)]}
         >
           {
             getsecondlvl?.length > 0 && getsecondlvl.map((ele) => {
@@ -95,7 +95,7 @@ export default function ProductFilters({ openFilter, onOpenFilter, onCloseFilter
   const renderColors = (
     <Stack spacing={1}>
       <FormLabel id="demo-radio-buttons-group-label">Colors:</FormLabel>
-      <CompactPicker color={color} onChange={(clr) => setcolor(clr.hex)} />
+      <CompactPicker color={color} onChange={(clr) => [setcolor(clr.hex),setpageNumber(1)]} />
     </Stack>
   );
 
@@ -119,6 +119,7 @@ export default function ProductFilters({ openFilter, onOpenFilter, onCloseFilter
     SetMAX(newValue[1]);
     setminPrice(newValue[0])
     setmaxPrice(newValue[1])
+    setpageNumber(1)
   };
 
   React.useEffect(() => {
@@ -153,11 +154,11 @@ export default function ProductFilters({ openFilter, onOpenFilter, onCloseFilter
         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <div className='flex items-center'>
             <TextField className='mb-2 me-2' inputProps={{ min: 0 }}
-              type='number' onChange={e => handlecngMIN(e)} label="Min" value={MIN} style={{ width: "50px", display: "flex", justifyContent: "center", textAlign: "center" }} id="standard-basic" variant="standard" />
+              type='number' onChange={e => [handlecngMIN(e),setpageNumber(1)]} label="Min" value={MIN} style={{ width: "50px", display: "flex", justifyContent: "center", textAlign: "center" }} id="standard-basic" variant="standard" />
           </div>
           <div className='flex items-center'>
             <TextField className='mb-2 me-2' inputProps={{ min: 10 }}
-              type='number' onChange={e => handlecngMAX(e)} value={MAX} style={{ width: "50px", display: "flex", justifyContent: "center", textAlign: "center" }} id="standard-basic" label="Max" variant="standard" />
+              type='number' onChange={e => [handlecngMAX(e),setpageNumber(1)]} value={MAX} style={{ width: "50px", display: "flex", justifyContent: "center", textAlign: "center" }} id="standard-basic" label="Max" variant="standard" />
           </div>
         </Box>
       </Box>
@@ -170,7 +171,7 @@ export default function ProductFilters({ openFilter, onOpenFilter, onCloseFilter
       <div className=" grid grid-cols-4 ">
         {getsizedata && getsizedata.map((name) => (
           name.options.map((opt) => (
-            <div onClick={() => setsizes(opt)}
+            <div onClick={() => [setsizes(opt),setpageNumber(1)]}
               className='flex m-2 cursor-pointer font-semibold rounded-full justify-center items-center p-[10px]'
               style={{ width: "50px", fontSize: "16px", border: sizes === opt ? "2px black solid" : "2px gray solid", }} >
               {opt.split("_")[0]}
@@ -187,7 +188,7 @@ export default function ProductFilters({ openFilter, onOpenFilter, onCloseFilter
         <div className='flex items-center' >
           <FormLabel id="demo-radio-buttons-group-label">Min Discount:</FormLabel>
           <TextField className='ms-2' type='number' InputProps={{ inputProps: { min: 0, max: 99 } }}
-             onChange={e => setminDiscount(e.target.value)} value={minDiscount} style={{ width: "40px" }} id="standard-basic" variant="standard" />
+             onChange={e => [setminDiscount(e.target.value),setpageNumber(1)]} value={minDiscount} style={{ width: "40px" }} id="standard-basic" variant="standard" />
         </div>
       {/* </FormControl> */}
     </Stack>
@@ -202,7 +203,7 @@ export default function ProductFilters({ openFilter, onOpenFilter, onCloseFilter
           aria-labelledby="demo-customized-radios"
           name="customized-radios"
           value={available}
-          onChange={(e) => setavailable(e.target.value)}
+          onChange={(e) => [setavailable(e.target.value),setpageNumber(1)]}
         >
           <div className='flex text-black font-semibold'>
             <FormControlLabel value="in_stock" control={<Radio />} label="In stock" />

@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { createSlice } from "@reduxjs/toolkit";
 
-import { createProductAction, getFilterProductAction } from "../action/productAction";
+import { createProductAction, deleteProductAction, getFilterProductAction } from "../action/productAction";
 
 
 const initialState = {
@@ -10,6 +10,7 @@ const initialState = {
     createProductPending: false,
     getFilterProductDATA: null,
     getFilterProductPENDING: false,
+    deleteProductMSG: false,
 };
 
 const productSlice = createSlice({
@@ -51,6 +52,18 @@ const productSlice = createSlice({
         builder.addCase(getFilterProductAction.rejected, (state, { payload }) => {
             state.getFilterProductDATA = null;
             state.getFilterProductPENDING = false;
+        })
+
+        builder.addCase(deleteProductAction.pending, (state, { payload }) => {
+            state.deleteProductMSG = null;
+        })
+
+        builder.addCase(deleteProductAction.fulfilled, (state, { payload }) => {
+            state.deleteProductMSG = payload;
+        })
+
+        builder.addCase(deleteProductAction.rejected, (state, { payload }) => {
+            state.deleteProductMSG = null;
         })
     }
 });

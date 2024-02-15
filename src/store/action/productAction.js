@@ -55,3 +55,29 @@ export const getFilterProductAction = createAsyncThunk(
         }
     }
 );
+
+export const deleteProductAction = createAsyncThunk(
+    "delete/product",
+    async (id, { rejectWithValue }) => {
+        console.log(id);
+        try {
+            const result = await axios.delete(
+                `${import.meta.env.VITE_APP_BASE_URL}/admin/products/${id}`,
+                // data,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": localStorage.getItem("token")
+                    },
+                }
+            );
+            return result.data;
+        } catch (error) {
+            if (error.response && error.response.data.msg) {
+                return rejectWithValue(error.response.data.msg);
+            } else {
+                return rejectWithValue(error.message);
+            }
+        }
+    }
+);

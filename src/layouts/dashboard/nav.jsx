@@ -122,6 +122,7 @@ export default function Nav({ openNav, onCloseNav }) {
   // sidebar menu  list items
 
   const renderContent = (
+    auth &&
     <Scrollbar
       sx={{
         height: 1,
@@ -150,11 +151,17 @@ export default function Nav({ openNav, onCloseNav }) {
     </Scrollbar>
   );
 
+
   return (
     <Box
       sx={{
         flexShrink: { lg: 0 },
         width: { lg: NAV.WIDTH },
+        background: "white",
+        // boxShadow: "15px 0px 10px -15px #111",
+        // boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
+        boxShadow: "rgba(9, 30, 66, 0.25) 0px 4px 8px -2px, rgba(9, 30, 66, 0.08) 0px 0px 0px 1px",
+        color: "black",
       }}
     >
       {upLg ? (
@@ -163,7 +170,7 @@ export default function Nav({ openNav, onCloseNav }) {
             height: 1,
             position: 'fixed',
             width: NAV.WIDTH,
-            borderRight: (theme) => `dashed 1px ${theme.palette.divider}`,
+            // borderRight: (theme) => `dashed 1px ${theme.palette.divider}`,
           }}
         >
           {renderContent}
@@ -196,8 +203,10 @@ function NavItem({ item }) {
   const pathname = usePathname();
 
   const active = item.path === pathname;
+  const auth = localStorage.getItem("token")
 
   return (
+    auth &&
     <ListItemButton
       component={RouterLink}
       href={item.path}

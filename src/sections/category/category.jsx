@@ -302,7 +302,7 @@ export const Category = () => {
     //     return newResult;
     // }
     return (
-        <Container>
+        <Container className='mt-8'>
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                 <Typography variant="h4">Category</Typography>
 

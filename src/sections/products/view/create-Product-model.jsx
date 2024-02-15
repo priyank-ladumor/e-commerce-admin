@@ -98,7 +98,7 @@ const schema = yup.object({
     title: yup
         .string()
         .min(4, "title must be above 4 characters")
-        .max(55, "title must be with in 25 characters")
+        .max(75, "title must be with in 75 characters")
         .required("please enter title"),
     price: yup.number().min(50, "price must be above 50").typeError("please enter price").required(),
     // brand: yup.string().min(2).max(24),
@@ -192,7 +192,7 @@ export default function ProductModal() {
     useEffect(() => {
         dispatch(getSizesAction())
     }, [])
-    
+
     useEffect(() => {
         if (getSizesDATA?.length > 0) {
             setgetSizeData(getSizesDATA)
