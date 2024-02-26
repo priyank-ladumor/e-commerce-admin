@@ -78,7 +78,8 @@ export default function Header({ onOpenNav }) {
           height: 1,
           background: "white",
           // background: "aliceblue",
-          boxShadow: "rgba(0, 0, 0, 0.45) 0px 25px 20px -20px",
+          // boxShadow: "rgba(0, 0, 0, 0.45) 0px 25px 20px -20px",
+          boxShadow: "rgba(9, 30, 66, 0.25) 0px 4px 8px -2px, rgba(9, 30, 66, 0.08) 0px 0px 0px 1px",
           color: "black",
           px: { lg: 5 },
         }}

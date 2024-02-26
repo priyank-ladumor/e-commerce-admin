@@ -38,7 +38,6 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import FormControl from '@mui/material/FormControl';
-// import { useNavigate } from 'react-router-dom';
 // eslint-disable-next-line perfectionist/sort-imports
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
@@ -51,8 +50,6 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useTheme } from '@mui/material/styles';
 import ListItemText from '@mui/material/ListItemText';
 import Checkbox from '@mui/material/Checkbox';
-// import { SketchPicker } from 'react-color'
-// import { IoIosColorPalette } from "react-icons/io";
 import { ThreeDots } from 'react-loader-spinner'
 import { RiDeleteBin5Fill } from "react-icons/ri";
 import { MdEditSquare } from "react-icons/md";
@@ -78,10 +75,6 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { getSecondLvlCategoriesAction, getThirdLvlCategoriesAction, getTopLvlCategoriesAction } from 'src/store/action/categoriesAction';
 import { getSizesAction } from 'src/store/action/sizeAction';
 
-// import SizesTableModal from './child-create-product';
-// import { getColorAction } from 'src/store/action/colorAction';
-// import { ChildProductModal } from './child-create-product-modal';
-
 const style = {
     position: 'absolute',
     top: '50%',
@@ -101,27 +94,8 @@ const schema = yup.object({
         .max(75, "title must be with in 75 characters")
         .required("please enter title"),
     price: yup.number().min(50, "price must be above 50").typeError("please enter price").required(),
-    // brand: yup.string().min(2).max(24),
-    // topLevelCategory: yup.string().min(2).max(24).matches(/^\S*$/, "No whitespaces allowed").required("Please enter product top level category"),
-    // secondLevelCategory: yup.string().min(2).max(24).matches(/^\S*$/, "No whitespaces allowed").required("Please enter product second level category"),
-    // thirdLevelCategory: yup.string().min(2).max(24).matches(/^\S*$/, "No whitespaces allowed").required("Please enter product third level category"),
     description: yup.string().min(20).max(800).required("Please enter product description"),
 });
-
-// const sizes = [
-//     {
-//         label: 'sizes',
-//         options: [
-//             'XS',
-//             'S',
-//             'M',
-//             'L',
-//             'XL',
-//             'XLL',
-//             'XXS'
-//         ],
-//     },
-// ];
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -133,6 +107,7 @@ const MenuProps = {
         },
     },
 };
+
 function getStyles(name, personName, theme) {
     return {
         fontWeight:
@@ -171,9 +146,6 @@ export default function ProductModal() {
     const [selectedNames, setSelectedNames] = useState([]);
     const [getSizeData, setgetSizeData] = useState()
 
-
-
-    // const navigate = useNavigate();
     const dispatch = useDispatch();
 
     const theme = useTheme();
@@ -493,9 +465,6 @@ export default function ProductModal() {
         setQuantity("")
     }
 
-    // const sizesFromTableAll = TableAll && TableAll.map((table) => table.size);
-    // const sizeWithOutDuplicate = sizesFromTableAll && sizesFromTableAll.filter((v, i) => sizesFromTableAll.indexOf(v) === i);
-
     const handleChangeSelectSize = (event) => {
         setsizeselect(event.target.value);
     };
@@ -623,6 +592,7 @@ export default function ProductModal() {
                         <form className='-mt-4 p-4' onSubmit={handleSubmit(onSubmit)}>
                             <div className="pb-12">
                                 <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-12">
+
                                     <div className="sm:col-span-6">
                                         <FormControl fullWidth sx={{ m: 0 }} size="large" >
                                             <TextField
@@ -636,62 +606,42 @@ export default function ProductModal() {
                                             />
                                         </FormControl>
                                     </div>
+
                                     <div className="sm:col-span-6">
                                         <FormControl fullWidth sx={{ m: 0 }} size="large" >
                                             <TextField
-                                                // error={errors && errors.brand?.message}
                                                 id="standard-error-helper-text"
                                                 label="Brand"
                                                 value={brand}
                                                 type='text'
                                                 onChange={(e) => setbrand(e.target.value)}
-                                                // {...register("brand")}
-                                                // helperText={errors && errors.brand?.message}
                                                 variant="outlined" />
                                         </FormControl>
                                     </div>
+
                                     <div className="sm:col-span-6">
                                         <FormControl fullWidth sx={{ m: 0 }} size="large" >
                                             <TextField
-                                                // error={errors && errors.brand?.message}
                                                 id="standard-error-helper-text"
                                                 label="Fabric "
                                                 value={Fabric}
                                                 type='text'
                                                 onChange={(e) => setFabric(e.target.value)}
-                                                // {...register("brand")}
-                                                // helperText={errors && errors.brand?.message}
                                                 variant="outlined" />
                                         </FormControl>
                                     </div>
+
                                     <div className="sm:col-span-6">
                                         <FormControl fullWidth sx={{ m: 0 }} size="large" >
                                             <TextField
-                                                // error={errors && errors.brand?.message}
                                                 id="standard-error-helper-text"
                                                 label="Material "
                                                 value={Material}
                                                 type='text'
                                                 onChange={(e) => setMaterial(e.target.value)}
-                                                // {...register("brand")}
-                                                // helperText={errors && errors.brand?.message}
                                                 variant="outlined" />
                                         </FormControl>
                                     </div>
-                                    {/* 
-                                    <div className="sm:col-span-6">
-                                        <FormControl fullWidth sx={{ m: 0 }} size="large" >
-                                            <TextField
-                                                error={errors && errors.topLevelCategory?.message}
-                                                id="standard-error-helper-text"
-                                                label="Top Level Category"
-                                                type='text'
-                                                {...register("topLevelCategory")}
-                                                helperText={errors && errors.topLevelCategory?.message}
-                                                variant="outlined"
-                                            />
-                                        </FormControl>
-                                    </div> */}
 
                                     <div className="sm:col-span-6">
                                         <Autocomplete
@@ -714,19 +664,6 @@ export default function ProductModal() {
                                         />
                                     </div>
 
-                                    {/* <div className="sm:col-span-6">
-                                        <FormControl fullWidth sx={{ m: 0 }} size="large" >
-                                            <TextField
-                                                error={errors && errors.secondLevelCategory?.message}
-                                                id="standard-error-helper-text"
-                                                label="Second Level Category"
-                                                type='text'
-                                                {...register("secondLevelCategory")}
-                                                helperText={errors && errors.secondLevelCategory?.message}
-                                                variant="outlined" />
-                                        </FormControl>
-                                    </div> */}
-
                                     <div className="sm:col-span-6">
                                         <Autocomplete
                                             value={secondCategory}
@@ -745,20 +682,6 @@ export default function ProductModal() {
                                             renderInput={(params) => <TextField  {...params} label="Second Level Category" />}
                                         />
                                     </div>
-
-                                    {/* <div className="sm:col-span-6">
-                                        <FormControl fullWidth sx={{ m: 0 }} size="large" >
-                                            <TextField
-                                                error={errors && errors.thirdLevelCategory?.message}
-                                                id="standard-error-helper-text"
-                                                label="Third Level Category"
-                                                type='text'
-                                                {...register("thirdLevelCategory")}
-                                                helperText={errors && errors.thirdLevelCategory?.message}
-                                                variant="outlined"
-                                            />
-                                        </FormControl>
-                                    </div> */}
 
                                     <div className="sm:col-span-6">
                                         <Autocomplete

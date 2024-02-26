@@ -112,7 +112,7 @@ export default function ProductFilters({ openFilter, onOpenFilter, onCloseFilter
       label: '',
     },
   ];
-  console.log(getsizedata && getsizedata);
+
   const handleChange = (_, newValue) => {
     setprice(newValue);
     SetMIN(newValue[0]);
