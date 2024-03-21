@@ -7,6 +7,7 @@ import productSlice from "./slice/productSlice";
 import categoriesSlice from "./slice/categoriesSlice";
 import userSlice from "./slice/userSlice";
 import sizeSlice from "./slice/sizeSlice";
+import orderSlice from "./slice/orderSlice";
 
 
 const store = configureStore({
@@ -16,6 +17,7 @@ const store = configureStore({
     categories: categoriesSlice,
     user: userSlice,
     size: sizeSlice,
+    order: orderSlice,
   },
 });
 

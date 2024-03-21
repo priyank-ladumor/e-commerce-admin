@@ -4,6 +4,7 @@
 import SvgColor from 'src/components/svg-color';
 import { MdCategory } from "react-icons/md";
 import { MdFormatSize  } from "react-icons/md";
+import { FaEdit } from "react-icons/fa";
 
 // ----------------------------------------------------------------------
 
@@ -36,6 +37,11 @@ const navConfig = [
     title: 'size',
     path: '/size',
     icon: <MdFormatSize  style={{fontSize:"24px"}} />,
+  },
+  {
+    title: 'order',
+    path: '/order',
+    icon: <FaEdit  style={{fontSize:"24px"}} />,
   }
 ];
 

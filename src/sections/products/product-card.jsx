@@ -102,13 +102,11 @@ export default function ShopProductCard({ product, setdelProductPopUp, delProduc
           textDecoration: 'line-through',
         }}
       >
-        {/* {product?.price && FaRupeeSign(product?.price)} */}
         <div className='flex items-center justify-center'>
           <FaRupeeSign style={{ fontSize: "16px" }} />{product?.price}
         </div>
       </Typography>
       &nbsp;
-      {/* {fCurrency(product?.discountPrice)} */}
       <div className='flex  items-center justify-center'>
         <FaRupeeSign style={{ fontSize: "16px" }} />{product?.discountPrice}
       </div>

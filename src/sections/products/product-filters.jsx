@@ -29,6 +29,7 @@ import Scrollbar from 'src/components/scrollbar';
 import { CompactPicker } from 'react-color'
 import Slider from '@mui/material/Slider';
 import TextField from '@mui/material/TextField';
+
 // import {
 //   MenuItem,
 // } from "@mui/material";
@@ -173,7 +174,7 @@ export default function ProductFilters({ openFilter, onOpenFilter, onCloseFilter
           name.options.map((opt) => (
             <div onClick={() => [setsizes(opt),setpageNumber(1)]}
               className='flex m-2 cursor-pointer font-semibold rounded-full justify-center items-center p-[10px]'
-              style={{ width: "50px", fontSize: "16px", border: sizes === opt ? "2px black solid" : "2px gray solid", }} >
+              style={{ width: "50px", fontSize: "16px", border: sizes === opt ? "3px black solid" : "1px gray solid", }} >
               {opt.split("_")[0]}
             </div>
           ))
@@ -184,13 +185,11 @@ export default function ProductFilters({ openFilter, onOpenFilter, onCloseFilter
 
   const renderminDiscount = (
     <Stack spacing={1}>
-      {/* <FormControl> */}
         <div className='flex items-center' >
           <FormLabel id="demo-radio-buttons-group-label">Min Discount:</FormLabel>
           <TextField className='ms-2' type='number' InputProps={{ inputProps: { min: 0, max: 99 } }}
              onChange={e => [setminDiscount(e.target.value),setpageNumber(1)]} value={minDiscount} style={{ width: "40px" }} id="standard-basic" variant="standard" />
         </div>
-      {/* </FormControl> */}
     </Stack>
   )
 

@@ -15,6 +15,7 @@ import Login from 'src/pages/Login';
 import DashboardLayout from 'src/layouts/dashboard';
 import CategoryPage from 'src/pages/Category';
 import SizePage from 'src/pages/Size';
+import OrderPage from 'src/pages/order';
 
 export const IndexPage = lazy(() => import('src/pages/app'));
 // eslint-disable-next-line import/no-unresolved
@@ -65,6 +66,10 @@ export default function Router() {
         {
           path: '/size',
           element: <SizePage />,
+        },
+        {
+          path: '/order',
+          element: <OrderPage />,
         }
       ],
     },

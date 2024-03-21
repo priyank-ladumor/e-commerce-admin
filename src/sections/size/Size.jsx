@@ -274,7 +274,7 @@ export const SizeView = () => {
     }, [deleteSizeTableMSG])
 
     return (
-        <Container className='mt-8'>
+        <Container className='mt-8' maxWidth="xl" >
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                 <Typography variant="h4">Size</Typography>
 
