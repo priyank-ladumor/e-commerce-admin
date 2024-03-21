@@ -30,3 +30,25 @@ export const getAllOrderAction = createAsyncThunk(
         }
     }
 );
+
+export const CancelOrderAction = createAsyncThunk(
+    "cancel/Order",
+    async (id, { rejectWithValue }) => {
+        try {
+            const result = await axios.get(
+                `${import.meta.env.VITE_APP_BASE_URL}/order/cancel/${id}`,
+                // id,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": localStorage.getItem('token')
+                    },
+                }
+            );
+            return result.data;
+        } catch (error) {
+
+            return rejectWithValue(error.response.data.msg)
+        }
+    }
+);

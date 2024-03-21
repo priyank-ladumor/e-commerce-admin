@@ -8,7 +8,7 @@
 /* eslint-disable perfectionist/sort-named-imports */
 /* eslint-disable perfectionist/sort-imports */
 
-import { Stack } from '@mui/material';
+import { MenuItem, Select, Stack } from '@mui/material';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import { useEffect, useState } from 'react';
@@ -26,7 +26,7 @@ import { CTableDataCell } from '@coreui/react'
 import { CTableHead } from '@coreui/react'
 import { CTableHeaderCell } from '@coreui/react'
 import { CTableRow } from '@coreui/react'
-
+import FormControl from '@mui/material/FormControl';
 
 const style = {
     position: 'absolute',
@@ -46,7 +46,6 @@ export default function OrderView() {
     const dispatch = useDispatch();
     const [open, setOpen] = useState(false);
     const [orderItemID, setorderItemID] = useState("");
-    console.log('✌️orderItemID --->', orderItemID);
 
     const handleOpen = (idd) => [setOpen(true), setorderItemID(idd)];
     const handleClose = () => [setOpen(false)];
@@ -64,6 +63,7 @@ export default function OrderView() {
         }
     }, [getAllOrderDATA])
 
+    
     return (
         <Container className='mt-8' maxWidth="xl" >
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
@@ -88,8 +88,7 @@ export default function OrderView() {
                     <CTableBody>
                         {
                             allOrder && allOrder?.map((ele) => {
-                                const viewOrderItem = allOrder && allOrder?.filter((item) =>  item._id.toString() === orderItemID && orderItemID.toString() )
-                                console.log('✌️viewOrderItem --->', viewOrderItem);
+                                const viewOrderItem = allOrder && allOrder?.filter((item) => item._id.toString() === orderItemID && orderItemID.toString())
                                 return (
                                     <CTableRow striped color='light'>
                                         <CTableHeaderCell scope="row">{allOrder.indexOf(ele) + 1}</CTableHeaderCell>
@@ -121,7 +120,37 @@ export default function OrderView() {
                                         <CTableDataCell style={{ fontWeight: "600" }} >{ele.paymentDetails.paymentStatus}</CTableDataCell>
                                         <CTableDataCell style={{ fontWeight: "600", minWidth: "120px" }} >{ele.createdAt.split("T")[0]}</CTableDataCell>
                                         <CTableDataCell className='' style={{ fontWeight: "600", minWidth: "120px" }} >{ele?.deliveredDate ? ele?.deliveredDate.split("T")[0] : "---"}</CTableDataCell>
-                                        <CTableDataCell style={{ color: ele.orderStatus === "CANCELLED" ? "red" : "black", fontWeight: "600" }} >{ele.orderStatus}</CTableDataCell>
+                                        <CTableDataCell style={{ color: ele.orderStatus === "CANCELLED" ? "red" : "black", fontWeight: "600" }} >
+                                            <FormControl variant="standard" className='ms-1' sx={{ m: 0 }}>
+                                                <Select
+                                                    id="demo-simple-select-standard"
+                                                    // onChange={e => [setpageSize(e.target.value), setpageNumber(1)]}
+                                                    displayEmpty
+                                                    style={{ padding: "0px", width: "105px" }}
+                                                    inputProps={{ 'aria-label': 'Without label' }}
+                                                    defaultValue={ele.orderStatus}
+                                                >
+                                                    <MenuItem value="Placed" >
+                                                        <em>Placed</em>
+                                                    </MenuItem>
+                                                    <MenuItem value="Confirmed">
+                                                        <em>Confirmed</em>
+                                                    </MenuItem>
+                                                    <MenuItem value="CANCELLED">
+                                                        <em>Canceled</em>
+                                                    </MenuItem>
+                                                    <MenuItem value="Shipped">
+                                                        <em>Shipped</em>
+                                                    </MenuItem>
+                                                    <MenuItem value="Packed">
+                                                        <em>Packed</em>
+                                                    </MenuItem>
+                                                    <MenuItem value="Delivered">
+                                                        <em>Delivered</em>
+                                                    </MenuItem>
+                                                </Select>
+                                            </FormControl>
+                                        </CTableDataCell>
                                         <CTableDataCell className='me-5' >
 
                                             <Button onClick={() => handleOpen(ele?._id)} variant="contained" color="inherit" >View Order items</Button>

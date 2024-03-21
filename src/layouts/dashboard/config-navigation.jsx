@@ -5,6 +5,8 @@ import SvgColor from 'src/components/svg-color';
 import { MdCategory } from "react-icons/md";
 import { MdFormatSize  } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
+import { GiVerticalBanner } from "react-icons/gi";
+import { MdOutlineAddPhotoAlternate } from "react-icons/md";
 
 // ----------------------------------------------------------------------
 
@@ -42,6 +44,16 @@ const navConfig = [
     title: 'order',
     path: '/order',
     icon: <FaEdit  style={{fontSize:"24px"}} />,
+  },
+  {
+    title: 'banner',
+    path: '/banner',
+    icon: <GiVerticalBanner  style={{fontSize:"24px"}} />,
+  },
+  {
+    title: 'logo',
+    path: '/logo',
+    icon: <MdOutlineAddPhotoAlternate  style={{fontSize:"24px"}} />,
   }
 ];
 

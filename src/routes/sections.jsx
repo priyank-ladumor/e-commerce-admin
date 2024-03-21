@@ -16,6 +16,8 @@ import DashboardLayout from 'src/layouts/dashboard';
 import CategoryPage from 'src/pages/Category';
 import SizePage from 'src/pages/Size';
 import OrderPage from 'src/pages/order';
+import BannerPage from 'src/pages/banner';
+import LogoPage from 'src/pages/logo';
 
 export const IndexPage = lazy(() => import('src/pages/app'));
 // eslint-disable-next-line import/no-unresolved
@@ -70,6 +72,14 @@ export default function Router() {
         {
           path: '/order',
           element: <OrderPage />,
+        },
+        {
+          path: '/banner',
+          element: <BannerPage />,
+        },
+        {
+          path: '/logo',
+          element: <LogoPage />,
         }
       ],
     },
