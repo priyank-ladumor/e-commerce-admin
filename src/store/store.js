@@ -8,6 +8,7 @@ import categoriesSlice from "./slice/categoriesSlice";
 import userSlice from "./slice/userSlice";
 import sizeSlice from "./slice/sizeSlice";
 import orderSlice from "./slice/orderSlice";
+import bannerLogoSlice from "./slice/bannerLogoSlice";
 
 
 const store = configureStore({
@@ -18,6 +19,7 @@ const store = configureStore({
     user: userSlice,
     size: sizeSlice,
     order: orderSlice,
+    bannerLogo: bannerLogoSlice,
   },
 });
 

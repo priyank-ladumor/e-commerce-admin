@@ -592,7 +592,6 @@ export default function ProductModal() {
                         <form className='-mt-4 p-4' onSubmit={handleSubmit(onSubmit)}>
                             <div className="pb-12">
                                 <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-12">
-
                                     <div className="sm:col-span-6">
                                         <FormControl fullWidth sx={{ m: 0 }} size="large" >
                                             <TextField
