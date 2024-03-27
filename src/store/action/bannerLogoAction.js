@@ -26,3 +26,45 @@ export const addBannerAction = createAsyncThunk(
         }
     }
 );
+
+export const getBannerAction = createAsyncThunk(
+    "get/banner",
+    async (item, { rejectWithValue }) => {
+        try {
+            const result = await axios.get(
+                `${import.meta.env.VITE_APP_BASE_URL}/banner`,
+                // item,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": localStorage.getItem('token')
+                    },
+                },
+            );
+            return result.data;
+        } catch (error) {
+            return rejectWithValue(error.response.data.msg || error.response.data.error)
+        }
+    }
+);
+
+export const deleteBannerAction = createAsyncThunk(
+    "delete/banner",
+    async (item, { rejectWithValue }) => {
+        try {
+            const result = await axios.delete(
+                `${import.meta.env.VITE_APP_BASE_URL}/banner/${item.url}`,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": localStorage.getItem('token')
+                    }
+                }
+
+            );
+            return result.data;
+        } catch (error) {
+            return rejectWithValue(error.response.data.msg || error.response.data.error)
+        }
+    }
+);

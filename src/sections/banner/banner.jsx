@@ -26,7 +26,7 @@ import Iconify from 'src/components/iconify';
 import { FaTrash } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import { ThreeDots } from 'react-loader-spinner';
-import { addBannerAction } from 'src/store/action/bannerLogoAction';
+import { addBannerAction, deleteBannerAction, getBannerAction } from 'src/store/action/bannerLogoAction';
 import Swal from 'sweetalert2';
 
 
@@ -49,10 +49,22 @@ export default function BannerView() {
     const handleClose = () => [setOpen(false)];
 
     const [BannerImgs, setBannerImgs] = React.useState("")
+    const [getBannerDATA, setgetBannerDATA] = React.useState("")
     const [BannerImgsAddPopUp, setBannerImgsAddPopUp] = React.useState(false)
     const [addBannerERRORPopUp, setaddBannerERRORPopUp] = React.useState(false)
+    const [deleteBannerPopUp, setdeleteBannerPopUp] = React.useState(false)
 
-    const { addBannerPENDING, addBannerMSG, addBannerERROR } = useSelector((state) => state.bannerLogo)
+    const { addBannerPENDING, addBannerMSG, addBannerERROR, getBannerMSG, deleteBannerMSG } = useSelector((state) => state.bannerLogo)
+
+    React.useEffect(() => {
+        dispatch(getBannerAction())
+    }, [addBannerMSG, deleteBannerMSG])
+
+    React.useEffect(() => {
+        if (getBannerMSG) {
+            setgetBannerDATA(getBannerMSG)
+        }
+    }, [getBannerMSG])
 
     const uploadBannerImgs = (e) => {
         const files = e.target.files;
@@ -121,6 +133,21 @@ export default function BannerView() {
         }
     }, [addBannerERROR])
 
+    React.useEffect(() => {
+        if (deleteBannerMSG && deleteBannerPopUp) {
+            <div className='swal2-container'>
+                {Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: deleteBannerMSG,
+                    showConfirmButton: false,
+                    timer: 2500
+                })}
+            </div>
+            setdeleteBannerPopUp(false)
+        }
+    }, [deleteBannerMSG])
+
     const handleAddBanner = () => {
         if (BannerImgs) {
             const item = {
@@ -130,6 +157,14 @@ export default function BannerView() {
             setBannerImgsAddPopUp(true)
             setaddBannerERRORPopUp(true)
         }
+    }
+
+    const handleDeleteBanner = (url) => {
+        const item = {
+            url
+        }
+        dispatch(deleteBannerAction(item))
+        setdeleteBannerPopUp(true)
     }
 
     return (
@@ -217,6 +252,35 @@ export default function BannerView() {
                     </Box>
                 </Modal>
             </Stack>
+            <div className='grid grid-cols-12 gap-4'  >
+                {
+                    getBannerDATA && getBannerDATA?.map((img) => {
+                        return (
+                            <>
+                                <div className='col-span-12 md:col-span-6 py-4' style={{ position: "relative" }} >
+                                    <div >
+                                        <img className="rounded-lg"
+                                            onMouseEnter={(e) => {
+                                                e.target.style.border = '1px solid red';
+                                                e.target.style.opacity = 0.5;
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                e.target.style.border = "none";
+                                                e.target.style.opacity = 1;
+                                            }}
+                                            src={img} alt={img} style={{ height: "450px" }} width={800} />
+                                        <FaTrash
+                                            className="text-danger btn-trash trash"
+                                            style={{ cursor: "pointer", position: "absolute", right: "50%", top: "50%" }}
+                                            onClick={() => handleDeleteBanner(img)}
+                                        />
+                                    </div>
+                                </div>
+                            </>
+                        )
+                    })
+                }
+            </div>
         </Container>
     )
 }
