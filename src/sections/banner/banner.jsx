@@ -1,3 +1,5 @@
+/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable no-await-in-loop */
 /* eslint-disable react/jsx-boolean-value */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable no-plusplus */
@@ -28,6 +30,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ThreeDots } from 'react-loader-spinner';
 import { addBannerAction, deleteBannerAction, getBannerAction } from 'src/store/action/bannerLogoAction';
 import Swal from 'sweetalert2';
+import Resizer from "react-image-file-resizer";
 
 
 const style = {
@@ -48,13 +51,29 @@ export default function BannerView() {
     const handleOpen = () => [setOpen(true)];
     const handleClose = () => [setOpen(false)];
 
-    const [BannerImgs, setBannerImgs] = React.useState("")
+    const [BannerImgs, setBannerImgs] = React.useState([])
     const [getBannerDATA, setgetBannerDATA] = React.useState("")
     const [BannerImgsAddPopUp, setBannerImgsAddPopUp] = React.useState(false)
     const [addBannerERRORPopUp, setaddBannerERRORPopUp] = React.useState(false)
     const [deleteBannerPopUp, setdeleteBannerPopUp] = React.useState(false)
 
     const { addBannerPENDING, addBannerMSG, addBannerERROR, getBannerMSG, deleteBannerMSG } = useSelector((state) => state.bannerLogo)
+
+    const resizeFile = (file) =>
+        new Promise((resolve) => {
+            Resizer.imageFileResizer(
+                file,
+                1100,
+                1100,
+                "JPEG",
+                100,
+                0,
+                (uri) => {
+                    resolve(uri);
+                },
+                "base64"
+            );
+        });
 
     React.useEffect(() => {
         dispatch(getBannerAction())
@@ -66,28 +85,14 @@ export default function BannerView() {
         }
     }, [getBannerMSG])
 
-    const uploadBannerImgs = (e) => {
+    const uploadBannerImgs = async (e) => {
         const files = e.target.files;
-        const imagePromises = [];
         if (files.length > 0) {
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
-                if (file) {
-                    const reader = new FileReader();
-                    imagePromises.push(
-                        new Promise((resolve) => {
-                            reader.onload = (e) => {
-                                resolve(e.target.result);
-                            };
-                            reader.readAsDataURL(file);
-                        })
-                    );
-                }
+                const image = await resizeFile(file);
+                setBannerImgs([image])
             }
-
-            Promise.all(imagePromises).then((results) => {
-                setBannerImgs(results);
-            });
         }
     }
 
@@ -159,9 +164,9 @@ export default function BannerView() {
         }
     }
 
-    const handleDeleteBanner = (url) => {
+    const handleDeleteBanner = (id) => {
         const item = {
-            url
+            id
         }
         dispatch(deleteBannerAction(item))
         setdeleteBannerPopUp(true)
@@ -254,7 +259,7 @@ export default function BannerView() {
             </Stack>
             <div className='grid grid-cols-12 gap-4'  >
                 {
-                    getBannerDATA && getBannerDATA?.map((img) => {
+                    getBannerDATA && getBannerDATA?.map((item) => {
                         return (
                             <>
                                 <div className='col-span-12 md:col-span-6 py-4' style={{ position: "relative" }} >
@@ -268,11 +273,11 @@ export default function BannerView() {
                                                 e.target.style.border = "none";
                                                 e.target.style.opacity = 1;
                                             }}
-                                            src={img} alt={img} style={{ height: "450px" }} width={800} />
+                                            src={item.img[0]} alt={item.img[0]} style={{ height: "450px" }} width={800} />
                                         <FaTrash
                                             className="text-danger btn-trash trash"
                                             style={{ cursor: "pointer", position: "absolute", right: "50%", top: "50%" }}
-                                            onClick={() => handleDeleteBanner(img)}
+                                            onClick={() => handleDeleteBanner(item._id)}
                                         />
                                     </div>
                                 </div>

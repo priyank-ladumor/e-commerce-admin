@@ -154,6 +154,7 @@ export default function Nav({ openNav, onCloseNav }) {
 
   return (
     <Box
+      className="minheight"
       sx={{
         flexShrink: { lg: 0 },
         width: { lg: NAV.WIDTH },

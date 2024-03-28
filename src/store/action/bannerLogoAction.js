@@ -37,7 +37,7 @@ export const getBannerAction = createAsyncThunk(
                 {
                     headers: {
                         "Content-Type": "application/json",
-                        "Authorization": localStorage.getItem('token')
+                        // "Authorization": localStorage.getItem('token')
                     },
                 },
             );
@@ -53,7 +53,7 @@ export const deleteBannerAction = createAsyncThunk(
     async (item, { rejectWithValue }) => {
         try {
             const result = await axios.delete(
-                `${import.meta.env.VITE_APP_BASE_URL}/banner/${item.url}`,
+                `${import.meta.env.VITE_APP_BASE_URL}/banner/${item.id}`,
                 {
                     headers: {
                         "Content-Type": "application/json",
