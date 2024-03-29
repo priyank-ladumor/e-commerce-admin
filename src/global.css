@@ -136,11 +136,18 @@ body{
     box-shadow: none;
 }
 
-.css-zlc8ed {
-    min-height: 0px !important;
+@media screen and (min-width: 1200px) {
+    .minheight {
+        min-height: 100vh !important;
+    }
 }
 
-.minheight {
-    min-height: 100vh !important;
+@media screen and (max-width: 1200px) {
+    .css-zlc8ed {
+        min-height: 0px !important ;
+    }
 }
+
+
+
 

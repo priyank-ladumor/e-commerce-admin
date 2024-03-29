@@ -2,7 +2,7 @@
 /* eslint-disable perfectionist/sort-imports */
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { createSlice } from "@reduxjs/toolkit";
-import { addBannerAction, deleteBannerAction, getBannerAction } from "../action/bannerLogoAction";
+import { addBannerAction, addLogoAction, deleteBannerAction, getBannerAction, getLogoAction } from "../action/bannerLogoAction";
 
 
 
@@ -14,6 +14,10 @@ const initialState = {
     addBannerPENDING: false,
     addBannerMSG: null,
     addBannerERROR: null,
+    addLogoMSG: null,
+    addLogoPENDING: false,
+    getLogoDATA: null,
+    getLogoPENDING: false,
 };
 
 const bannerLogoSlice = createSlice({
@@ -70,6 +74,36 @@ const bannerLogoSlice = createSlice({
         builder.addCase(deleteBannerAction.rejected, (state, { payload }) => {
             state.deleteBannerMSG = null;
             state.deleteBannerPENDING = false;
+        })
+
+        builder.addCase(addLogoAction.pending, (state, { payload }) => {
+            state.addLogoMSG = null;
+            state.addLogoPENDING = true;
+        })
+
+        builder.addCase(addLogoAction.fulfilled, (state, { payload }) => {
+            state.addLogoMSG = payload;
+            state.addLogoPENDING = false;
+        })
+
+        builder.addCase(addLogoAction.rejected, (state, { payload }) => {
+            state.addLogoMSG = null;
+            state.addLogoPENDING = false;
+        })
+
+        builder.addCase(getLogoAction.pending, (state, { payload }) => {
+            state.getLogoDATA = null;
+            state.getLogoPENDING = true;
+        })
+
+        builder.addCase(getLogoAction.fulfilled, (state, { payload }) => {
+            state.getLogoDATA = payload;
+            state.getLogoPENDING = false;
+        })
+
+        builder.addCase(getLogoAction.rejected, (state, { payload }) => {
+            state.getLogoDATA = null;
+            state.getLogoPENDING = false;
         })
     }
 });

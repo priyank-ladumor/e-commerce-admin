@@ -1,3 +1,6 @@
+/* eslint-disable import/order */
+/* eslint-disable perfectionist/sort-imports */
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable import/no-extraneous-dependencies */
 // eslint-disable-next-line perfectionist/sort-imports
 import PropTypes from 'prop-types';

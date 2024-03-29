@@ -1,14 +1,33 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable perfectionist/sort-named-imports */
+/* eslint-disable perfectionist/sort-imports */
+/* eslint-disable import/no-unresolved */
 import PropTypes from 'prop-types';
-import { forwardRef } from 'react';
+import { forwardRef, useEffect, useState } from 'react';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 
 import { RouterLink } from 'src/routes/components';
+import { useDispatch, useSelector } from 'react-redux';
+import { getLogoAction } from 'src/store/action/bannerLogoAction';
 
 // ----------------------------------------------------------------------
 
 const Logo = forwardRef(({ disabledLink = false, sx, ...other }, ref) => {
+  const [getLogo, setgetLogo] = useState("")
+  const dispatch = useDispatch()
+  const { getLogoDATA, addLogoMSG } = useSelector((state) => state.bannerLogo)
+
+  useEffect(() => {
+    dispatch(getLogoAction())
+  }, [addLogoMSG])
+
+  useEffect(() => {
+    if (getLogoDATA) {
+      setgetLogo(getLogoDATA)
+    }
+  }, [getLogoDATA])
 
   const logo = (
     <Box
@@ -24,7 +43,7 @@ const Logo = forwardRef(({ disabledLink = false, sx, ...other }, ref) => {
     >
       <img
         className="h-15 w-12 rounded-xl"
-        src="https://i.imgur.com/d7MoWpc.png"
+        src={getLogo?.logo}
         alt="Your Company"
       />
     </Box>
