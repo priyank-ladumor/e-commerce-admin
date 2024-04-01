@@ -85,7 +85,7 @@ export default function Nav({ openNav, onCloseNav }) {
       {/* admin pic and name for sidebar */}
       {adminData &&
         <Avatar
-          src={adminData?.photoURL}
+          src={adminData?.profileImg[0]}
           alt={adminData.firstName}
           sx={{
             width: 36,

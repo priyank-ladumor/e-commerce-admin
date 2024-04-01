@@ -1,3 +1,6 @@
+/* eslint-disable perfectionist/sort-imports */
+/* eslint-disable import/order */
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable import/no-unresolved */
 /* eslint-disable import/no-extraneous-dependencies */
@@ -17,6 +20,7 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 import { adminLogin } from '../store/action/authAction';
+import { getLogoAction } from "src/store/action/bannerLogoAction";
 
 const schema = yup.object({
     email: yup.string().email().required("please enter your email"),
@@ -29,6 +33,20 @@ const schema = yup.object({
 const Login = () => {
     const dispatch = useDispatch()
     const navigate = useNavigate()
+
+    const [getLogo, setgetLogo] = useState("")
+    const { getLogoDATA, addLogoMSG } = useSelector((state) => state.bannerLogo)
+  
+    useEffect(() => {
+      dispatch(getLogoAction())
+    }, [addLogoMSG])
+  
+    useEffect(() => {
+      if (getLogoDATA) {
+        setgetLogo(getLogoDATA)
+      }
+    }, [getLogoDATA])
+
     const { adminLoginError, adminLoginRole } = useSelector((state) => state.auth)
 
     const [showPassword, setShowPassword] = useState(false);
@@ -95,7 +113,7 @@ const Login = () => {
                     <div className=" sm:mx-auto sm:w-full sm:max-w-sm">
                         <img
                             className="mx-auto h-16 rounded-lg w-auto  flex justify-center items-center"
-                            src="https://i.imgur.com/d7MoWpc.png"
+                            src={getLogo?.logo}
                             alt="Your Company"
                         />
                         <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">

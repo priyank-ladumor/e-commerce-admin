@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable react/jsx-no-useless-fragment */
 /* eslint-disable react/jsx-curly-brace-presence */
 /* eslint-disable import/no-duplicates */
@@ -12,9 +13,9 @@ import { MenuItem, Select, Stack } from '@mui/material';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import { useEffect, useState } from 'react';
-import { FaRupeeSign } from 'react-icons/fa';
+import { FaRupeeSign, FaTrash } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAllOrderAction } from 'src/store/action/orderAction';
+import { CancelOrderAction, DeleteOrderAction, confirmOrderAction, deliveredOrderAction, getAllOrderAction, packedOrderAction, shippedOrderAction } from 'src/store/action/orderAction';
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
@@ -27,6 +28,7 @@ import { CTableHead } from '@coreui/react'
 import { CTableHeaderCell } from '@coreui/react'
 import { CTableRow } from '@coreui/react'
 import FormControl from '@mui/material/FormControl';
+import Swal from 'sweetalert2';
 
 const style = {
     position: 'absolute',
@@ -49,13 +51,45 @@ export default function OrderView() {
 
     const handleOpen = (idd) => [setOpen(true), setorderItemID(idd)];
     const handleClose = () => [setOpen(false)];
-    const { getAllOrderDATA } = useSelector((state) => state.order);
+    const { getAllOrderDATA, DeleteOrderMSG, CancelOrderMSG, confirmOrderMSG, packedOrderMSG, shippedOrderMSG, deliveredOrderMSG } = useSelector((state) => state.order);
 
+    const [status, setstatus] = useState("")
+    const [orderID, setOrderID] = useState("")
     const [allOrder, setAllOrder] = useState()
+    const [orderPopUp, setorderPopUp] = useState(false)
+
+    useEffect(() => {
+        if (orderID && status) {
+            const item = {
+                id: orderID
+            }
+            if (status === "CANCELLED") {
+                dispatch(CancelOrderAction(item))
+            }
+
+            if (status === "Confirmed") {
+                dispatch(confirmOrderAction(item))
+            }
+
+            if (status === "Packed") {
+                dispatch(packedOrderAction(item))
+            }
+
+            if (status === "Shipped") {
+                dispatch(shippedOrderAction(item))
+            }
+
+            if (status === "Delivered") {
+                dispatch(deliveredOrderAction(item))
+            }
+
+            setorderPopUp(true)
+        }
+    }, [status, orderID])
 
     useEffect(() => {
         dispatch(getAllOrderAction())
-    }, [])
+    }, [DeleteOrderMSG, CancelOrderMSG, confirmOrderMSG, packedOrderMSG, shippedOrderMSG, deliveredOrderMSG])
 
     useEffect(() => {
         if (getAllOrderDATA) {
@@ -63,7 +97,114 @@ export default function OrderView() {
         }
     }, [getAllOrderDATA])
 
-    
+    const handleDeleteOrder = (id) => {
+        const item = {
+            id: id.toString()
+        }
+        dispatch(DeleteOrderAction(item))
+        setorderPopUp(true)
+    }
+
+    React.useEffect(() => {
+        if (DeleteOrderMSG && orderPopUp) {
+            <div className='swal2-container'>
+                {Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: DeleteOrderMSG,
+                    showConfirmButton: false,
+                    timer: 2500
+                })}
+            </div>
+            setorderPopUp(false)
+        }
+    }, [DeleteOrderMSG])
+
+    React.useEffect(() => {
+        if (CancelOrderMSG && orderPopUp) {
+            <div className='swal2-container'>
+                {Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: CancelOrderMSG,
+                    showConfirmButton: false,
+                    timer: 2500
+                })}
+            </div>
+            setorderPopUp(false)
+            setstatus("")
+            setOrderID("")
+        }
+    }, [CancelOrderMSG])
+
+    React.useEffect(() => {
+        if (confirmOrderMSG && orderPopUp) {
+            <div className='swal2-container'>
+                {Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: confirmOrderMSG,
+                    showConfirmButton: false,
+                    timer: 2500
+                })}
+            </div>
+            setorderPopUp(false)
+            setstatus("")
+            setOrderID("")
+        }
+    }, [confirmOrderMSG])
+
+    React.useEffect(() => {
+        if (packedOrderMSG && orderPopUp) {
+            <div className='swal2-container'>
+                {Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: packedOrderMSG,
+                    showConfirmButton: false,
+                    timer: 2500
+                })}
+            </div>
+            setorderPopUp(false)
+            setstatus("")
+            setOrderID("")
+        }
+    }, [packedOrderMSG])
+
+    React.useEffect(() => {
+        if (shippedOrderMSG && orderPopUp) {
+            <div className='swal2-container'>
+                {Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: shippedOrderMSG,
+                    showConfirmButton: false,
+                    timer: 2500
+                })}
+            </div>
+            setorderPopUp(false)
+            setstatus("")
+            setOrderID("")
+        }
+    }, [shippedOrderMSG])
+
+    React.useEffect(() => {
+        if (deliveredOrderMSG && orderPopUp) {
+            <div className='swal2-container'>
+                {Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: deliveredOrderMSG,
+                    showConfirmButton: false,
+                    timer: 2500
+                })}
+            </div>
+            setorderPopUp(false)
+            setstatus("")
+            setOrderID("")
+        }
+    }, [deliveredOrderMSG])
+
     return (
         <Container className='mt-8' maxWidth="xl" >
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
@@ -83,6 +224,7 @@ export default function OrderView() {
                             <CTableHeaderCell scope="col">Delivered Date</CTableHeaderCell>
                             <CTableHeaderCell scope="col">Order Status</CTableHeaderCell>
                             <CTableHeaderCell scope="col">Product Details</CTableHeaderCell>
+                            <CTableHeaderCell scope="col">Action</CTableHeaderCell>
                         </CTableRow>
                     </CTableHead>
                     <CTableBody>
@@ -90,7 +232,7 @@ export default function OrderView() {
                             allOrder && allOrder?.map((ele) => {
                                 const viewOrderItem = allOrder && allOrder?.filter((item) => item._id.toString() === orderItemID && orderItemID.toString())
                                 return (
-                                    <CTableRow striped color='light'>
+                                    <CTableRow striped color={ele.orderStatus === "CANCELLED" ? "danger" : ele?.orderStatus === "Delivered" ? 'success' : ele?.orderStatus === "Placed" ? 'warning' : 'light'}>
                                         <CTableHeaderCell scope="row">{allOrder.indexOf(ele) + 1}</CTableHeaderCell>
                                         <CTableDataCell style={{ minWidth: "280px" }}>
                                             <div className='flex' >
@@ -124,30 +266,42 @@ export default function OrderView() {
                                             <FormControl variant="standard" className='ms-1' sx={{ m: 0 }}>
                                                 <Select
                                                     id="demo-simple-select-standard"
-                                                    // onChange={e => [setpageSize(e.target.value), setpageNumber(1)]}
+                                                    onChange={e => [setstatus(e.target.value), setOrderID(ele?._id)]}
                                                     displayEmpty
                                                     style={{ padding: "0px", width: "105px" }}
                                                     inputProps={{ 'aria-label': 'Without label' }}
                                                     defaultValue={ele.orderStatus}
                                                 >
-                                                    <MenuItem value="Placed" >
-                                                        <em>Placed</em>
-                                                    </MenuItem>
-                                                    <MenuItem value="Confirmed">
-                                                        <em>Confirmed</em>
-                                                    </MenuItem>
-                                                    <MenuItem value="CANCELLED">
-                                                        <em>Canceled</em>
-                                                    </MenuItem>
-                                                    <MenuItem value="Shipped">
-                                                        <em>Shipped</em>
-                                                    </MenuItem>
-                                                    <MenuItem value="Packed">
-                                                        <em>Packed</em>
-                                                    </MenuItem>
-                                                    <MenuItem value="Delivered">
-                                                        <em>Delivered</em>
-                                                    </MenuItem>
+                                                    {ele.orderStatus === "Placed"
+                                                        && <MenuItem value="Placed" >
+                                                            <em>Placed</em>
+                                                        </MenuItem>
+                                                    }
+                                                    {(ele.orderStatus === "Confirmed" || ele.orderStatus === "Placed") &&
+                                                        <MenuItem value="Confirmed">
+                                                            <em>Confirmed</em>
+                                                        </MenuItem>
+                                                    }
+                                                    {(ele.orderStatus === "CANCELLED" || ele.orderStatus === "Confirmed"  || ele.orderStatus === "Packed" || ele.orderStatus === "Shipped" || ele.orderStatus === "Placed") &&
+                                                        <MenuItem value="CANCELLED">
+                                                            <em>Canceled</em>
+                                                        </MenuItem>
+                                                    }
+                                                    {(ele.orderStatus === "Packed" || ele.orderStatus === "Confirmed" || ele.orderStatus === "Placed") &&
+                                                        <MenuItem value="Packed">
+                                                            <em>Packed</em>
+                                                        </MenuItem>
+                                                    }
+                                                    {(ele.orderStatus === "Shipped" || ele.orderStatus === "Packed" || ele.orderStatus === "Confirmed" || ele.orderStatus === "Placed") &&
+                                                        <MenuItem value="Shipped">
+                                                            <em>Shipped</em>
+                                                        </MenuItem>
+                                                    }
+                                                    {(ele.orderStatus === "Delivered" || ele.orderStatus === "Shipped" || ele.orderStatus === "Packed" || ele.orderStatus === "Confirmed" || ele.orderStatus === "Placed") &&
+                                                        <MenuItem value="Delivered">
+                                                            <em>Delivered</em>
+                                                        </MenuItem>
+                                                    }
                                                 </Select>
                                             </FormControl>
                                         </CTableDataCell>
@@ -195,7 +349,7 @@ export default function OrderView() {
                                                                                 </div>
                                                                                 <div className='flex items-center' >
                                                                                     <span className=' text-lg font-semibold me-2' >Color:</span>
-                                                                                    <p className=" p-4 w-8 rounded-full mt-[2px] text-sm text-gray-500 border-[1px] border-black " style={{ background: item?.color }} >{""}</p>
+                                                                                    <p className=" p-3 w-8 rounded-full mt-[2px] text-sm text-gray-500 border-[1px] border-black " style={{ background: item?.color }} >{""}</p>
                                                                                 </div>
                                                                                 <div className='flex items-center mb-1' >
                                                                                     <span className='text-lg font-semibold me-2' >Quantity:</span>
@@ -215,6 +369,9 @@ export default function OrderView() {
                                                     </Typography>
                                                 </Box>
                                             </Modal>
+                                        </CTableDataCell>
+                                        <CTableDataCell style={{ fontWeight: "600", color: ele.orderStatus === "CANCELLED" ? "red" : "gray", cursor: ele.orderStatus === "CANCELLED" ? "pointer" : "no-drop" }} >
+                                            <FaTrash onClick={() => ele.orderStatus === "CANCELLED" && handleDeleteOrder(ele?._id)} />
                                         </CTableDataCell>
                                     </CTableRow>
                                 )
