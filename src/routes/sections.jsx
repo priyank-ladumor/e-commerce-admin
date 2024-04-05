@@ -27,25 +27,6 @@ export const ProductsPage = lazy(() => import('src/pages/products'));
 // ----------------------------------------------------------------------
 
 export default function Router() {
-  // const navigate = useNavigate()
-  // useEffect(() => {
-  //   !auth &&
-  //     <div className='z-100' >
-  //       {Swal.fire({
-  //         title: "Are you sure Login?",
-  //         text: "You won't be able to see this page without login!",
-  //         icon: "warning",
-  //         // showCancelButton: true,
-  //         confirmButtonColor: "#3085d6",
-  //         // cancelButtonColor: "#d33",
-  //         confirmButtonText: "Go to login page"
-  //       }).then((result) => {
-  //         if (result.isConfirmed) {
-  //           navigate("/login")
-  //         }
-  //       })}
-  //     </div>
-  // }, [])
   const auth = localStorage.getItem("token")
   const routes = useRoutes([
     {
