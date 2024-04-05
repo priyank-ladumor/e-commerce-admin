@@ -9,7 +9,7 @@
     "deploy": "gh-pages  -d dist",
     "dev": "vite",
     "start": "vite preview",
-    "build": "npm run build",
+    "build": "vite build",
     "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\"",
     "lint:fix": "eslint --fix \"src/**/*.{js,jsx,ts,tsx}\"",
     "prettier": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
